@@ -14,9 +14,8 @@ class AppearanceScreen extends StatefulWidget {
 }
 
 class _AppearanceScreenState extends State<AppearanceScreen> {
-  late ThemeRepository _repository;
-  ThemeSettings _settings = ThemeSettings.defaults();
-  bool _isLoading = true;
+  final ThemeRepository _repository = ThemeRepository.instance;
+  late ThemeSettings _settings;
 
   final List<Color> _brandColors = [
     Colors.blue,
@@ -38,15 +37,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    _repository = await ThemeRepository.init();
-    setState(() {
-      _settings = _repository.currentTheme;
-      _isLoading = false;
-    });
+    _settings = _repository.currentTheme;
   }
 
   Future<void> _updateThemeMode(ThemeMode mode) async {
@@ -67,10 +58,6 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text('settings.appearance'.tr()),
@@ -135,9 +122,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
       spacing: 12,
       runSpacing: 12,
       children: _brandColors.map((color) {
-        final isSelected = _settings.colorValue == color.toARGB32();
+        final isSelected = _settings.colorValue == color.value;
         return GestureDetector(
-          onTap: () => _updateColor(color.toARGB32()),
+          onTap: () => _updateColor(color.value),
           child: Container(
             width: 48,
             height: 48,

@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_gateway/core/storage/provider_repository.dart';
-import 'package:ai_gateway/core/models/settings/provider.dart';
-import 'add_provider_screen.dart';
 
-import '../../settings/widgets/settings_tile.dart';
-import '../../settings/widgets/settings_card.dart';
+import '../../../core/storage/provider_repository.dart';
+import '../../../core/models/provider.dart';
+import '../../../core/widgets/resource_tile.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/confirm_dialog.dart';
+import '../../../core/widgets/grid_card.dart';
+import 'add_provider_screen.dart';
 
 class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});
@@ -15,7 +17,7 @@ class ProvidersScreen extends StatefulWidget {
 }
 
 class _ProvidersScreenState extends State<ProvidersScreen> {
-  List<LLMProvider> _providers = [];
+  List<Provider> _providers = [];
   bool _isLoading = true;
   bool _isGridView = false;
   late ProviderRepository _repository;
@@ -34,16 +36,14 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
     });
   }
 
-  Future<void> _deleteProvider(String id) async {
-    final provider = _providers.firstWhere((p) => p.id == id);
-    await _repository.deleteProvider(id);
+  Future<void> _deleteProvider(String name) async {
+    final provider = _providers.firstWhere((p) => p.name == name);
+    await _repository.deleteProvider(name);
     _loadProviders();
     if (mounted) {
-       ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'settings.provider_deleted'.tr(args: [provider.name]),
-          ),
+          content: Text('settings.provider_deleted'.tr(args: [provider.name])),
         ),
       );
     }
@@ -53,20 +53,9 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'settings.providers'.tr(),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+        title: Text('settings.providers'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
+          AddAction(
             onPressed: () async {
               final result = await Navigator.push(
                 context,
@@ -79,11 +68,11 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
               }
             },
           ),
-          IconButton(
-            icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
-            onPressed: () {
+          ViewToggleAction(
+            isGrid: _isGridView,
+            onChanged: (val) {
               setState(() {
-                _isGridView = !_isGridView;
+                _isGridView = val;
               });
             },
           ),
@@ -92,7 +81,21 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _providers.isEmpty
-          ? Center(child: Text('settings.no_providers'.tr()))
+          ? EmptyState(
+              message: 'settings.no_providers'.tr(),
+              actionLabel: 'Add Provider',
+              onAction: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddProviderScreen(),
+                  ),
+                );
+                if (result == true) {
+                  _loadProviders();
+                }
+              },
+            )
           : _isGridView
           ? GridView.builder(
               padding: const EdgeInsets.all(16),
@@ -106,51 +109,23 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
               itemBuilder: (context, index) =>
                   _buildProviderCard(_providers[index]),
             )
-          : ListView.separated(
+          : ListView.builder(
+              // Changed to Builder for better perf
               itemCount: _providers.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemBuilder: (context, index) =>
                   _buildProviderTile(_providers[index]),
             ),
     );
   }
 
-  Widget _buildProviderTile(LLMProvider provider) {
-    return Dismissible(
-      key: Key(provider.id),
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete, color: Colors.white),
+  Widget _buildProviderTile(Provider provider) {
+    return ResourceTile(
+      title: provider.name,
+      subtitle: 'settings.models_count'.tr(
+        namedArgs: {'count': provider.models.length.toString()},
       ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        _deleteProvider(provider.id);
-      },
-      child: SettingsTile(
-        icon: _getProviderIcon(provider.type),
-        iconColor: Colors.blue,
-        title: provider.name,
-        subtitle: 'settings.models_count'
-            .tr(namedArgs: {'count': provider.models.length.toString()}),
-        onTap: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddProviderScreen(provider: provider),
-            ),
-          );
-          if (result == true) {
-            _loadProviders();
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildProviderCard(LLMProvider provider) {
-    return SettingsCard(
+      leadingIcon: _getProviderIcon(provider.type),
       onTap: () async {
         final result = await Navigator.push(
           context,
@@ -162,48 +137,80 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
           _loadProviders();
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _getProviderIcon(provider.type),
-              size: 32,
-              color: Colors.blue,
-            ),
-            const Spacer(),
-            Text(
-              provider.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'settings.models_count'.tr(
-                namedArgs: {'count': provider.models.length.toString()},
-              ),
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
+      onDelete: () => _confirmDelete(provider),
+      onEdit: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddProviderScreen(provider: provider),
+          ),
+        );
+        if (result == true) {
+          _loadProviders();
+        }
+      },
     );
+  }
+
+  Widget _buildProviderCard(Provider provider) {
+    return GridCard(
+      icon: _getProviderIcon(provider.type),
+      title: provider.name,
+      subtitle: 'settings.models_count'.tr(
+        namedArgs: {'count': provider.models.length.toString()},
+      ),
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddProviderScreen(provider: provider),
+          ),
+        );
+        if (result == true) {
+          _loadProviders();
+        }
+      },
+      onEdit: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddProviderScreen(provider: provider),
+          ),
+        );
+        if (result == true) {
+          _loadProviders();
+        }
+      },
+      onDelete: () => _confirmDelete(provider),
+    );
+  }
+
+  Future<void> _confirmDelete(Provider provider) async {
+    final confirm = await ConfirmDialog.show(
+      context,
+      title: 'Delete Provider',
+      content: 'Are you sure you want to delete ${provider.name}?',
+      confirmLabel: 'Delete',
+      isDestructive: true,
+    );
+
+    if (confirm == true) {
+      _deleteProvider(
+        provider.name,
+      ); // Using name as ID based on repo implementation
+    }
   }
 
   IconData _getProviderIcon(ProviderType type) {
     switch (type) {
-      case ProviderType.gemini:
-        return Icons.android; // Placeholder for Google
-      case ProviderType.openai:
-        return Icons.smart_toy; // Placeholder for OpenAI
+      case ProviderType.googleGenAI:
+        return Icons.android;
+      case ProviderType.openAI:
+        return Icons.smart_toy;
       case ProviderType.anthropic:
-        return Icons.psychology; // Placeholder for Anthropic
+        return Icons.psychology;
       case ProviderType.ollama:
-        return Icons.pets; // Placeholder for Ollama
+        return Icons.terminal;
     }
   }
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/storage/agent_repository.dart';
-import '../models/agent.dart';
+import '../../../core/models/ai_agent.dart';
 import 'add_agent_dialog.dart';
+import '../../../core/widgets/resource_tile.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/confirm_dialog.dart';
+import '../../../core/widgets/grid_card.dart';
 
 class AgentListScreen extends StatefulWidget {
   const AgentListScreen({super.key});
@@ -11,7 +15,7 @@ class AgentListScreen extends StatefulWidget {
 }
 
 class _AgentListScreenState extends State<AgentListScreen> {
-  List<Agent> _agents = [];
+  List<AIAgent> _agents = [];
   bool _isLoading = true;
   late AgentRepository _repository;
 
@@ -38,16 +42,9 @@ class _AgentListScreenState extends State<AgentListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Danh sách Agent',
-          style: TextStyle(color: Colors.black87),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black54),
+        title: const Text('Danh sách Agent'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
+          AddAction(
             onPressed: () async {
               final result = await showDialog(
                 context: context,
@@ -62,57 +59,57 @@ class _AgentListScreenState extends State<AgentListScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.separated(
-              itemCount: _agents.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final agent = _agents[index];
-                return Dismissible(
-                  key: Key(agent.id),
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 20),
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (direction) {
-                    _deleteAgent(agent.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${agent.name} deleted')),
+          : _agents.isEmpty
+              ? EmptyState(
+                  message: 'No agents',
+                  actionLabel: 'Add Agent',
+                  onAction: () async {
+                    final result = await showDialog(
+                      context: context,
+                      builder: (context) => const AddAgentDialog(),
                     );
+                    if (result == true) {
+                      _loadAgents();
+                    }
                   },
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue.shade100,
-                      child: Text(
-                        agent.name.isNotEmpty
-                            ? agent.name[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                    title: Text(agent.name),
-                    subtitle: Text(
-                      agent.systemPrompt.isNotEmpty
+                )
+              : ListView.builder(
+                  itemCount: _agents.length,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemBuilder: (context, index) {
+                    final agent = _agents[index];
+                    return ResourceTile(
+                      title: agent.name,
+                      subtitle: agent.systemPrompt.isNotEmpty
                           ? agent.systemPrompt
                           : 'No system prompt',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: const Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey,
-                    ),
-                    onTap: () async {
-                      await _repository.setSelectedAgentId(agent.id);
-                      if (!mounted) return;
-                      Navigator.pop(context, true);
-                    },
-                  ),
-                );
-              },
-            ),
+                      leadingIcon: Icons.smart_toy,
+                      onTap: () async {
+                        await _repository.setSelectedAgentId(agent.id);
+                        if (!mounted) return;
+                        Navigator.pop(context, true);
+                      },
+                      onDelete: () => _confirmDelete(agent),
+                    );
+                  },
+                ),
     );
+  }
+
+  Future<void> _confirmDelete(AIAgent agent) async {
+    final confirm = await ConfirmDialog.show(
+      context,
+      title: 'Delete Agent',
+      content: 'Are you sure you want to delete ${agent.name}?',
+      confirmLabel: 'Delete',
+      isDestructive: true,
+    );
+    if (confirm == true) {
+      await _deleteAgent(agent.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${agent.name} deleted')),
+      );
+    }
   }
 }

@@ -21,15 +21,44 @@ abstract class AIServiceBase {
   }
 
   Map<String, String> buildHeaders([Map<String, String>? extra]) {
-    final base = <String, String>{
+    // 1) Bắt đầu từ header mặc định
+    final defaults = <String, String>{
       'Content-Type': 'application/json',
-      ...customHeaders,
     };
-    applyAuthHeaders(base);
-    if (extra != null) {
-      base.addAll(extra);
+
+    // 2) Cho phép provider thêm header auth mặc định (nếu có)
+    applyAuthHeaders(defaults);
+
+    // Helper: phát hiện khóa auth
+    bool containsAuthKey(Map<String, String> h) {
+      return h.keys.any((k) {
+        final kl = k.toLowerCase();
+        return kl == 'authorization' || kl == 'x-api-key' || kl == 'x-goog-api-key';
+      });
     }
-    return base;
+
+    // 3) Nếu người dùng có truyền customHeaders hoặc extraHeaders chứa khóa auth,
+    //    thì ƯU TIÊN các header đó, KHÔNG can thiệp/loại bỏ.
+    final hasUserAuth =
+        containsAuthKey(customHeaders) || (extra != null && containsAuthKey(extra));
+
+    // 4) Nếu KHÔNG có apiKey và cũng KHÔNG có user auth,
+    //    loại bỏ mọi auth mặc định để tránh gửi sai.
+    if ((apiKey == null || apiKey!.isEmpty) && !hasUserAuth) {
+      defaults.removeWhere((k, _) {
+        final kl = k.toLowerCase();
+        return kl == 'authorization' || kl == 'x-api-key' || kl == 'x-goog-api-key';
+      });
+    }
+
+    // 5) Cuối cùng gộp header người dùng để CHIẾM ƯU TIÊN so với mặc định
+    final out = <String, String>{
+      ...defaults,
+      ...customHeaders,
+      if (extra != null) ...extra,
+    };
+
+    return out;
   }
 
   /// Hook for providers to inject authentication headers.

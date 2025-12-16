@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'core/storage/theme_repository.dart';
 import 'app.dart';
 
 Future<void> main() async {
@@ -9,6 +10,9 @@ Future<void> main() async {
 
   // Initialize Hive
   await Hive.initFlutter();
+
+  // Initialize ThemeRepository
+  await ThemeRepository.init();
 
   runApp(
     EasyLocalization(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import 'package:ai_gateway/core/storage/agent_repository.dart';
 
-import '../models/agent.dart';
+import '../../../core/storage/agent_repository.dart';
+import '../../../core/models/ai_agent.dart';
 
 class AddAgentDialog extends StatefulWidget {
   const AddAgentDialog({super.key});
@@ -35,7 +35,7 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
     }
 
     final repository = await AgentRepository.init();
-    final newAgent = Agent(
+    final newAgent = AIAgent(
       id: const Uuid().v4(),
       name: _nameController.text,
       systemPrompt: _promptController.text,
@@ -239,9 +239,9 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                   child: const Text('Hủy'),
                 ),
                 const SizedBox(width: 16),
-                ElevatedButton(
+                FilledButton(
                   onPressed: _saveAgent,
-                  style: ElevatedButton.styleFrom(
+                  style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

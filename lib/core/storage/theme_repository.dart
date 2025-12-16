@@ -22,9 +22,22 @@ class ThemeRepository extends BaseRepository<ThemeSettings> {
     }
   }
 
+  static ThemeRepository? _instance;
+
   static Future<ThemeRepository> init() async {
+    if (_instance != null) {
+      return _instance!;
+    }
     final box = await Hive.openBox<String>(_boxName);
-    return ThemeRepository(box);
+    _instance = ThemeRepository(box);
+    return _instance!;
+  }
+
+  static ThemeRepository get instance {
+    if (_instance == null) {
+      throw Exception('ThemeRepository not initialized. Call init() first.');
+    }
+    return _instance!;
   }
 
   @override

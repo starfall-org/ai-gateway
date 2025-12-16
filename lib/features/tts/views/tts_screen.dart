@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:ai_gateway/core/storage/tts_repository.dart';
-import 'package:ai_gateway/core/models/settings/tts_profile.dart';
+import 'package:ai_gateway/core/models/tts_profile.dart';
 import 'add_tts_profile_screen.dart';
 
 class TTSScreen extends StatefulWidget {

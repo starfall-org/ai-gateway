@@ -126,12 +126,27 @@ class ChatViewModel extends ChangeNotifier {
           '${modelInput.isEmpty ? '' : '$modelInput\n'}[Attachments: $names]';
     }
 
+    // Temporary logic to select a provider/model until Agent supports it
+    final providerRepo = await ProviderRepository.init();
+    final providers = providerRepo.getProviders();
+    String providerName = '';
+    String modelName = '';
+
+    if (providers.isNotEmpty) {
+      providerName = providers.first.name;
+      if (providers.first.models.isNotEmpty) {
+        modelName = providers.first.models.first.name;
+      }
+    }
+
     final reply = await ChatService.generateReply(
       userText: modelInput,
       history: _currentSession!.messages,
       agent:
           _selectedAgent ??
-          Agent(id: const Uuid().v4(), name: 'Default Agent', systemPrompt: ''),
+          AIAgent(id: const Uuid().v4(), name: 'Default Agent', systemPrompt: ''),
+      providerName: providerName,
+      modelName: modelName,
     );
 
     final modelMessage = ChatMessage(
