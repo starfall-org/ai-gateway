@@ -1,19 +1,19 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/tts_profile.dart';
 import 'base_repository.dart';
 
 class TTSRepository extends BaseRepository<TTSProfile> {
-  static const String _storageKey = 'tts_profiles';
+  static const String _boxName = 'tts_profiles';
 
-  TTSRepository(super.prefs);
+  TTSRepository(super.box);
 
   static Future<TTSRepository> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    return TTSRepository(prefs);
+    final box = await Hive.openBox<String>(_boxName);
+    return TTSRepository(box);
   }
 
   @override
-  String get storageKey => _storageKey;
+  String get boxName => _boxName;
 
   @override
   TTSProfile deserializeItem(String json) => TTSProfile.fromJsonString(json);

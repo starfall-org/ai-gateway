@@ -1,3 +1,4 @@
+import 'package:uuid/uuid.dart';
 import 'mcp_core.dart';
 import 'mcp_stdio.dart';
 import 'mcp_http.dart';
@@ -11,6 +12,7 @@ export 'mcp_http.dart';
 /// Spec: https://spec.modelcontextprotocol.io/specification/
 class MCPServer {
   /// Unique identifier/name for this server configuration
+  final String id;
   final String name;
 
   /// Human-readable description
@@ -37,10 +39,8 @@ class MCPServer {
   /// Available prompts (discovered after connection)
   final List<MCPPrompt> prompts;
 
-  /// Whether this server is currently enabled
-  final bool enabled;
-
   const MCPServer({
+    required this.id,
     required this.name,
     this.description,
     required this.transport,
@@ -50,20 +50,20 @@ class MCPServer {
     this.tools = const [],
     this.resources = const [],
     this.prompts = const [],
-    this.enabled = true,
   });
 
   /// Create a stdio-based MCP server
   factory MCPServer.stdio({
+    String? id,
     required String name,
     String? description,
     required String command,
     List<String> args = const [],
     Map<String, String>? env,
     String? cwd,
-    bool enabled = true,
   }) {
     return MCPServer(
+      id: id ?? const Uuid().v4(),
       name: name,
       description: description,
       transport: MCPTransportType.stdio,
@@ -73,46 +73,46 @@ class MCPServer {
         env: env,
         cwd: cwd,
       ),
-      enabled: enabled,
     );
   }
 
   /// Create an SSE-based MCP server
   factory MCPServer.sse({
+    String? id,
     required String name,
     String? description,
     required String url,
     Map<String, String>? headers,
-    bool enabled = true,
   }) {
     return MCPServer(
+      id: id ?? const Uuid().v4(),
       name: name,
       description: description,
       transport: MCPTransportType.sse,
       httpConfig: MCPHttpConfig(url: url, headers: headers),
-      enabled: enabled,
     );
   }
 
   /// Create a Streamable HTTP-based MCP server
   factory MCPServer.streamable({
+    String? id,
     required String name,
     String? description,
     required String url,
     Map<String, String>? headers,
-    bool enabled = true,
   }) {
     return MCPServer(
+      id: id ?? const Uuid().v4(),
       name: name,
       description: description,
       transport: MCPTransportType.streamable,
       httpConfig: MCPHttpConfig(url: url, headers: headers),
-      enabled: enabled,
     );
   }
 
   /// Create a copy with updated fields
   MCPServer copyWith({
+    String? id,
     String? name,
     String? description,
     MCPTransportType? transport,
@@ -122,9 +122,9 @@ class MCPServer {
     List<MCPTool>? tools,
     List<MCPResource>? resources,
     List<MCPPrompt>? prompts,
-    bool? enabled,
   }) {
     return MCPServer(
+      id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       transport: transport ?? this.transport,
@@ -134,12 +134,12 @@ class MCPServer {
       tools: tools ?? this.tools,
       resources: resources ?? this.resources,
       prompts: prompts ?? this.prompts,
-      enabled: enabled ?? this.enabled,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       if (description != null) 'description': description,
       'transport': transport.name,
@@ -149,12 +149,12 @@ class MCPServer {
       'tools': tools.map((t) => t.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),
       'prompts': prompts.map((p) => p.toJson()).toList(),
-      'enabled': enabled,
     };
   }
 
   factory MCPServer.fromJson(Map<String, dynamic> json) {
     return MCPServer(
+      id: json['id'] as String? ?? const Uuid().v4(),
       name: json['name'] as String,
       description: json['description'] as String?,
       transport: MCPTransportType.values.firstWhere(
@@ -187,7 +187,6 @@ class MCPServer {
               ?.map((p) => MCPPrompt.fromJson(p as Map<String, dynamic>))
               .toList() ??
           [],
-      enabled: json['enabled'] as bool? ?? true,
     );
   }
 }

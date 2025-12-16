@@ -1,20 +1,20 @@
 import 'package:ai_gateway/core/models/chat/conversation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'base_repository.dart';
 
 class ChatRepository extends BaseRepository<Conversation> {
-  static const String _storageKey = 'conversations';
+  static const String _boxName = 'conversations';
 
-  ChatRepository(super.prefs);
+  ChatRepository(super.box);
 
   static Future<ChatRepository> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    return ChatRepository(prefs);
+    final box = await Hive.openBox<String>(_boxName);
+    return ChatRepository(box);
   }
 
   @override
-  String get storageKey => _storageKey;
+  String get boxName => _boxName;
 
   @override
   Conversation deserializeItem(String json) =>

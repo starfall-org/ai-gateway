@@ -1,12 +1,12 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class BaseRepository<T> {
-  final SharedPreferences prefs;
+  final Box<String> box;
 
-  /// The key used to store the list of items in SharedPreferences
-  String get storageKey;
+  /// The name of the Hive box
+  String get boxName;
 
-  BaseRepository(this.prefs);
+  BaseRepository(this.box);
 
   /// Deserializes a JSON string into an item of type T
   T deserializeItem(String json);
@@ -19,25 +19,27 @@ abstract class BaseRepository<T> {
 
   /// Retrieves all items from storage
   List<T> getItems() {
-    final List<String>? itemsJson = prefs.getStringList(storageKey);
-    if (itemsJson == null || itemsJson.isEmpty) {
-      return [];
+    return box.values.map((str) => deserializeItem(str)).toList();
+  }
+
+  /// Retrieves a specific item by its ID
+  T? getItem(String id) {
+    // We assume the key in the box is the ID.
+    // However, if the box keys are not guaranteed to be ids (e.g. integer auto-increment),
+    // we should check. In this implementation, we will perform saveItem by using ID as key.
+    if (box.containsKey(id)) {
+      final json = box.get(id);
+      if (json != null) {
+        return deserializeItem(json);
+      }
     }
-    return itemsJson.map((str) => deserializeItem(str)).toList();
+    return null;
   }
 
   /// Adds or updates an item in storage
   Future<void> saveItem(T item) async {
-    final items = getItems();
     final id = getItemId(item);
-    final index = items.indexWhere((i) => getItemId(i) == id);
-
-    if (index != -1) {
-      items[index] = item;
-    } else {
-      items.add(item);
-    }
-    await _saveItems(items);
+    await box.put(id, serializeItem(item));
   }
 
   /// Alias for saveItem to maintain backward compatibility with some naming in subclasses
@@ -48,13 +50,10 @@ abstract class BaseRepository<T> {
 
   /// Deletes an item by its ID
   Future<void> deleteItem(String id) async {
-    final items = getItems();
-    items.removeWhere((i) => getItemId(i) == id);
-    await _saveItems(items);
+    await box.delete(id);
   }
 
-  Future<void> _saveItems(List<T> items) async {
-    final List<String> itemsJson = items.map((i) => serializeItem(i)).toList();
-    await prefs.setStringList(storageKey, itemsJson);
+  Future<void> clear() async {
+    await box.clear();
   }
 }

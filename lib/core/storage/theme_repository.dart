@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/theme.dart';
 import 'base_repository.dart';
 
 class ThemeRepository extends BaseRepository<ThemeSettings> {
-  static const String _storageKey = 'theme_settings';
+  static const String _boxName = 'theme_settings';
 
   // Expose a notifier for valid reactive UI updates
   final ValueNotifier<ThemeSettings> themeNotifier = ValueNotifier(
     ThemeSettings.defaults(),
   );
 
-  ThemeRepository(super.prefs) {
+  ThemeRepository(super.box) {
     _loadInitialTheme();
   }
 
@@ -23,12 +23,12 @@ class ThemeRepository extends BaseRepository<ThemeSettings> {
   }
 
   static Future<ThemeRepository> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    return ThemeRepository(prefs);
+    final box = await Hive.openBox<String>(_boxName);
+    return ThemeRepository(box);
   }
 
   @override
-  String get storageKey => _storageKey;
+  String get boxName => _boxName;
 
   @override
   ThemeSettings deserializeItem(String json) =>
@@ -43,11 +43,6 @@ class ThemeRepository extends BaseRepository<ThemeSettings> {
 
   Future<void> updateSettings(ThemeSettings settings) async {
     // We only ever store one item for settings
-    final items = [settings];
-    // This is a bit of a hack since base repo manages lists,
-    // but works fine if we just treat it as a list of 1.
-    // However, BaseRepository.saveItem expects generic ID.
-    // Let's just override save logic for simplicity or use the list
     await saveItem(settings);
     themeNotifier.value = settings;
   }

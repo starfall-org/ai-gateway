@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'chat_message.dart';
+import 'message.dart';
 
 class Conversation {
   final String id;

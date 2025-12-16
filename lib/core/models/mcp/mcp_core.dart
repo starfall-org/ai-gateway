@@ -101,10 +101,14 @@ class MCPTool {
   /// JSON Schema defining the expected parameters for the tool
   final JsonSchema inputSchema;
 
+  /// Whether this tool is enabled
+  final bool enabled;
+
   const MCPTool({
     required this.name,
     this.description,
     required this.inputSchema,
+    this.enabled = true,
   });
 
   Map<String, dynamic> toJson() {
@@ -112,6 +116,7 @@ class MCPTool {
       'name': name,
       if (description != null) 'description': description,
       'inputSchema': inputSchema.toJson(),
+      'enabled': enabled,
     };
   }
 
@@ -122,6 +127,7 @@ class MCPTool {
       inputSchema: JsonSchema.fromJson(
         json['inputSchema'] as Map<String, dynamic>? ?? {'type': 'object'},
       ),
+      enabled: json['enabled'] as bool? ?? true,
     );
   }
 }

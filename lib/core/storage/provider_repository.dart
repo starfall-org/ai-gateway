@@ -1,20 +1,20 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../models/provider.dart';
 import 'base_repository.dart';
 
 class ProviderRepository extends BaseRepository<Provider> {
-  static const String _storageKey = 'providers';
+  static const String _boxName = 'providers';
 
-  ProviderRepository(super.prefs);
+  ProviderRepository(super.box);
 
   static Future<ProviderRepository> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    return ProviderRepository(prefs);
+    final box = await Hive.openBox<String>(_boxName);
+    return ProviderRepository(box);
   }
 
   @override
-  String get storageKey => _storageKey;
+  String get boxName => _boxName;
 
   @override
   Provider deserializeItem(String json) => Provider.fromJsonString(json);

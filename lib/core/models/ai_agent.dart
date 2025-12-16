@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Agent {
+class AIAgent {
   final String id;
   final String name;
   final String systemPrompt;
@@ -8,9 +8,10 @@ class Agent {
   final double? temperature;
   final int contextWindow;
   final int conversationLength;
-  final List<String> activeMCPServer;
+  final int maxTokens;
+  final List<String> activeMCPServerIds; // Renamed from activeMCPServer
 
-  Agent({
+  AIAgent({
     required this.id,
     required this.name,
     required this.systemPrompt,
@@ -18,7 +19,8 @@ class Agent {
     this.temperature,
     this.contextWindow = 60000,
     this.conversationLength = 10,
-    this.activeMCPServer = const [],
+    this.maxTokens = 4000,
+    this.activeMCPServerIds = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -30,12 +32,12 @@ class Agent {
       'temperature': temperature,
       'contextWindow': contextWindow,
       'conversationLength': conversationLength,
-      'activeMCPServer': activeMCPServer,
+      'activeMCPServerIds': activeMCPServerIds,
     };
   }
 
-  factory Agent.fromJson(Map<String, dynamic> json) {
-    return Agent(
+  factory AIAgent.fromJson(Map<String, dynamic> json) {
+    return AIAgent(
       id: json['id'] as String,
       name: json['name'] as String,
       systemPrompt: json['systemPrompt'] as String,
@@ -43,13 +45,16 @@ class Agent {
       temperature: json['temperature'] as double?,
       contextWindow: json['contextWindow'] as int,
       conversationLength: json['conversationLength'] as int,
-      activeMCPServer:
-          (json['activeMCPServer'] as List?)?.cast<String>() ?? const [],
+      activeMCPServerIds:
+          (json['activeMCPServerIds'] as List?)?.cast<String>() ??
+          (json['activeMCPServer'] as List?)
+              ?.cast<String>() ?? // Backwards compatibility
+          const [],
     );
   }
 
   String toJsonString() => json.encode(toJson());
 
-  factory Agent.fromJsonString(String jsonString) =>
-      Agent.fromJson(json.decode(jsonString));
+  factory AIAgent.fromJsonString(String jsonString) =>
+      AIAgent.fromJson(json.decode(jsonString));
 }

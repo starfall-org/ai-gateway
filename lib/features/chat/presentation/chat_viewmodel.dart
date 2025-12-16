@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../../../core/models/agent.dart';
-import '../../../core/models/chat/chat_message.dart';
-import '../../../core/repositories/chat_service.dart';
+import '../../../core/models/ai_agent.dart';
+import '../../../core/models/chat/message.dart';
+import '../../../core/services/chat_service.dart';
 import '../../../core/models/chat/conversation.dart';
 import '../../../core/storage/agent_repository.dart';
 import '../../../core/storage/chat_repository.dart';

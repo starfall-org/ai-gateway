@@ -1,13 +1,13 @@
 enum ChatRole { user, model, system, tool }
 
-class ChatMessage {
+class Message {
   final String id;
   final ChatRole role;
   final String content;
   final DateTime timestamp;
   final List<String> attachments;
 
-  ChatMessage({
+  Message({
     required this.id,
     required this.role,
     this.content = '',
@@ -25,8 +25,8 @@ class ChatMessage {
     };
   }
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
       id: json['id'] as String,
       role: ChatRole.values.firstWhere((e) => e.name == json['role']),
       content: json['content'] as String,
