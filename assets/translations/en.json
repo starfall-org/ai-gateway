@@ -110,7 +110,14 @@
     "connection_error": "Connection error. Please check URL and network.",
     "timeout_error": "Request timed out. Please try again.",
     "invalid_format": "Invalid response format from API.",
-    "tap_to_fetch_models": "Tap to fetch models"
+    "tap_to_fetch_models": "Tap to fetch models",
+    "selected_models": "Selected Models",
+    "no_models_selected": "No models selected",
+    "tap_fab_to_add": "Tap FAB to add models",
+    "no_models_fetched": "No models fetched yet",
+    "models_available": "models available",
+    "fetch": "Fetch",
+    "manage_models": "Manage Models"
   },
   "agents": {
     "add_new_agent": "Add New Agent",

@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai_model.dart';
 import '../../../core/models/provider.dart';
 import '../widgets/models_drawer.dart';
+import '../widgets/fetch_models_drawer.dart';
+import '../widgets/model_card.dart';
 import 'add_provider_viewmodel.dart';
 
 class AddProviderScreen extends StatefulWidget {
@@ -37,6 +39,14 @@ class _AddProviderScreenState extends State<AddProviderScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _tabController.index == 1
+          ? FloatingActionButton.extended(
+              onPressed: _showFetchModelsDrawer,
+              icon: const Icon(Icons.cloud_download),
+              label: Text('settings.fetch_models'.tr()),
+              backgroundColor: Colors.blue,
+            )
+          : null,
       appBar: AppBar(
         title: Text(
           widget.provider != null
@@ -256,64 +266,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Fetch Models Button
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: () => _showModelsDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.cloud_download,
-                          color: Colors.blue[600],
-                          size: 28,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'settings.fetch_models'.tr(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _viewModel.availableModels.isEmpty
-                                    ? 'settings.tap_to_fetch_models'.tr()
-                                    : '${_viewModel.availableModels.length} ${'settings.models_available'.tr()}',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[400],
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Selected Models Section
+              // Selected Models Section Header
               Row(
                 children: [
                   Icon(Icons.model_training, color: Colors.blue[600]),
@@ -321,15 +276,16 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                   Text(
                     'settings.selected_models'.tr(),
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
+              // Selected Models List
               Expanded(
                 child: _viewModel.selectedModels.isEmpty
                     ? Center(
@@ -338,14 +294,22 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                           children: [
                             Icon(
                               Icons.model_training,
-                              size: 48,
+                              size: 64,
                               color: Colors.grey[400],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 16),
                             Text(
                               'settings.no_models_selected'.tr(),
                               style: TextStyle(
                                 color: Colors.grey[600],
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'settings.tap_fab_to_add'.tr(),
+                              style: TextStyle(
+                                color: Colors.grey[500],
                                 fontSize: 14,
                               ),
                             ),
@@ -355,18 +319,18 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                     : ListView.separated(
                         itemCount: _viewModel.selectedModels.length,
                         separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
+                            const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final model = _viewModel.selectedModels[index];
-                          return ListTile(
-                            title: Text(model.name),
-                            subtitle: Wrap(spacing: 4, children: [
-                                
-                              ],
-                            ),
+                          return ModelCard(
+                            model: model,
                             onTap: () => _showModelCapabilities(model),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 20,
+                              ),
                               onPressed: () =>
                                   _viewModel.removeModel(model.name),
                             ),
@@ -381,20 +345,18 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     );
   }
 
-  void _showModelsDrawer() {
+  void _showFetchModelsDrawer() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => ModelsDrawer(
+      builder: (context) => FetchModelsDrawer(
         availableModels: _viewModel.availableModels,
         selectedModels: _viewModel.selectedModels,
-        selectedModelToAdd: _viewModel.selectedModelToAdd,
         isFetchingModels: _viewModel.isFetchingModels,
         onFetchModels: () => _viewModel.fetchModels(context),
-        onUpdateSelectedModel: _viewModel.updateSelectedModel,
-        onAddModel: _viewModel.addModel,
-        onRemoveModel: _viewModel.removeModel,
+        onAddModel: _viewModel.addModelDirectly,
+        onRemoveModel: _viewModel.removeModelDirectly,
         onShowCapabilities: _showModelCapabilities,
       ),
     );

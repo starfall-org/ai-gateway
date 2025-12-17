@@ -110,7 +110,14 @@
     "connection_error": "Lỗi kết nối. Vui lòng kiểm tra URL và mạng.",
     "timeout_error": "Hết thời gian yêu cầu. Vui lòng thử lại.",
     "invalid_format": "Định dạng phản hồi không hợp lệ từ API.",
-    "tap_to_fetch_models": "Nhấn để tải danh sách mô hình"
+    "tap_to_fetch_models": "Nhấn để tải danh sách mô hình",
+    "selected_models": "Mô hình đã chọn",
+    "no_models_selected": "Chưa có mô hình nào được chọn",
+    "tap_fab_to_add": "Nhấn nút FAB để thêm mô hình",
+    "no_models_fetched": "Chưa tải danh sách mô hình",
+    "models_available": "mô hình khả dụng",
+    "fetch": "Tải",
+    "manage_models": "Quản lý mô hình"
   },
   "agents": {
     "add_new_agent": "Thêm Agent Mới",

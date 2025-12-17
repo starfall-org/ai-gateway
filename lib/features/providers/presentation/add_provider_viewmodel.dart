@@ -369,8 +369,20 @@ class AddProviderViewModel extends ChangeNotifier {
     }
   }
 
+  void addModelDirectly(AIModel model) {
+    if (!_selectedModels.any((m) => m.name == model.name)) {
+      _selectedModels.add(model);
+      notifyListeners();
+    }
+  }
+
   void removeModel(String modelId) {
     _selectedModels.removeWhere((m) => m.name == modelId);
+    notifyListeners();
+  }
+
+  void removeModelDirectly(AIModel model) {
+    _selectedModels.removeWhere((m) => m.name == model.name);
     notifyListeners();
   }
 
