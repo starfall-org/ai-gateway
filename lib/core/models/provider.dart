@@ -23,7 +23,7 @@ class CustomGoogleGenAIRoutes {
     this.models = '/models',
   });
 
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'generateContent': generateContent,
       'generateContentStream': generateContentStream,
@@ -31,7 +31,7 @@ class CustomGoogleGenAIRoutes {
     };
   }
 
-  static CustomGoogleGenAIRoutes fromJson(Map<String, String> json) {
+  static CustomGoogleGenAIRoutes fromJson(Map<String, dynamic> json) {
     return CustomGoogleGenAIRoutes(
       generateContent: json['generateContent'] ?? '/generateContent',
       generateContentStream:
@@ -54,7 +54,7 @@ class CustomOpenAIRoutes {
     this.models = '/models',
   });
 
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'chatCompletion': chatCompletion,
       'responses': responses,
@@ -63,7 +63,7 @@ class CustomOpenAIRoutes {
     };
   }
 
-  static CustomOpenAIRoutes fromJson(Map<String, String> json) {
+  static CustomOpenAIRoutes fromJson(Map<String, dynamic> json) {
     return CustomOpenAIRoutes(
       chatCompletion: json['chatCompletion'] ?? '/chat/completions',
       responses: json['responses'] ?? '/responses',
@@ -79,11 +79,11 @@ class CustomAnthropicRoutes {
 
   CustomAnthropicRoutes({this.messages = '/messages', this.models = '/models'});
 
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     return {'messages': messages, 'models': models};
   }
 
-  static CustomAnthropicRoutes fromJson(Map<String, String> json) {
+  static CustomAnthropicRoutes fromJson(Map<String, dynamic> json) {
     return CustomAnthropicRoutes(
       messages: json['messages'] ?? '/messages',
       models: json['models'] ?? '/models',
@@ -97,11 +97,11 @@ class CustomOllamaRoutes {
 
   CustomOllamaRoutes({this.chat = '/chat', this.tags = '/tags'});
 
-  Map<String, String> toJson() {
+  Map<String, dynamic> toJson() {
     return {'chat': chat, 'tags': tags};
   }
 
-  static CustomOllamaRoutes fromJson(Map<String, String> json) {
+  static CustomOllamaRoutes fromJson(Map<String, dynamic> json) {
     return CustomOllamaRoutes(
       chat: json['chat'] ?? '/chat',
       tags: json['tags'] ?? '/tags',
@@ -215,7 +215,9 @@ class Provider {
       customOllamaRoutes: json['customOllamaRoutes'] != null
           ? CustomOllamaRoutes.fromJson(json['customOllamaRoutes'])
           : null,
-      headers: Map<String, String>.from(json['headers'] ?? {}),
+      headers: (json['headers'] as Map<String, dynamic>?)?.map(
+        (key, value) => MapEntry(key, value.toString()),
+      ) ?? {},
       models: parsedModels,
     );
   }
