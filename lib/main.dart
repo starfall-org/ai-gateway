@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/storage/theme_repository.dart';
@@ -13,6 +14,12 @@ Future<void> main() async {
 
   // Initialize ThemeRepository
   await ThemeRepository.init();
+
+  // On Android, prevent content from drawing under status/navigation bars
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: SystemUiOverlay.values,
+  );
 
   runApp(
     EasyLocalization(

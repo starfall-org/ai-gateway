@@ -1,6 +1,7 @@
-import 'package:ai_gateway/core/models/settings/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import '../../../core/models/ai_model.dart';
 
 class ModelsDrawer extends StatefulWidget {
   final List<AIModel> availableModels;
@@ -39,7 +40,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+            padding: const EdgeInsets.fromLTRB(8, 60, 8, 16),
             decoration: const BoxDecoration(
               color: Colors.blue,
               borderRadius: BorderRadius.only(
@@ -68,11 +69,11 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -83,13 +84,16 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.cloud_download, color: Colors.blue[600]),
+                              Icon(
+                                Icons.cloud_download,
+                                color: Colors.blue[600],
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'settings.fetch_models'.tr(),
@@ -138,9 +142,9 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Available Models Section
                   if (widget.availableModels.isNotEmpty) ...[
                     Text(
@@ -161,7 +165,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
+                            horizontal: 8,
                             vertical: 8,
                           ),
                         ),
@@ -169,7 +173,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                           return DropdownMenuItem(
                             value: model,
                             child: Text(
-                              model.id,
+                              model.name,
                               overflow: TextOverflow.ellipsis,
                             ),
                           );
@@ -191,9 +195,9 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                       ),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Selected Models Section
                   Text(
                     'settings.selected_models'.tr(),
@@ -246,27 +250,13 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                     ),
                                   ),
                                   title: Text(
-                                    model.id,
+                                    model.name,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 14,
                                     ),
                                   ),
-                                  subtitle: Wrap(
-                                    spacing: 4,
-                                    runSpacing: -4,
-                                    children: model.capabilities.take(2).map((capability) {
-                                      return Chip(
-                                        label: Text(
-                                          capability.name,
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                        visualDensity: VisualDensity.compact,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                      );
-                                    }).toList(),
-                                  ),
+                                  subtitle: Wrap(spacing: 4, runSpacing: -4),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -286,12 +276,11 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                           color: Colors.red,
                                         ),
                                         onPressed: () =>
-                                            widget.onRemoveModel(model.id),
+                                            widget.onRemoveModel(model.name),
                                       ),
                                     ],
                                   ),
-                                  onTap: () =>
-                                      widget.onShowCapabilities(model),
+                                  onTap: () => widget.onShowCapabilities(model),
                                 ),
                               );
                             },

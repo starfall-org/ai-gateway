@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:ai_gateway/core/storage/tts_repository.dart';
-import 'package:ai_gateway/core/models/tts_profile.dart';
-import 'package:ai_gateway/core/models/settings/tts_profile.dart';
+import '../../../core/models/ai_model.dart';
+import '../../../core/models/provider.dart';
+import '../../../core/storage/provider_repository.dart';
+import '../../../core/storage/tts_repository.dart';
+import '../../../core/models/tts_profile.dart';
 
 class AddTTSProfileScreen extends StatefulWidget {
   const AddTTSProfileScreen({super.key});
@@ -17,11 +18,10 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
   TTSServiceType _selectedType = TTSServiceType.system;
 
   // Provider TTS
-  List<LLMProvider> _availableProviders = [];
+  List<Provider> _availableProviders = [];
   String? _selectedProviderId;
 
   // ElevenLabs
-  final _apiKeyController = TextEditingController();
 
   // Voice
   String? _selectedVoiceId;
@@ -41,9 +41,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
       // Filter providers that have TTS capability
       _availableProviders = providers
           .where(
-            (p) => p.models.any(
-              (m) => m.capabilities.contains(ModelCapability.audioGeneration),
-            ),
+            (p) => p.models.any((m) => m.output.contains(ModelIOType.audio)),
           )
           .toList();
     });
@@ -60,9 +58,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
     List<String> voices = [];
     if (_selectedType == TTSServiceType.system) {
       voices = ['en-US-x-sfg#male_1-local', 'en-US-x-sfg#female_1-local'];
-    } else if (_selectedType == TTSServiceType.elevenLabs) {
-      voices = ['Rachel', 'Drew', 'Clyde', 'Mimi'];
-    } else if (_selectedType == TTSServiceType.fromProvider) {
+    } else if (_selectedType == TTSServiceType.provider) {
       voices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
     }
 
@@ -81,19 +77,11 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
       return;
     }
 
-    if (_selectedType == TTSServiceType.fromProvider &&
+    if (_selectedType == TTSServiceType.provider &&
         _selectedProviderId == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please select a provider')));
-      return;
-    }
-
-    if (_selectedType == TTSServiceType.elevenLabs &&
-        _apiKeyController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please enter API Key')));
       return;
     }
 
@@ -103,8 +91,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
       id: const Uuid().v4(),
       name: _nameController.text,
       type: _selectedType,
-      providerId: _selectedProviderId,
-      apiKey: _apiKeyController.text.isNotEmpty ? _apiKeyController.text : null,
+      provider: _selectedProviderId,
       voiceId: _selectedVoiceId,
     );
 
@@ -162,7 +149,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
             },
           ),
           const SizedBox(height: 16),
-          if (_selectedType == TTSServiceType.fromProvider) ...[
+          if (_selectedType == TTSServiceType.provider) ...[
             DropdownButtonFormField<String>(
               initialValue: _selectedProviderId,
               decoration: const InputDecoration(
@@ -170,7 +157,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
                 border: OutlineInputBorder(),
               ),
               items: _availableProviders.map((p) {
-                return DropdownMenuItem(value: p.id, child: Text(p.name));
+                return DropdownMenuItem(value: p.name, child: Text(p.name));
               }).toList(),
               onChanged: (value) {
                 setState(() {
@@ -180,17 +167,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          if (_selectedType == TTSServiceType.elevenLabs) ...[
-            TextField(
-              controller: _apiKeyController,
-              decoration: const InputDecoration(
-                labelText: 'API Key',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-          ],
+
           Row(
             children: [
               Expanded(

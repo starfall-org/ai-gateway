@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_gateway/core/routes.dart';
+
+import '../../../core/routes.dart';
 import '../widgets/settings_tile.dart';
 
 class SettingsScreen extends StatelessWidget {

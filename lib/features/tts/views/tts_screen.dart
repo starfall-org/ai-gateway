@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_gateway/core/storage/tts_repository.dart';
-import 'package:ai_gateway/core/models/tts_profile.dart';
+import '../../../core/storage/tts_repository.dart';
+import '../../../core/models/tts_profile.dart';
 import 'add_tts_profile_screen.dart';
 
 class TTSScreen extends StatefulWidget {
@@ -111,10 +110,8 @@ class _TTSScreenState extends State<TTSScreen> {
     switch (type) {
       case TTSServiceType.system:
         return Icons.settings_voice;
-      case TTSServiceType.fromProvider:
+      case TTSServiceType.provider:
         return Icons.cloud;
-      case TTSServiceType.elevenLabs:
-        return Icons.graphic_eq;
     }
   }
 }

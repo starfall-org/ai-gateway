@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 import '../../agents/presentation/agent_list_screen.dart';
-import 'chat_viewmodel.dart';
 import '../widgets/chat_drawer.dart';
 import '../widgets/chat_input_area.dart';
 import '../widgets/chat_message_list.dart';
+import 'chat_viewmodel.dart';
+import '../../../core/storage/theme_repository.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -22,6 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _viewModel = ChatViewModel();
     _viewModel.initChat();
     _viewModel.loadSelectedAgent();
+    _viewModel.refreshProviders();
   }
 
   @override
@@ -45,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
           key: _viewModel.scaffoldKey,
           appBar: AppBar(
             leading: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black54),
+              icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color?.withOpacity(0.7)),
               onPressed: _viewModel.openDrawer,
             ),
             title: Column(
@@ -53,23 +56,23 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Text(
                   'chat.title'.tr(),
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   _viewModel.selectedAgent?.name ?? 'Default Agent',
-                  style: const TextStyle(
-                    color: Colors.blue,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 0.5,
             actions: [_buildAgentAvatar(), _buildPopupMenu()],
           ),
@@ -88,21 +91,32 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           body: Column(
             children: [
-              Expanded(child: _buildMessageList()),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: _buildMessageList(),
+                ),
+              ),
               if (_viewModel.isGenerating)
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: LinearProgressIndicator(),
                 ),
-              ChatInputArea(
-                controller: _viewModel.textController,
-                onSubmitted: (text) =>
-                    _viewModel.handleSubmitted(text, context),
-                attachments: _viewModel.pendingAttachments,
-                onPickAttachments: () => _viewModel.pickAttachments(context),
-                onRemoveAttachment: _viewModel.removeAttachmentAt,
-                isGenerating: _viewModel.isGenerating,
-                onMicTap: _viewModel.speakLastModelMessage,
+              SafeArea(
+                top: false,
+                child: ChatInputArea(
+                  controller: _viewModel.textController,
+                  onSubmitted: (text) =>
+                      _viewModel.handleSubmitted(text, context),
+                  attachments: _viewModel.pendingAttachments,
+                  onPickAttachments: () => _viewModel.pickAttachments(context),
+                  onRemoveAttachment: _viewModel.removeAttachmentAt,
+                  isGenerating: _viewModel.isGenerating,
+                  onOpenModelPicker: () => _openModelPicker(context),
+                  onMicTap: _viewModel.speakLastModelMessage,
+                  onOpenMenu: _viewModel.openDrawer,
+                ),
               ),
             ],
           ),
@@ -126,7 +140,7 @@ class _ChatScreenState extends State<ChatScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: CircleAvatar(
           radius: 14,
-          backgroundColor: Colors.blue.shade100,
+          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
           child: Text(
             ((_viewModel.selectedAgent?.name.isNotEmpty == true
                     ? _viewModel.selectedAgent!.name[0]
@@ -134,7 +148,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 .toUpperCase(),
             style: TextStyle(
               fontSize: 12,
-              color: Colors.blue.shade900,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -145,7 +159,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildPopupMenu() {
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert, color: Colors.black54),
+      icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color?.withOpacity(0.7)),
       onSelected: (value) {
         switch (value) {
           case 'regen':
@@ -167,12 +181,100 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void _openModelPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          top: false,
+          child: ListenableBuilder(
+            listenable: _viewModel,
+            builder: (context, _) {
+              final providers = _viewModel.providers;
+              if (providers.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No providers configured'),
+                );
+              }
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: ListView(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        'Select model',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    ...providers.map((p) {
+                      final collapsed =
+                          _viewModel.providerCollapsed[p.name] ?? false;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              collapsed ? Icons.expand_more : Icons.expand_less,
+                            ),
+                            title: Text(p.name),
+                            onTap: () => _viewModel.setProviderCollapsed(
+                              p.name,
+                              !collapsed,
+                            ),
+                          ),
+                          if (!collapsed)
+                            ...p.models.map((m) {
+                              final isSelected =
+                                  _viewModel.selectedProviderName == p.name &&
+                                  _viewModel.selectedModelName == m.name;
+                              return ListTile(
+                                contentPadding: const EdgeInsets.only(
+                                  left: 56,
+                                  right: 16,
+                                ),
+                                title: Text(m.name),
+                                trailing: isSelected
+                                    ? Icon(
+                                        Icons.check,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      )
+                                    : null,
+                                onTap: () {
+                                  _viewModel.selectModel(p.name, m.name);
+                                  Navigator.pop(ctx);
+                                },
+                              );
+                            }),
+                        ],
+                      );
+                    }),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildMessageList() {
     if (_viewModel.currentSession?.messages.isEmpty ?? true) {
       return Center(
         child: Text(
           'chat.start'.tr(),
-          style: const TextStyle(color: Colors.grey),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
         ),
       );
     }

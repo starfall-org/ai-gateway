@@ -26,6 +26,26 @@
     "mic_tts": "Mic/TTS",
     "send": "Send"
   },
+  "attachment_options": {
+    "title": "Attachment Options",
+    "gallery": "Gallery",
+    "gallery_desc": "Choose from your photo gallery",
+    "camera": "Camera",
+    "camera_desc": "Take a new photo with camera",
+    "document": "Document",
+    "document_desc": "Choose document files (PDF, DOC, TXT)",
+    "audio": "Audio",
+    "audio_desc": "Choose audio files or record new audio",
+    "video": "Video",
+    "video_desc": "Choose video files or record new video",
+    "voice_record": "Voice Recording",
+    "voice_record_desc": "Record your voice"
+  },
+  "model_picker": {
+    "title": "Select Model",
+    "select_model": "Select model",
+    "no_providers": "No providers configured"
+  },
   "attachments": {
     "title_count": "Attachments ({count})"
   },
@@ -79,6 +99,22 @@
     "auth_error": "Authentication failed. Please check your API key.",
     "connection_error": "Connection error. Please check URL and network.",
     "timeout_error": "Request timed out. Please try again.",
-    "invalid_format": "Invalid response format from API."
+    "invalid_format": "Invalid response format from API.",
+    "tap_to_fetch_models": "Tap to fetch models"
+  },
+  "agents": {
+    "add_new_agent": "Add New Agent",
+    "name": "Agent Name",
+    "system_prompt": "System Prompt",
+    "parameters": "Parameters",
+    "top_p": "Top P",
+    "top_k": "Top K",
+    "temperature": "Temperature",
+    "context_window": "Context Window",
+    "conversation_length": "Conversation Length",
+    "max_tokens": "Max Tokens",
+    "active_mcp_servers": "Active MCP Servers",
+    "save": "Save",
+    "cancel": "Cancel"
   }
 }

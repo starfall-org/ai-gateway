@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ai_gateway/core/models/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../widgets/add_provider_viewmodel.dart';
+import '../../../core/models/ai_model.dart';
+import '../../../core/models/provider.dart';
 import '../widgets/models_drawer.dart';
+import 'add_provider_viewmodel.dart';
 
 class AddProviderScreen extends StatefulWidget {
-  final LLMProvider? provider;
+  final Provider? provider;
 
   const AddProviderScreen({super.key, this.provider});
 
@@ -58,16 +59,16 @@ class _AddProviderScreenState extends State<AddProviderScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => _viewModel.saveProvider(context, existingProvider: widget.provider),
+            onPressed: () => _viewModel.saveProvider(
+              context,
+              existingProvider: widget.provider,
+            ),
           ),
         ],
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildEditTab(),
-          _buildModelsTab(),
-        ],
+        children: [_buildEditTab(), _buildModelsTab()],
       ),
     );
   }
@@ -86,10 +87,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                 border: const OutlineInputBorder(),
               ),
               items: ProviderType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.name.toUpperCase()),
-                );
+                return DropdownMenuItem(value: type, child: Text(type.name));
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -123,13 +121,28 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                 border: const OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 8),
+            ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: const Text('Custom routes'),
+              subtitle: Text(_viewModel.selectedType.name),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: _buildCustomRoutesSection(),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'settings.custom_headers'.tr(),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
@@ -179,6 +192,60 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           ],
         );
       },
+    );
+  }
+
+  Widget _buildCustomRoutesSection() {
+    switch (_viewModel.selectedType) {
+      case ProviderType.googleGenAI:
+        return Column(
+          children: [
+            _routeField(_viewModel.googleGenerateContentController, 'Generate Content'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.googleGenerateContentStreamController, 'Generate Content Stream'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.googleModelsRouteController, 'Models'),
+          ],
+        );
+      case ProviderType.openAI:
+        return Column(
+          children: [
+            _routeField(_viewModel.openAIChatCompletionsRouteController, 'Chat Completions'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.openAIResponsesRouteController, 'Responses'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.openAIEmbeddingsRouteController, 'Embeddings'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.openAIModelsRouteController, 'Models'),
+          ],
+        );
+      case ProviderType.anthropic:
+        return Column(
+          children: [
+            _routeField(_viewModel.anthropicMessagesRouteController, 'Messages'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.anthropicModelsRouteController, 'Models'),
+          ],
+        );
+      case ProviderType.ollama:
+        return Column(
+          children: [
+            _routeField(_viewModel.ollamaChatRouteController, 'Chat'),
+            const SizedBox(height: 8),
+            _routeField(_viewModel.ollamaTagsRouteController, 'Tags'),
+          ],
+        );
+    }
+  }
+
+  Widget _routeField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        isDense: true,
+      ),
     );
   }
 
@@ -243,9 +310,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Selected Models Section
               Row(
                 children: [
@@ -260,9 +327,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Expanded(
                 child: _viewModel.selectedModels.isEmpty
                     ? Center(
@@ -287,29 +354,21 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                       )
                     : ListView.separated(
                         itemCount: _viewModel.selectedModels.length,
-                        separatorBuilder: (context, index) => const Divider(height: 1),
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 1),
                         itemBuilder: (context, index) {
                           final model = _viewModel.selectedModels[index];
                           return ListTile(
-                            title: Text(model.id),
-                            subtitle: Wrap(
-                              spacing: 4,
-                              children: [
-                                ...model.capabilities.map(
-                                  (c) => Chip(
-                                    label: Text(
-                                      c.name,
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                ),
+                            title: Text(model.name),
+                            subtitle: Wrap(spacing: 4, children: [
+                                
                               ],
                             ),
                             onTap: () => _showModelCapabilities(model),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _viewModel.removeModel(model.id),
+                              onPressed: () =>
+                                  _viewModel.removeModel(model.name),
                             ),
                           );
                         },
@@ -346,10 +405,10 @@ class _AddProviderScreenState extends State<AddProviderScreen>
         _viewModel.nameController.text == 'OpenAI' ||
         _viewModel.nameController.text == 'Anthropic') {
       switch (type) {
-        case ProviderType.gemini:
+        case ProviderType.googleGenAI:
           _viewModel.nameController.text = 'Gemini';
           break;
-        case ProviderType.openai:
+        case ProviderType.openAI:
           _viewModel.nameController.text = 'OpenAI';
           break;
         case ProviderType.anthropic:
@@ -366,17 +425,17 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${'settings.capabilities'.tr()}: ${model.id}'),
+        title: Text('${'settings.capabilities'.tr()}: ${model.name}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${'settings.inputs'.tr()}: ${model.inputTypes.map((e) => e.name).join(", ")}'),
-            const SizedBox(height: 8),
-            Text('${'settings.outputs'.tr()}: ${model.outputTypes.map((e) => e.name).join(", ")}'),
+            Text(
+              '${'settings.inputs'.tr()}: ${model.input.map((e) => e.name).join(", ")}',
+            ),
             const SizedBox(height: 8),
             Text(
-              '${'settings.capabilities'.tr()}: ${model.capabilities.map((e) => e.name).join(", ")}',
+              '${'settings.outputs'.tr()}: ${model.output.map((e) => e.name).join(", ")}',
             ),
           ],
         ),

@@ -85,7 +85,7 @@ class ChatService {
           model: modelName,
           messages: messages,
         );
-        return response.choices.firstOrNull?.message.content ?? '';
+        return response.choices.firstOrNull!.message?.content ?? '';
 
       case ProviderType.anthropic:
         final service = AnthropicService(

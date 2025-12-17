@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/storage/agent_repository.dart';
+import '../../../core/storage/mcp_repository.dart';
 import '../../../core/models/ai_agent.dart';
+import '../../../core/models/mcp/mcp_server.dart';
 
 class AddAgentDialog extends StatefulWidget {
   const AddAgentDialog({super.key});
@@ -14,10 +17,23 @@ class AddAgentDialog extends StatefulWidget {
 class _AddAgentDialogState extends State<AddAgentDialog> {
   final _nameController = TextEditingController();
   final _promptController = TextEditingController();
+  final bool _isTopPEnabled = false;
+  final double _topPValue = 1.0;
   bool _isTopKEnabled = false;
   double _topKValue = 40.0;
   bool _isTemperatureEnabled = false;
   double _temperatureValue = 0.7;
+  int _contextWindowValue = 60000;
+  int _conversationLengthValue = 10;
+  int _maxTokensValue = 4000;
+  List<MCPServer> _availableMCPServers = [];
+  final List<String> _selectedMCPServerIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMCPServers();
+  }
 
   @override
   void dispose() {
@@ -26,10 +42,17 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
     super.dispose();
   }
 
+  Future<void> _loadMCPServers() async {
+    final mcpRepo = await MCPRepository.init();
+    setState(() {
+      _availableMCPServers = mcpRepo.getMCPServers();
+    });
+  }
+
   Future<void> _saveAgent() async {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter an agent name')),
+        SnackBar(content: Text('agents.name'.tr())),
       );
       return;
     }
@@ -39,8 +62,13 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
       id: const Uuid().v4(),
       name: _nameController.text,
       systemPrompt: _promptController.text,
+      topP: _isTopPEnabled ? _topPValue : null,
       topK: _isTopKEnabled ? _topKValue : null,
       temperature: _isTemperatureEnabled ? _temperatureValue : null,
+      contextWindow: _contextWindowValue,
+      conversationLength: _conversationLengthValue,
+      maxTokens: _maxTokensValue,
+      activeMCPServerIds: _selectedMCPServerIds,
     );
 
     await repository.addAgent(newAgent);
@@ -66,9 +94,9 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Thêm Agent Mới',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              'agents.add_new_agent'.tr(),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Expanded(
@@ -110,38 +138,38 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                     const SizedBox(height: 24),
 
                     // Agent Name
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Tên Agent',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                   TextField(
+                     controller: _nameController,
+                     decoration: InputDecoration(
+                       labelText: 'agents.name'.tr(),
+                       border: OutlineInputBorder(
+                         borderRadius: BorderRadius.circular(12),
+                       ),
+                       filled: true,
+                       fillColor: Colors.grey.shade50,
+                     ),
+                   ),
+                   const SizedBox(height: 16),
 
-                    // System Prompt
-                    TextField(
-                      controller: _promptController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'System Prompt',
-                        alignLabelWithHint: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                      ),
-                    ),
+                   // System Prompt
+                   TextField(
+                     controller: _promptController,
+                     maxLines: 3,
+                     decoration: InputDecoration(
+                       labelText: 'agents.system_prompt'.tr(),
+                       alignLabelWithHint: true,
+                       border: OutlineInputBorder(
+                         borderRadius: BorderRadius.circular(12),
+                       ),
+                       filled: true,
+                       fillColor: Colors.grey.shade50,
+                     ),
+                   ),
                     const SizedBox(height: 24),
 
                     // Parameters
-                    const Text(
-                      'Tham số nâng cao',
+                    Text(
+                      'agents.parameters'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -151,7 +179,7 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
 
                     // Top K
                     SwitchListTile(
-                      title: const Text('Top K'),
+                      title: Text('agents.top_k'.tr()),
                       value: _isTopKEnabled,
                       onChanged: (value) {
                         setState(() {
@@ -226,6 +254,136 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                           ],
                         ),
                       ),
+
+                   // Context Window
+                   Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 8),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text('agents.context_window'.tr()),
+                         const SizedBox(height: 8),
+                         Row(
+                           children: [
+                             Expanded(
+                               child: TextField(
+                                 keyboardType: TextInputType.number,
+                                 controller: TextEditingController(
+                                   text: _contextWindowValue.toString(),
+                                 ),
+                                 decoration: InputDecoration(
+                                   border: OutlineInputBorder(
+                                     borderRadius: BorderRadius.circular(12),
+                                   ),
+                                   filled: true,
+                                   fillColor: Colors.grey.shade50,
+                                 ),
+                                 onChanged: (value) {
+                                   _contextWindowValue = int.tryParse(value) ?? 60000;
+                                 },
+                               ),
+                             ),
+                           ],
+                         ),
+                       ],
+                     ),
+                   ),
+
+                   // Conversation Length
+                   Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 8),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text('agents.conversation_length'.tr()),
+                         const SizedBox(height: 8),
+                         Row(
+                           children: [
+                             Expanded(
+                               child: TextField(
+                                 keyboardType: TextInputType.number,
+                                 controller: TextEditingController(
+                                   text: _conversationLengthValue.toString(),
+                                 ),
+                                 decoration: InputDecoration(
+                                   border: OutlineInputBorder(
+                                     borderRadius: BorderRadius.circular(12),
+                                   ),
+                                   filled: true,
+                                   fillColor: Colors.grey.shade50,
+                                 ),
+                                 onChanged: (value) {
+                                   _conversationLengthValue = int.tryParse(value) ?? 10;
+                                 },
+                               ),
+                             ),
+                           ],
+                         ),
+                       ],
+                     ),
+                   ),
+
+                   // Max Tokens
+                   Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 8),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text('agents.max_tokens'.tr()),
+                         const SizedBox(height: 8),
+                         Row(
+                           children: [
+                             Expanded(
+                               child: TextField(
+                                 keyboardType: TextInputType.number,
+                                 controller: TextEditingController(
+                                   text: _maxTokensValue.toString(),
+                                 ),
+                                 decoration: InputDecoration(
+                                   border: OutlineInputBorder(
+                                     borderRadius: BorderRadius.circular(12),
+                                   ),
+                                   filled: true,
+                                   fillColor: Colors.grey.shade50,
+                                 ),
+                                 onChanged: (value) {
+                                   _maxTokensValue = int.tryParse(value) ?? 4000;
+                                 },
+                               ),
+                             ),
+                           ],
+                         ),
+                       ],
+                     ),
+                   ),
+
+                   // Active MCP Servers
+                   if (_availableMCPServers.isNotEmpty)
+                     Padding(
+                       padding: const EdgeInsets.symmetric(vertical: 8),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text('agents.active_mcp_servers'.tr()),
+                           const SizedBox(height: 8),
+                           ..._availableMCPServers.map((server) {
+                             return CheckboxListTile(
+                               title: Text(server.name),
+                               value: _selectedMCPServerIds.contains(server.id),
+                               onChanged: (bool? value) {
+                                 setState(() {
+                                   if (value == true) {
+                                     _selectedMCPServerIds.add(server.id);
+                                   } else {
+                                     _selectedMCPServerIds.remove(server.id);
+                                   }
+                                 });
+                               },
+                             );
+                           }),
+                         ],
+                       ),
+                     ),
                   ],
                 ),
               ),
@@ -236,7 +394,7 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Hủy'),
+                  child: Text('agents.cancel'.tr()),
                 ),
                 const SizedBox(width: 16),
                 FilledButton(
@@ -250,7 +408,7 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                       vertical: 12,
                     ),
                   ),
-                  child: const Text('Lưu'),
+                  child: Text('agents.save'.tr()),
                 ),
               ],
             ),

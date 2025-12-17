@@ -24,7 +24,28 @@
     "pick_images": "Chọn ảnh/tệp",
     "placeholder": "Nhập tin nhắn...",
     "mic_tts": "Mic/TTS",
-    "send": "Gửi"
+    "send": "Gửi",
+    "menu": "Menu"
+  },
+  "attachment_options": {
+    "title": "Tùy chọn đính kèm",
+    "gallery": "Thư viện ảnh",
+    "gallery_desc": "Chọn từ thư viện ảnh của bạn",
+    "camera": "Camera",
+    "camera_desc": "Chụp ảnh mới bằng camera",
+    "document": "Tài liệu",
+    "document_desc": "Chọn tệp tài liệu (PDF, DOC, TXT)",
+    "audio": "Audio",
+    "audio_desc": "Chọn tệp audio hoặc ghi âm mới",
+    "video": "Video",
+    "video_desc": "Chọn tệp video hoặc quay video mới",
+    "voice_record": "Ghi âm giọng nói",
+    "voice_record_desc": "Ghi âm giọng nói của bạn"
+  },
+  "model_picker": {
+    "title": "Chọn Model",
+    "select_model": "Chọn model",
+    "no_providers": "Chưa có nhà cung cấp nào được cấu hình"
   },
   "attachments": {
     "title_count": "Đính kèm ({count})"
@@ -79,6 +100,22 @@
     "auth_error": "Xác thực thất bại. Vui lòng kiểm tra API Key.",
     "connection_error": "Lỗi kết nối. Vui lòng kiểm tra URL và mạng.",
     "timeout_error": "Hết thời gian yêu cầu. Vui lòng thử lại.",
-    "invalid_format": "Định dạng phản hồi không hợp lệ từ API."
+    "invalid_format": "Định dạng phản hồi không hợp lệ từ API.",
+    "tap_to_fetch_models": "Nhấn để tải danh sách mô hình"
+  },
+  "agents": {
+    "add_new_agent": "Thêm Agent Mới",
+    "name": "Tên Agent",
+    "system_prompt": "System Prompt",
+    "parameters": "Tham số",
+    "top_p": "Top P",
+    "top_k": "Top K",
+    "temperature": "Nhiệt độ",
+    "context_window": "Cửa sổ ngữ cảnh",
+    "conversation_length": "Độ dài cuộc trò chuyện",
+    "max_tokens": "Số token tối đa",
+    "active_mcp_servers": "Máy chủ MCP hoạt động",
+    "save": "Lưu",
+    "cancel": "Hủy"
   }
 }

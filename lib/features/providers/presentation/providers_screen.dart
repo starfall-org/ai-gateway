@@ -29,23 +29,58 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   }
 
   Future<void> _loadProviders() async {
-    _repository = await ProviderRepository.init();
+    if (_isLoading) return; // Prevent multiple simultaneous calls
+    
     setState(() {
-      _providers = _repository.getProviders();
-      _isLoading = false;
+      _isLoading = true;
     });
+    
+    try {
+      _repository = await ProviderRepository.init();
+      final providers = _repository.getProviders();
+      
+      if (mounted) {
+        setState(() {
+          _providers = providers;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading providers: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _deleteProvider(String name) async {
-    final provider = _providers.firstWhere((p) => p.name == name);
-    await _repository.deleteProvider(name);
-    _loadProviders();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('settings.provider_deleted'.tr(args: [provider.name])),
-        ),
-      );
+    try {
+      final provider = _providers.firstWhere((p) => p.name == name);
+      await _repository.deleteProvider(name);
+      await _loadProviders(); // Use await to ensure proper sequencing
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('settings.provider_deleted'.tr(args: [provider.name])),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error deleting provider: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

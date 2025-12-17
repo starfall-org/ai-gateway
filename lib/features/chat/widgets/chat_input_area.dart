@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'attachment_options_drawer.dart';
 
 class ChatInputArea extends StatelessWidget {
   final TextEditingController controller;
@@ -9,12 +10,16 @@ class ChatInputArea extends StatelessWidget {
   final List<String> attachments;
   final VoidCallback onPickAttachments;
   final void Function(int index) onRemoveAttachment;
+  // Nút mở drawer chọn model
+  final VoidCallback onOpenModelPicker;
 
   // Trạng thái sinh câu trả lời để disable input/nút gửi
   final bool isGenerating;
 
   // Tuỳ chọn: hành động cho nút mic (ví dụ TTS)
   final VoidCallback? onMicTap;
+  // Nút mở drawer menu
+  final VoidCallback? onOpenMenu;
 
   const ChatInputArea({
     super.key,
@@ -23,14 +28,16 @@ class ChatInputArea extends StatelessWidget {
     this.attachments = const [],
     required this.onPickAttachments,
     required this.onRemoveAttachment,
+    required this.onOpenModelPicker,
     this.isGenerating = false,
     this.onMicTap,
+    this.onOpenMenu,
   });
 
   Widget _buildAttachmentChips(BuildContext context) {
     if (attachments.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 6),
+      padding: const EdgeInsets.only(left: 4, right: 4, bottom: 6),
       child: Wrap(
         spacing: 6,
         runSpacing: -8,
@@ -54,75 +61,112 @@ class ChatInputArea extends StatelessWidget {
         ((controller.text.trim().isNotEmpty) || attachments.isNotEmpty);
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(color: Colors.white),
+      padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3F4),
-          borderRadius: BorderRadius.circular(28),
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildAttachmentChips(context),
+            // Input row
+            TextField(
+              enabled: !isGenerating,
+              controller: controller,
+              minLines: 1,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: 'input.ask'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              onSubmitted: (_) {
+                if (canSend) onSubmitted(controller.text);
+              },
+            ),
+            const SizedBox(height: 8),
+            // Buttons row
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    color: Colors.black87,
-                  ),
-                  onPressed: onPickAttachments,
-                  tooltip: 'input.attach_files'.tr(),
+                // Left side buttons
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: () {
+                        AttachmentOptionsDrawer.show(
+                          context,
+                          onPickAttachments: onPickAttachments,
+                          onMicTap: onMicTap,
+                        );
+                      },
+                      tooltip: 'input.attach_files'.tr(),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.menu,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: onOpenMenu,
+                      tooltip: 'input.menu'.tr(),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.image_outlined, color: Colors.black87),
-                  onPressed: onPickAttachments,
-                  tooltip: 'input.pick_images'.tr(),
-                ),
-                Expanded(
-                  child: TextField(
-                    enabled: !isGenerating,
-                    controller: controller,
-                    minLines: 1,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: 'input.ask'.tr(),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                // Right side buttons
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.smart_toy_outlined,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: onOpenModelPicker,
+                      tooltip: 'model_picker.title'.tr(),
+                    ),
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: canSend
+                            ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                            : Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.send,
+                          color: canSend
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).iconTheme.color?.withOpacity(0.5),
+                          size: 20,
+                        ),
+                        onPressed: canSend
+                            ? () => onSubmitted(controller.text)
+                            : null,
+                        tooltip: 'input.send'.tr(),
                       ),
                     ),
-                    onSubmitted: (_) {
-                      if (canSend) onSubmitted(controller.text);
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.mic_none, color: Colors.black87),
-                  onPressed: onMicTap,
-                  tooltip: 'input.mic_tts'.tr(),
-                ),
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: canSend ? const Color(0xFFE8F0FE) : Colors.grey[300],
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.send,
-                      color: canSend ? Colors.blue : Colors.grey[500],
-                      size: 20,
-                    ),
-                    onPressed: canSend
-                        ? () => onSubmitted(controller.text)
-                        : null,
-                    tooltip: 'input.send'.tr(),
-                  ),
+                  ],
                 ),
               ],
             ),

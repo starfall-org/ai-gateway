@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ai_gateway/features/agents/presentation/agent_list_screen.dart';
-import 'package:ai_gateway/features/screens/settings_screen/settings_screen.dart';
-import 'package:ai_gateway/core/storage/chat_repository.dart';
-import 'package:ai_gateway/core/models/chat/message.dart';
+import '../../../core/models/chat/conversation.dart';
+import '../../../core/routes.dart';
+import '../../agents/presentation/agent_list_screen.dart';
+import '../../../core/storage/chat_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ChatDrawer extends StatefulWidget {
@@ -22,7 +22,7 @@ class ChatDrawer extends StatefulWidget {
 }
 
 class _ChatDrawerState extends State<ChatDrawer> {
-  List<ChatSession> _sessions = [];
+  List<Conversation> _sessions = [];
   ChatRepository? _chatRepository;
 
   @override
@@ -34,51 +34,45 @@ class _ChatDrawerState extends State<ChatDrawer> {
   Future<void> _loadHistory() async {
     _chatRepository = await ChatRepository.init();
     setState(() {
-      _sessions = _chatRepository!.getSessions();
+      _sessions = _chatRepository!.getConversations();
     });
   }
 
   Future<void> _deleteSession(String id) async {
-    await _chatRepository!.deleteSession(id);
+    await _chatRepository!.deleteConversation(id);
     _loadHistory();
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xFFF0F4F9),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black54),
+                  icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color?.withOpacity(0.7)),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 Text(
                   'LMHub',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add, color: Colors.blue),
+                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                   tooltip: 'drawer.new_chat'.tr(),
                   onPressed: widget.onNewChat,
                 ),
@@ -87,26 +81,29 @@ class _ChatDrawerState extends State<ChatDrawer> {
           ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               children: [
                 const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
                   child: Text(
                     'drawer.recent'.tr(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black54,
+                      color: Theme.of(context).iconTheme.color?.withOpacity(0.7),
                     ),
                   ),
                 ),
                 if (_sessions.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'drawer.no_history'.tr(),
-                      style: const TextStyle(color: Colors.grey),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6)),
                     ),
                   ),
                 ..._sessions.map((session) => _buildHistoryItem(session)),
@@ -115,7 +112,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Column(
               children: [
                 _buildDrawerItem(
@@ -129,12 +126,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                   'drawer.settings'.tr(),
                   onTap: () {
                     Navigator.pop(context); // Close drawer
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, AppRoutes.settings);
                   },
                 ),
                 _buildDrawerItem(
@@ -159,27 +151,28 @@ class _ChatDrawerState extends State<ChatDrawer> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 
-  Widget _buildHistoryItem(ChatSession session) {
+  Widget _buildHistoryItem(Conversation session) {
     return Dismissible(
       key: Key(session.id),
       background: Container(
-        color: Colors.red,
+        color: Theme.of(context).colorScheme.error,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        child: const Icon(Icons.delete, color: Colors.white, size: 20),
+        child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError, size: 20),
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         _deleteSession(session.id);
       },
       child: ListTile(
-        leading: const Icon(
+        leading: Icon(
           Icons.chat_bubble_outline,
           size: 20,
-          color: Colors.black54,
+          color: Theme.of(context).iconTheme.color?.withOpacity(0.7),
         ),
         title: Text(
           session.title,
@@ -201,13 +194,13 @@ class _ChatDrawerState extends State<ChatDrawer> {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.black54),
+      leading: Icon(icon, color: Theme.of(context).iconTheme.color?.withOpacity(0.7)),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: Colors.black87,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
       onTap: onTap,

@@ -11,6 +11,8 @@ import '../../../core/services/chat_service.dart';
 import '../../../core/models/chat/conversation.dart';
 import '../../../core/storage/agent_repository.dart';
 import '../../../core/storage/chat_repository.dart';
+import '../../../core/storage/provider_repository.dart';
+import '../../../core/models/provider.dart';
 
 class ChatViewModel extends ChangeNotifier {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -20,11 +22,18 @@ class ChatViewModel extends ChangeNotifier {
   ChatRepository? _chatRepository;
   Conversation? _currentSession;
   AgentRepository? _agentRepository;
-  Agent? _selectedAgent;
+  AIAgent? _selectedAgent;
   bool _isLoading = true;
   bool _isGenerating = false;
 
   final List<String> _pendingAttachments = [];
+
+  // Providers and model selection state
+  ProviderRepository? _providerRepository;
+  List<Provider> _providers = [];
+  final Map<String, bool> _providerCollapsed = {}; // true = collapsed
+  String? _selectedProviderName;
+  String? _selectedModelName;
 
   FlutterTts? _tts;
 
@@ -32,10 +41,16 @@ class ChatViewModel extends ChangeNotifier {
   TextEditingController get textController => _textController;
   ScrollController get scrollController => _scrollController;
   Conversation? get currentSession => _currentSession;
-  Agent? get selectedAgent => _selectedAgent;
+  AIAgent? get selectedAgent => _selectedAgent;
   bool get isLoading => _isLoading;
   bool get isGenerating => _isGenerating;
   List<String> get pendingAttachments => _pendingAttachments;
+
+  // Expose providers/model selection state
+  List<Provider> get providers => _providers;
+  Map<String, bool> get providerCollapsed => _providerCollapsed;
+  String? get selectedProviderName => _selectedProviderName;
+  String? get selectedModelName => _selectedModelName;
 
   Future<void> initChat() async {
     _chatRepository = await ChatRepository.init();
@@ -54,6 +69,27 @@ class ChatViewModel extends ChangeNotifier {
     _agentRepository ??= await AgentRepository.init();
     final agent = await _agentRepository!.getOrInitSelectedAgent();
     _selectedAgent = agent;
+    notifyListeners();
+  }
+
+  Future<void> refreshProviders() async {
+    _providerRepository ??= await ProviderRepository.init();
+    _providers = _providerRepository!.getProviders();
+    // Initialize collapse map entries for unseen providers
+    for (final p in _providers) {
+      _providerCollapsed.putIfAbsent(p.name, () => false);
+    }
+    notifyListeners();
+  }
+
+  void setProviderCollapsed(String providerName, bool collapsed) {
+    _providerCollapsed[providerName] = collapsed;
+    notifyListeners();
+  }
+
+  void selectModel(String providerName, String modelName) {
+    _selectedProviderName = providerName;
+    _selectedModelName = modelName;
     notifyListeners();
   }
 
@@ -126,25 +162,26 @@ class ChatViewModel extends ChangeNotifier {
           '${modelInput.isEmpty ? '' : '$modelInput\n'}[Attachments: $names]';
     }
 
-    // Temporary logic to select a provider/model until Agent supports it
+    // Select provider/model based on current selection, fallback to first available
     final providerRepo = await ProviderRepository.init();
     final providers = providerRepo.getProviders();
-    String providerName = '';
-    String modelName = '';
-
-    if (providers.isNotEmpty) {
-      providerName = providers.first.name;
-      if (providers.first.models.isNotEmpty) {
-        modelName = providers.first.models.first.name;
-      }
-    }
+    String providerName =
+        _selectedProviderName ?? (providers.isNotEmpty ? providers.first.name : '');
+    String modelName = _selectedModelName ??
+        ((providers.isNotEmpty && providers.first.models.isNotEmpty)
+            ? providers.first.models.first.name
+            : '');
 
     final reply = await ChatService.generateReply(
       userText: modelInput,
       history: _currentSession!.messages,
       agent:
           _selectedAgent ??
-          AIAgent(id: const Uuid().v4(), name: 'Default Agent', systemPrompt: ''),
+          AIAgent(
+            id: const Uuid().v4(),
+            name: 'Default Agent',
+            systemPrompt: '',
+          ),
       providerName: providerName,
       modelName: modelName,
     );
@@ -278,12 +315,27 @@ class ChatViewModel extends ChangeNotifier {
     _isGenerating = true;
     notifyListeners();
 
+    // Resolve provider/model for regeneration
+    final providerRepo = await ProviderRepository.init();
+    final providers = providerRepo.getProviders();
+    final providerName =
+        _selectedProviderName ?? (providers.isNotEmpty ? providers.first.name : '');
+    final modelName = _selectedModelName ??
+        ((providers.isNotEmpty && providers.first.models.isNotEmpty)
+            ? providers.first.models.first.name
+            : '');
+
     final reply = await ChatService.generateReply(
       userText: userText,
       history: history,
-      agent:
-          _selectedAgent ??
-          Agent(id: const Uuid().v4(), name: 'Default Agent', systemPrompt: ''),
+      agent: _selectedAgent ??
+          AIAgent(
+            id: const Uuid().v4(),
+            name: 'Default Agent',
+            systemPrompt: '',
+          ),
+      providerName: providerName,
+      modelName: modelName,
     );
 
     final modelMessage = ChatMessage(

@@ -1,4 +1,4 @@
-import 'package:ai_gateway/core/models/chat/conversation.dart';
+import '../models/chat/conversation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'base_repository.dart';

@@ -7,6 +7,7 @@ class TTSProfile {
   final String name;
   final TTSServiceType type;
   final String? provider;
+  final String? model;
   final String? voiceId;
   final Map<String, dynamic> settings;
 
@@ -15,6 +16,7 @@ class TTSProfile {
     required this.name,
     required this.type,
     this.provider,
+    this.model,
     this.voiceId,
     this.settings = const {},
   });
@@ -25,7 +27,8 @@ class TTSProfile {
       'name': name,
       'type': type.name,
       'provider': provider,
-      'voiceId': voiceId,
+      'model': model, // for provider
+      'voiceId': voiceId, // for provider
       'settings': settings,
     };
   }
@@ -36,6 +39,7 @@ class TTSProfile {
       name: json['name'] as String,
       type: TTSServiceType.values.firstWhere((e) => e.name == json['type']),
       provider: json['provider'] as String?,
+      model: json['model'] as String?,
       voiceId: json['voiceId'] as String?,
       settings: json['settings'] as Map<String, dynamic>? ?? {},
     );
