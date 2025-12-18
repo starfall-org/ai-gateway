@@ -1,0 +1,10 @@
+{
+    "terminal.integrated.env.linux": {
+        "GRADLE_USER_HOME": "/teamspace/studios/this_studio/.cache/gradle",
+        "PUB_CACHE": "/teamspace/studios/this_studio/.cache/pub-cache"
+    },
+    "dart.env": {
+        "GRADLE_USER_HOME": "/teamspace/studios/this_studio/.cache/gradle",
+        "PUB_CACHE": "/teamspace/studios/this_studio/.cache/pub-cache"
+    }
+}

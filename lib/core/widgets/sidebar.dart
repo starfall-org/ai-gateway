@@ -22,9 +22,9 @@ class AppSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final effectiveBackgroundColor = backgroundColor ?? theme.scaffoldBackgroundColor;
+    final _ = backgroundColor ?? theme.scaffoldBackgroundColor;
     
-    final border = borderSide ?? BorderSide(
+    final _ = borderSide ?? BorderSide(
       color: theme.dividerColor.withAlpha(50),
       width: 1,
     );

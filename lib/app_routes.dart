@@ -7,7 +7,7 @@ import 'features/providers/presentation/providers_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'features/settings/presentation/appearance_screen.dart';
 import 'features/settings/presentation/preferences_screen.dart';
-import 'features/tts/views/tts_screen.dart';
+import 'features/tts/presentation/tts_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {

@@ -24,7 +24,8 @@
     "pick_images": "Choisir des images/fichiers",
     "placeholder": "Tapez un message...",
     "mic_tts": "Micro/TTS",
-    "send": "Envoyer"
+    "send": "Envoyer",
+    "menu": "Menu"
   },
   "attachment_options": {
     "title": "Options de pièce jointe",
@@ -47,7 +48,8 @@
     "no_providers": "Aucun fournisseur configuré"
   },
   "attachments": {
-    "title_count": "Pièces jointes ({count})"
+    "title_count": "Pièces jointes ({count})",
+    "empty": "Aucune pièce jointe"
   },
   "role": {
     "you": "Vous",
@@ -100,7 +102,14 @@
     "connection_error": "Erreur de connexion. Veuillez vérifier l'URL et le réseau.",
     "timeout_error": "Délai d'attente dépassé. Veuillez réessayer.",
     "invalid_format": "Format de réponse invalide de l'API.",
-    "tap_to_fetch_models": "Appuyez pour récupérer les modèles"
+    "tap_to_fetch_models": "Appuyez pour récupérer les modèles",
+    "selected_models": "Modèles sélectionnés",
+    "no_models_selected": "Aucun modèle sélectionné",
+    "tap_fab_to_add": "Appuyez sur le bouton flottant pour ajouter des modèles",
+    "no_models_fetched": "Aucun modèle récupéré",
+    "models_available": "modèles disponibles",
+    "fetch": "Récupérer",
+    "manage_models": "Gérer les modèles"
   },
   "agents": {
     "add_new_agent": "Ajouter un nouvel agent",
@@ -114,6 +123,10 @@
     "conversation_length": "Longueur de conversation",
     "max_tokens": "Jetons max",
     "active_mcp_servers": "Serveurs MCP actifs",
+    "persist_section_title": "Conserver la sélection de discussion",
+    "persist_follow_global": "Suivre les paramètres globaux",
+    "persist_force_on": "Forcer activation pour cet agent",
+    "persist_force_off": "Forcer désactivation pour cet agent",
     "save": "Enregistrer",
     "cancel": "Annuler"
   },
@@ -122,6 +135,30 @@
     "auto_detect_language": "Détection automatique de la langue",
     "select_language": "Sélectionner la langue",
     "about": "À propos",
-    "current_language": "Langue actuelle"
+    "current_language": "Langue actuelle",
+    "language_changed": "La langue a été changée. L'application redémarrera.",
+    "language_change_error": "Échec du changement de langue. Veuillez réessayer.",
+    "auto_detect_enabled": "La détection automatique de la langue a été activée. L'application redémarrera.",
+    "auto_detect_error": "Échec de la modification de la détection automatique. Veuillez réessayer.",
+    "chat_settings": "Paramètres de discussion",
+    "persist_chat_selection": "Conserver le fournisseur/modèle et les outils par conversation",
+    "prefer_agent_settings": "Préférer les paramètres de l'agent aux paramètres globaux"
+  },
+ "message": {
+    "copy": "Copier",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "read": "Lire",
+    "reasoning": "Contenu de raisonnement"
+  },
+  "dialog": {
+    "edit_message": "Modifier le message",
+    "message": "Message",
+    "attachments": "Pièces jointes",
+    "add": "Ajouter",
+    "save_and_resend": "Enregistrer et renvoyer"
+  },
+  "common": {
+    "more": "Plus"
   }
 }

@@ -42,7 +42,8 @@
     "no_providers": "Chưa có nhà cung cấp nào được cấu hình"
   },
   "attachments": {
-    "title_count": "Đính kèm ({count})"
+    "title_count": "Đính kèm ({count})",
+    "empty": "Không có đính kèm"
   },
   "role": {
     "you": "Bạn",
@@ -143,5 +144,24 @@
     "chat_settings": "Cài đặt chat",
     "persist_chat_selection": "Lưu model/provider và tools theo từng cuộc trò chuyện",
     "prefer_agent_settings": "Ưu tiên cài đặt Agent thay vì Global"
+  },
+  "message": {
+    "copy": "Sao chép",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "read": "Đọc",
+    "reasoning": "Nội dung lập luận"
+  },
+  "dialog": {
+    "edit_message": "Sửa tin nhắn",
+    "message": "Tin nhắn",
+    "attachments": "Đính kèm",
+    "add": "Thêm",
+    "save_and_resend": "Lưu & Gửi lại"
+  },
+  "common": {
+    "more": "Khác",
+    "cancel": "Hủy",
+    "save": "Lưu"
   }
 }

@@ -45,7 +45,7 @@ class AIGatewayApp extends StatelessWidget {
                 settings.pureDark ? Colors.black : const Color(0xFF121212);
 
             // Utilities for secondary background calculation
-            Color _autoSecondary(Color base, Brightness br) {
+            Color autoSecondary(Color base, Brightness br) {
               final hsl = HSLColor.fromColor(base);
               final double delta = br == Brightness.dark ? 0.06 : -0.04;
               final double newLightness = (hsl.lightness + delta).clamp(0.0, 1.0);
@@ -63,14 +63,14 @@ class AIGatewayApp extends StatelessWidget {
                   return scheme.secondaryContainer;
                 case SecondaryBackgroundMode.auto:
                   // Subtle delta from main background
-                  return _autoSecondary(mainBg, br);
+                  return autoSecondary(mainBg, br);
                 case SecondaryBackgroundMode.off:
                   // Same as main background
                   return mainBg;
               }
             }
 
-            Color _borderFor(Color bg) =>
+            Color borderFor(Color bg) =>
                 (bg.computeLuminance() < 0.5) ? Colors.white : Colors.black;
 
             // Light palette surfaces
@@ -78,7 +78,7 @@ class AIGatewayApp extends StatelessWidget {
                 _deriveSecondaryBg(Brightness.light, lightScheme, lightMainBg);
             final BorderSide? lightBorderSide =
                 settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                    ? BorderSide(color: _borderFor(lightMainBg), width: 1)
+                    ? BorderSide(color: borderFor(lightMainBg), width: 1)
                     : null;
 
             // Dark palette surfaces
@@ -86,7 +86,7 @@ class AIGatewayApp extends StatelessWidget {
                 _deriveSecondaryBg(Brightness.dark, darkScheme, darkMainBg);
             final BorderSide? darkBorderSide =
                 settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                    ? BorderSide(color: _borderFor(darkMainBg), width: 1)
+                    ? BorderSide(color: borderFor(darkMainBg), width: 1)
                     : null;
 
             return MaterialApp(

@@ -7,6 +7,9 @@ import '../widgets/chat_input_area.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/models_drawer.dart';
 import 'chat_viewmodel.dart';
+import '../../../core/widgets/sidebar_right.dart';
+import '../../../core/widgets/empty_state.dart';
+import 'dart:io';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -94,6 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
               _viewModel.loadSelectedAgent();
             },
           ),
+          endDrawer: _buildEndDrawer(context),
           body: Column(
             children: [
               Expanded(
@@ -209,21 +213,148 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageList() {
     if (_viewModel.currentSession?.messages.isEmpty ?? true) {
-      return Center(
-        child: Text(
-          'chat.start'.tr(),
-          style: TextStyle(
-            color: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
-          ),
-        ),
+      return EmptyState(
+        icon: Icons.chat_bubble_outline,
+        message: 'chat.start'.tr(),
       );
     }
 
     return ChatMessageList(
       messages: _viewModel.currentSession!.messages,
       scrollController: _viewModel.scrollController,
+      onCopy: (m) => _viewModel.copyMessage(context, m),
+      onEdit: (m) => _viewModel.openEditMessageDialog(context, m),
+      onDelete: (m) => _viewModel.deleteMessage(m),
+      onOpenAttachmentsSidebar: (files) => _viewModel.openAttachmentsSidebar(files),
+      onRegenerate: () => _viewModel.regenerateLast(context),
     );
+  }
+
+  Widget _buildEndDrawer(BuildContext context) {
+    return AppSidebarRight(
+      width: 320,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 8, 8),
+              child: Row(
+                children: [
+                  Text(
+                    'attachments.title_count'.tr(
+                      namedArgs: {
+                        'count': _viewModel.inspectingAttachments.length.toString(),
+                      },
+                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    tooltip: 'settings.close'.tr(),
+                    onPressed: _viewModel.closeEndDrawer,
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // List
+            Expanded(
+              child: _viewModel.inspectingAttachments.isEmpty
+                  ? EmptyState(
+                      icon: Icons.attach_file,
+                      message: 'attachments.empty'.tr(),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: _viewModel.inspectingAttachments.length,
+                      separatorBuilder: (_, __) => const Divider(height: 12),
+                      itemBuilder: (ctx, i) {
+                        final path = _viewModel.inspectingAttachments[i];
+                        return _attachmentTile(context, path);
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _attachmentTile(BuildContext context, String path) {
+    final name = path.split('/').last;
+    int sizeBytes = 0;
+    try {
+      sizeBytes = File(path).lengthSync();
+    } catch (_) {}
+    final sizeText = _formatBytes(sizeBytes);
+    final isImg = _isImagePath(path);
+
+    Widget leading;
+    if (isImg) {
+      leading = ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: 48,
+          height: 48,
+          color: Theme.of(context).colorScheme.surface,
+          child: Image.file(
+            File(path),
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) => _fallbackIcon(context),
+          ),
+        ),
+      );
+    } else {
+      leading = _fallbackIcon(context);
+    }
+
+    return ListTile(
+      leading: leading,
+      title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: sizeBytes > 0 ? Text(sizeText) : null,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      onTap: () {
+        // (Optional) Preview action can be added later
+      },
+    );
+  }
+
+  Widget _fallbackIcon(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(Icons.insert_drive_file, color: Theme.of(context).iconTheme.color),
+    );
+  }
+
+  String _formatBytes(int bytes, [int decimals = 1]) {
+    if (bytes <= 0) return '0 B';
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    int i = 0;
+    double v = bytes.toDouble();
+    while (v >= 1024 && i < sizes.length - 1) {
+      v /= 1024;
+      i++;
+    }
+    return '${v.toStringAsFixed(decimals)} ${sizes[i]}';
+  }
+
+  bool _isImagePath(String path) {
+    final lower = path.toLowerCase();
+    return lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.bmp');
   }
 }

@@ -24,7 +24,8 @@
     "pick_images": "選擇圖片/檔案",
     "placeholder": "輸入消息...",
     "mic_tts": "麥克風/語音合成",
-    "send": "發送"
+    "send": "發送",
+    "menu": "菜單"
   },
   "attachment_options": {
     "title": "附件選項",
@@ -47,7 +48,8 @@
     "no_providers": "未配置提供商"
   },
   "attachments": {
-    "title_count": "附件 ({count})"
+    "title_count": "附件 ({count})",
+    "empty": "無附件"
   },
   "role": {
     "you": "您",
@@ -100,7 +102,14 @@
     "connection_error": "連接錯誤。請檢查 URL 和網絡。",
     "timeout_error": "請求超時。請重試。",
     "invalid_format": "API 響應格式無效。",
-    "tap_to_fetch_models": "點擊獲取模型"
+    "tap_to_fetch_models": "點擊獲取模型",
+    "selected_models": "已選模型",
+    "no_models_selected": "未選擇模型",
+    "tap_fab_to_add": "點擊浮動按鈕添加模型",
+    "no_models_fetched": "尚未獲取模型",
+    "models_available": "個模型可用",
+    "fetch": "獲取",
+    "manage_models": "管理模型"
   },
   "agents": {
     "add_new_agent": "添加新代理",
@@ -114,6 +123,10 @@
     "conversation_length": "對話長度",
     "max_tokens": "最大令牌數",
     "active_mcp_servers": "活動 MCP 服務器",
+    "persist_section_title": "保持聊天選擇",
+    "persist_follow_global": "遵循全局設置",
+    "persist_force_on": "強制開啟此代理",
+    "persist_force_off": "強制關閉此代理",
     "save": "保存",
     "cancel": "取消"
   },
@@ -122,6 +135,30 @@
     "auto_detect_language": "自動檢測語言",
     "select_language": "選擇語言",
     "about": "關於",
-    "current_language": "當前語言"
+    "current_language": "當前語言",
+    "language_changed": "語言已更改。應用程序將重新啟動。",
+    "language_change_error": "更改語言失敗。請重試。",
+    "auto_detect_enabled": "自動檢測語言已啟用。應用程序將重新啟動。",
+    "auto_detect_error": "切換自動檢測失敗。請重試。",
+    "chat_settings": "聊天設置",
+    "persist_chat_selection": "在每次對話中保留提供商/模型和工具",
+    "prefer_agent_settings": "優先使用代理設置而非全局設置"
+  },
+  "message": {
+    "copy": "複製",
+    "edit": "編輯",
+    "delete": "刪除",
+    "read": "閱讀",
+    "reasoning": "推理內容"
+  },
+  "dialog": {
+    "edit_message": "編輯消息",
+    "message": "消息",
+    "attachments": "附件",
+    "add": "添加",
+    "save_and_resend": "保存並重新發送"
+  },
+  "common": {
+    "more": "更多"
   }
 }

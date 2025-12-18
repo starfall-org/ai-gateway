@@ -16,6 +16,7 @@ import '../../../core/models/provider.dart';
 import '../../../core/storage/app_preferences_repository.dart';
 import '../../../core/storage/mcp_repository.dart';
 import '../../../core/models/mcp/mcp_server.dart';
+import '../widgets/edit_message_dialog.dart';
 
 class ChatViewModel extends ChangeNotifier {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -30,6 +31,9 @@ class ChatViewModel extends ChangeNotifier {
   bool _isGenerating = false;
 
   final List<String> _pendingAttachments = [];
+
+  // Right sidebar: attachments to inspect
+  final List<String> _inspectingAttachments = [];
 
   // Providers and model selection state
   ProviderRepository? _providerRepository;
@@ -54,6 +58,7 @@ class ChatViewModel extends ChangeNotifier {
   Map<String, bool> get providerCollapsed => _providerCollapsed;
   String? get selectedProviderName => _selectedProviderName;
   String? get selectedModelName => _selectedModelName;
+  List<String> get inspectingAttachments => _inspectingAttachments;
 
   Future<void> initChat() async {
     _chatRepository = await ChatRepository.init();
@@ -503,6 +508,102 @@ class ChatViewModel extends ChangeNotifier {
 
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
+  }
+
+  // Open/close End Drawer (right sidebar)
+  void openEndDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  void closeEndDrawer() {
+    _scaffoldKey.currentState?.closeEndDrawer();
+  }
+
+  // Set and open attachment inspector
+  void setInspectingAttachments(List<String> attachments) {
+    _inspectingAttachments
+      ..clear()
+      ..addAll(attachments);
+    notifyListeners();
+  }
+
+  void openAttachmentsSidebar(List<String> attachments) {
+    setInspectingAttachments(attachments);
+    openEndDrawer();
+  }
+
+  // Message operations
+  Future<void> copyMessage(BuildContext context, ChatMessage message) async {
+    if (message.content.trim().isEmpty) return;
+    await Clipboard.setData(ClipboardData(text: message.content));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('chat.copied'.tr())));
+    }
+  }
+
+  Future<void> deleteMessage(ChatMessage message) async {
+    if (_currentSession == null) return;
+    final msgs = List<ChatMessage>.from(_currentSession!.messages)
+      ..removeWhere((m) => m.id == message.id);
+    _currentSession = _currentSession!.copyWith(
+      messages: msgs,
+      updatedAt: DateTime.now(),
+    );
+    notifyListeners();
+    await _chatRepository!.saveConversation(_currentSession!);
+  }
+
+  Future<void> openEditMessageDialog(BuildContext context, ChatMessage message) async {
+    final result = await EditMessageDialog.show(
+      context,
+      initialContent: message.content,
+      initialAttachments: message.attachments,
+    );
+    if (result == null) return;
+    await applyMessageEdit(
+      message,
+      result.content,
+      result.attachments,
+      resend: result.resend,
+      context: context,
+    );
+  }
+
+  Future<void> applyMessageEdit(
+    ChatMessage original,
+    String newContent,
+    List<String> newAttachments, {
+    bool resend = false,
+    BuildContext? context,
+  }) async {
+    if (_currentSession == null) return;
+
+    final msgs = List<ChatMessage>.from(_currentSession!.messages);
+    final idx = msgs.indexWhere((m) => m.id == original.id);
+    if (idx == -1) return;
+
+    final updated = ChatMessage(
+      id: original.id,
+      role: original.role,
+      content: newContent,
+      timestamp: original.timestamp,
+      attachments: newAttachments,
+      reasoningContent: original.reasoningContent,
+      aiMedia: original.aiMedia,
+    );
+    msgs[idx] = updated;
+
+    _currentSession = _currentSession!.copyWith(
+      messages: msgs,
+      updatedAt: DateTime.now(),
+    );
+    notifyListeners();
+    await _chatRepository!.saveConversation(_currentSession!);
+
+    if (resend && context != null) {
+      await regenerateLast(context);
+    }
   }
 
   @override

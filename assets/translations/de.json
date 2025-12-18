@@ -24,7 +24,8 @@
     "pick_images": "Bilder/Dateien auswählen",
     "placeholder": "Nachricht eingeben...",
     "mic_tts": "Mikrofon/TTS",
-    "send": "Senden"
+    "send": "Senden",
+    "menu": "Menü"
   },
   "attachment_options": {
     "title": "Anhangsoptionen",
@@ -47,7 +48,8 @@
     "no_providers": "Keine Anbieter konfiguriert"
   },
   "attachments": {
-    "title_count": "Anhänge ({count})"
+    "title_count": "Anhänge ({count})",
+    "empty": "Keine Anhänge"
   },
   "role": {
     "you": "Sie",
@@ -100,7 +102,14 @@
     "connection_error": "Verbindungsfehler. Bitte überprüfen Sie URL und Netzwerk.",
     "timeout_error": "Anfrage zeitüberschritten. Bitte versuchen Sie es erneut.",
     "invalid_format": "Ungültiges Antwortformat von der API.",
-    "tap_to_fetch_models": "Tippen Sie, um Modelle abzurufen"
+    "tap_to_fetch_models": "Tippen Sie, um Modelle abzurufen",
+    "selected_models": "Ausgewählte Modelle",
+    "no_models_selected": "Keine Modelle ausgewählt",
+    "tap_fab_to_add": "Tippen Sie auf die FAB, um Modelle hinzuzufügen",
+    "no_models_fetched": "Noch keine Modelle abgerufen",
+    "models_available": "Modelle verfügbar",
+    "fetch": "Abrufen",
+    "manage_models": "Modelle verwalten"
   },
   "agents": {
     "add_new_agent": "Neuen Agent hinzufügen",
@@ -114,6 +123,10 @@
     "conversation_length": "Gesprächslänge",
     "max_tokens": "Max Tokens",
     "active_mcp_servers": "Aktive MCP-Server",
+    "persist_section_title": "Chat-Auswahl beibehalten",
+    "persist_follow_global": "Globale Einstellungen folgen",
+    "persist_force_on": "Für diesen Agenten ERZWINGEN",
+    "persist_force_off": "Für diesen Agenten DEAKTIVIEREN",
     "save": "Speichern",
     "cancel": "Abbrechen"
   },
@@ -122,6 +135,30 @@
     "auto_detect_language": "Sprache automatisch erkennen",
     "select_language": "Sprache auswählen",
     "about": "Über",
-    "current_language": "Aktuelle Sprache"
+    "current_language": "Aktuelle Sprache",
+    "language_changed": "Die Sprache wurde geändert. Die App wird neu gestartet.",
+    "language_change_error": "Fehler beim Ändern der Sprache. Bitte versuchen Sie es erneut.",
+    "auto_detect_enabled": "Automatische Spracherkennung wurde aktiviert. Die App wird neu gestartet.",
+    "auto_detect_error": "Fehler beim Umschalten der automatischen Erkennung. Bitte versuchen Sie es erneut.",
+    "chat_settings": "Chat-Einstellungen",
+    "persist_chat_selection": "Anbieter/Modell und Tools pro Konversation beibehalten",
+    "prefer_agent_settings": "Agent-Einstellungen gegenüber Globalen bevorzugen"
+  },
+  "message": {
+    "copy": "Kopieren",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "read": "Lesen",
+    "reasoning": "Begründungsinhalt"
+  },
+ "dialog": {
+    "edit_message": "Nachricht bearbeiten",
+    "message": "Nachricht",
+    "attachments": "Anhänge",
+    "add": "Hinzufügen",
+    "save_and_resend": "Speichern & erneut senden"
+  },
+  "common": {
+    "more": "Mehr"
   }
 }

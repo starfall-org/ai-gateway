@@ -13,6 +13,10 @@
             "args": [
                 "--web-port=8080"
             ],
+            "env": {
+                "GRADLE_USER_HOME": "/teamspace/studios/this_studio/.cache/gradle",
+                "PUB_CACHE": "/teamspace/studios/this_studio/.cache/pub-cache"
+            }
         }
     ]
 }

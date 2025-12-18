@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/chat/message.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import '../../../core/theme_extensions.dart';
 import 'dart:io';
 
 class ChatMessageList extends StatelessWidget {
   final List<ChatMessage> messages;
   final ScrollController scrollController;
 
+  // Callbacks để liên kết với ViewModel/Screen
+  final void Function(ChatMessage message)? onCopy;
+  final void Function(ChatMessage message)? onEdit;
+  final void Function(ChatMessage message)? onDelete;
+  final void Function(List<String> attachments)? onOpenAttachmentsSidebar;
+  final VoidCallback? onRegenerate;
+
   const ChatMessageList({
     super.key,
     required this.messages,
     required this.scrollController,
+    this.onCopy,
+    this.onEdit,
+    this.onDelete,
+    this.onOpenAttachmentsSidebar,
+    this.onRegenerate,
   });
 
   @override
@@ -22,101 +36,331 @@ class ChatMessageList extends StatelessWidget {
       itemBuilder: (context, index) {
         final message = messages[index];
         final isUser = message.role == ChatRole.user;
-        return _buildMessageBubble(context, message, isUser);
+        return isUser
+            ? _buildUserMessage(context, message)
+            : _buildAssistantMessage(context, message);
       },
     );
   }
 
-  Widget _buildMessageBubble(
-    BuildContext context,
-    ChatMessage message,
-    bool isUser,
-  ) {
-    final bubbleColor = isUser ? Colors.blue : Colors.grey[200];
-    final textColor = isUser ? Colors.white : Colors.black87;
+  // ----------------------
+  // USER MESSAGE (Secondary background + border, attachments row + markdown)
+  // ----------------------
+  Widget _buildUserMessage(BuildContext context, ChatMessage message) {
+    final secondary = Theme.of(context).extension<SecondarySurface>();
+    final bg = secondary?.backgroundColor ??
+        Theme.of(context).colorScheme.surfaceVariant;
+    final borderSide = secondary?.borderSide ??
+        BorderSide(
+          color: Theme.of(context).dividerColor.withAlpha(80),
+          width: 1,
+        );
 
     return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.all(12),
-        constraints: const BoxConstraints(maxWidth: 320),
-        decoration: BoxDecoration(
-          color: bubbleColor,
-          borderRadius: BorderRadius.circular(16).copyWith(
-            bottomRight: isUser ? const Radius.circular(0) : null,
-            bottomLeft: !isUser ? const Radius.circular(0) : null,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Nội dung tin nhắn
-            if (isUser)
-              Text(
-                message.content,
-                style: TextStyle(color: textColor, fontSize: 15),
-              )
-            else
-              // Model: hỗ trợ Markdown để trình bày tốt hơn
-              MarkdownBody(
-                data: message.content,
-                selectable: true,
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                    .copyWith(
-                      p: const TextStyle(fontSize: 15, color: Colors.black87),
-                      code: const TextStyle(fontSize: 13),
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onLongPressStart: (details) =>
+            _showUserContextMenu(context, details.globalPosition, message),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderSide.color, width: borderSide.width),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (message.attachments.isNotEmpty)
+                  _buildUserAttachmentsBar(context, message.attachments),
+                if (message.content.trim().isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: message.attachments.isNotEmpty ? 8 : 0,
                     ),
-              ),
-
-            // Hình/đính kèm (nếu có)
-            if (message.attachments.isNotEmpty) const SizedBox(height: 8),
-            if (message.attachments.isNotEmpty)
-              _buildAttachments(message.attachments, isUser),
-          ],
+                    child: MarkdownBody(
+                      data: message.content,
+                      selectable: true,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildAttachments(List<String> attachments, bool isUser) {
-    final imagePaths = attachments.where(_isImagePath).toList();
-    final otherPaths = attachments.where((p) => !_isImagePath(p)).toList();
+  Widget _buildUserAttachmentsBar(BuildContext context, List<String> attachments) {
+    final count = attachments.length;
+    final showOverflow = count > 4;
+    final visible = showOverflow ? attachments.take(3).toList() : attachments;
+    final tileSize = _computeTileSize(count);
 
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (imagePaths.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: imagePaths.map((path) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 180,
-                  height: 120,
-                  child: Image.file(
-                    File(path),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _fallbackAttachmentTile(path, isUser),
-                  ),
-                ),
-              );
-            }).toList(),
+        if (showOverflow)
+          _overflowTile(context, attachments, tileSize),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: visible
+                  .map((p) => _squareAttachmentTile(context, p, tileSize))
+                  .toList(),
+            ),
           ),
-        if (otherPaths.isNotEmpty) const SizedBox(height: 6),
-        if (otherPaths.isNotEmpty)
-          Wrap(
-            spacing: 6,
-            runSpacing: -8,
-            children: otherPaths
-                .map((p) => _attachmentChip(p, isUser))
-                .toList(),
-          ),
+        ),
       ],
     );
+  }
+
+  Widget _overflowTile(
+      BuildContext context, List<String> attachments, double size) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: InkWell(
+        onTap: () => onOpenAttachmentsSidebar?.call(attachments),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withAlpha(80),
+              width: 1,
+            ),
+          ),
+          child: const Center(child: Icon(Icons.more_horiz)),
+        ),
+      ),
+    );
+  }
+
+  Widget _squareAttachmentTile(
+      BuildContext context, String path, double size) {
+    final isImg = _isImagePath(path);
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: size,
+          height: size,
+          color: Theme.of(context).colorScheme.surface,
+          child: isImg
+              ? Image.file(
+                  File(path),
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, e, s) => _attachmentIconTile(context, path),
+                )
+              : _attachmentIconTile(context, path),
+        ),
+      ),
+    );
+  }
+
+  Widget _attachmentIconTile(BuildContext context, String path) {
+    final name = path.split('/').last;
+    return Container(
+      padding: const EdgeInsets.all(8),
+      color: Theme.of(context).colorScheme.surfaceVariant,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.insert_drive_file, size: 28, color: Theme.of(context).iconTheme.color),
+          const SizedBox(height: 6),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ----------------------
+  // ASSISTANT MESSAGE (Primary background, avatar top-left, markdown under avatar,
+  // media section, toolbar bottom (copy/regenerate/menu), read icon top-right,
+  // dropdown reasoning_content)
+  // ----------------------
+  Widget _buildAssistantMessage(BuildContext context, ChatMessage message) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: GestureDetector(
+        onLongPressStart: (details) =>
+            _showAssistantContextMenu(context, details.globalPosition, message),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.all(8),
+            // Không viền, nền theo primary background (mặc định Scaffold)
+            color: Colors.transparent,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top row: avatar (left) + read button (right)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CircleAvatar(
+                      radius: 14,
+                      child: Icon(Icons.smart_toy, size: 16),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.volume_up),
+                      tooltip: 'message.read'.tr(),
+                      onPressed: () {
+                        // Placeholder button (chưa thêm chức năng)
+                      },
+                    ),
+                  ],
+                ),
+                if (message.content.trim().isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: MarkdownBody(
+                      data: message.content,
+                      selectable: true,
+                    ),
+                  ),
+
+                // Media generated by AI (ẩn nếu trống)
+                if (message.aiMedia.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildMediaGrid(context, message.aiMedia),
+                ],
+
+                // Reasoning dropdown (ẩn nếu trống)
+                if ((message.reasoningContent ?? '').trim().isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildReasoningDropdown(context, message.reasoningContent!.trim()),
+                ],
+
+                // Bottom toolbar
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            tooltip: 'message.copy'.tr(),
+                            icon: const Icon(Icons.copy),
+                            onPressed: () => onCopy?.call(message),
+                          ),
+                          IconButton(
+                            tooltip: 'chat.regenerate'.tr(),
+                            icon: const Icon(Icons.refresh),
+                            onPressed: onRegenerate,
+                          ),
+                        ],
+                      ),
+                      PopupMenuButton<String>(
+                        tooltip: 'common.more'.tr(),
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'edit':
+                              onEdit?.call(message);
+                              break;
+                            case 'delete':
+                              onDelete?.call(message);
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
+                          PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaGrid(BuildContext context, List<String> media) {
+    final size = _computeTileSize(media.length);
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: media.map((m) {
+        final isImg = _isImagePath(m);
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: size,
+            height: size,
+            color: Theme.of(context).colorScheme.surface,
+            child: isImg
+                ? Image.file(
+                    File(m),
+                    fit: BoxFit.cover,
+                    errorBuilder: (c, e, s) => _attachmentIconTile(context, m),
+                  )
+                : _attachmentIconTile(context, m),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildReasoningDropdown(BuildContext context, String reasoning) {
+    final style = Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+        );
+    // ExpansionTile giúp thu gọn/mở rộng
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(left: 8),
+        collapsedIconColor: Theme.of(context).iconTheme.color,
+        iconColor: Theme.of(context).iconTheme.color,
+        title: Row(
+          children: [
+            Icon(Icons.keyboard_arrow_down, size: 18, color: Theme.of(context).iconTheme.color),
+            const SizedBox(width: 4),
+            Text('message.reasoning'.tr(), style: style),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              reasoning,
+              style: style,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------
+  // Helpers
+  // -------------
+  double _computeTileSize(int count) {
+    if (count <= 1) return 220;
+    if (count == 2) return 140;
+    if (count == 3) return 110;
+    return 96;
   }
 
   bool _isImagePath(String path) {
@@ -129,51 +373,59 @@ class ChatMessageList extends StatelessWidget {
         lower.endsWith('.bmp');
   }
 
-  Widget _attachmentChip(String path, bool isUser) {
-    final name = path.split('/').last;
-    return Chip(
-      avatar: Icon(
-        Icons.attachment,
-        size: 16,
-        color: isUser ? Colors.white : Colors.black54,
+  void _showUserContextMenu(
+      BuildContext context, Offset globalPos, ChatMessage m) async {
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        globalPos.dx,
+        globalPos.dy,
+        overlay.size.width - globalPos.dx,
+        overlay.size.height - globalPos.dy,
       ),
-      label: Text(
-        name,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(color: isUser ? Colors.white : Colors.black87),
-      ),
-      backgroundColor: isUser
-          ? Colors.blue.withValues(alpha: 0.2)
-          : Colors.grey[300],
-      visualDensity: VisualDensity.compact,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      items: [
+        PopupMenuItem(value: 'copy', child: Text('message.copy'.tr())),
+        PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
+        PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+      ],
     );
+    switch (selected) {
+      case 'copy':
+        onCopy?.call(m);
+        break;
+      case 'edit':
+        onEdit?.call(m);
+        break;
+      case 'delete':
+        onDelete?.call(m);
+        break;
+    }
   }
 
-  Widget _fallbackAttachmentTile(String path, bool isUser) {
-    final name = path.split('/').last;
-    return Container(
-      color: isUser ? Colors.white.withValues(alpha: 0.15) : Colors.black12,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.image_not_supported,
-            size: 18,
-            color: Colors.black54,
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.black87, fontSize: 13),
-            ),
-          ),
-        ],
+  void _showAssistantContextMenu(
+      BuildContext context, Offset globalPos, ChatMessage m) async {
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        globalPos.dx,
+        globalPos.dy,
+        overlay.size.width - globalPos.dx,
+        overlay.size.height - globalPos.dy,
       ),
+      items: [
+        PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
+        PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+      ],
     );
+    switch (selected) {
+      case 'edit':
+        onEdit?.call(m);
+        break;
+      case 'delete':
+        onDelete?.call(m);
+        break;
+    }
   }
 }

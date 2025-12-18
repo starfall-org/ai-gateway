@@ -57,7 +57,8 @@
     "no_providers": "No providers configured"
   },
   "attachments": {
-    "title_count": "Attachments ({count})"
+    "title_count": "Attachments ({count})",
+    "empty": "No attachments"
   },
   "role": {
     "you": "You",
@@ -170,5 +171,22 @@
     "chat_settings": "Chat Settings",
     "persist_chat_selection": "Persist provider/model and tools per conversation",
     "prefer_agent_settings": "Prefer Agent settings over Global"
+  },
+  "message": {
+    "copy": "Copy",
+    "edit": "Edit",
+    "delete": "Delete",
+    "read": "Read",
+    "reasoning": "Reasoning content"
+  },
+  "dialog": {
+    "edit_message": "Edit message",
+    "message": "Message",
+    "attachments": "Attachments",
+    "add": "Add",
+    "save_and_resend": "Save & Resend"
+  },
+  "common": {
+    "more": "More"
   }
 }

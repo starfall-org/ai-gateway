@@ -24,7 +24,8 @@
     "pick_images": "画像/ファイルを選択",
     "placeholder": "メッセージを入力...",
     "mic_tts": "マイク/TTS",
-    "send": "送信"
+    "send": "送信",
+    "menu": "メニュー"
   },
   "attachment_options": {
     "title": "添付ファイルオプション",
@@ -47,7 +48,8 @@
     "no_providers": "プロバイダーが設定されていません"
   },
   "attachments": {
-    "title_count": "添付ファイル ({count})"
+    "title_count": "添付ファイル ({count})",
+    "empty": "添付ファイルなし"
   },
   "role": {
     "you": "あなた",
@@ -100,7 +102,14 @@
     "connection_error": "接続エラー。URLとネットワークを確認してください。",
     "timeout_error": "リクエストがタイムアウトしました。もう一度お試しください。",
     "invalid_format": "APIからの応答形式が無効です。",
-    "tap_to_fetch_models": "タップしてモデルを取得"
+    "tap_to_fetch_models": "タップしてモデルを取得",
+    "selected_models": "選択されたモデル",
+    "no_models_selected": "モデルが選択されていません",
+    "tap_fab_to_add": "FABをタップしてモデルを追加",
+    "no_models_fetched": "まだモデルが取得されていません",
+    "models_available": "モデルが利用可能",
+    "fetch": "取得",
+    "manage_models": "モデルを管理"
   },
   "agents": {
     "add_new_agent": "新しいエージェントを追加",
@@ -114,6 +123,10 @@
     "conversation_length": "会話の長さ",
     "max_tokens": "最大トークン数",
     "active_mcp_servers": "アクティブなMCPサーバー",
+    "persist_section_title": "チャット選択を維持",
+    "persist_follow_global": "グローバル設定に従う",
+    "persist_force_on": "このエージェントに対して強制的にON",
+    "persist_force_off": "このエージェントに対して強制的にOFF",
     "save": "保存",
     "cancel": "キャンセル"
   },
@@ -122,6 +135,30 @@
     "auto_detect_language": "言語を自動検出",
     "select_language": "言語を選択",
     "about": "について",
-    "current_language": "現在の言語"
+    "current_language": "現在の言語",
+    "language_changed": "言語が変更されました。アプリが再起動します。",
+    "language_change_error": "言語の変更に失敗しました。もう一度お試しください。",
+    "auto_detect_enabled": "言語の自動検出が有効になりました。アプリが再起動します。",
+    "auto_detect_error": "自動検出の切り替えに失敗しました。もう一度お試しください。",
+    "chat_settings": "チャット設定",
+    "persist_chat_selection": "会話ごとにプロバイダー/モデルおよびツールを保持する",
+    "prefer_agent_settings": "グローバル設定よりエージェント設定を優先"
+  },
+  "message": {
+    "copy": "コピー",
+    "edit": "編集",
+    "delete": "削除",
+    "read": "読む",
+    "reasoning": "推論コンテンツ"
+  },
+  "dialog": {
+    "edit_message": "メッセージを編集",
+    "message": "メッセージ",
+    "attachments": "添付ファイル",
+    "add": "追加",
+    "save_and_resend": "保存して再送信"
+  },
+  "common": {
+    "more": "もっと見る"
   }
 }
