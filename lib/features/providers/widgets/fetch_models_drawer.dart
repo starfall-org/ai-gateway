@@ -54,7 +54,7 @@ class FetchModelsDrawer extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'settings.fetch_models'.tr(),
+                        'providers.fetch_models'.tr(),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 20,
@@ -94,8 +94,8 @@ class FetchModelsDrawer extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   availableModels.isEmpty
-                                      ? 'settings.no_models_fetched'.tr()
-                                      : '${availableModels.length} ${'settings.models_available'.tr()}',
+                                      ? 'providers.no_models_fetched'.tr()
+                                      : '${availableModels.length} ${'providers.models_available'.tr()}',
                                   style: TextStyle(
                                     color: availableModels.isEmpty
                                         ? Colors.grey
@@ -107,7 +107,7 @@ class FetchModelsDrawer extends StatelessWidget {
                               ElevatedButton.icon(
                                 onPressed: () => viewModel.fetchModels(context),
                                 icon: const Icon(Icons.refresh, size: 16),
-                                label: Text('settings.fetch'.tr()),
+                                label: Text('providers.fetch'.tr()),
                               ),
                             ],
                           ),
@@ -127,13 +127,13 @@ class FetchModelsDrawer extends StatelessWidget {
                             Icon(
                               Icons.cloud_off,
                               size: 64,
-                              color: Theme.of(context)
-                                  .disabledColor
-                                  .withOpacity(0.4),
+                              color: Theme.of(
+                                context,
+                              ).disabledColor.withValues(alpha: 0.4),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'settings.tap_to_fetch_models'.tr(),
+                              'providers.tap_to_fetch_models'.tr(),
                               style: TextStyle(
                                 color: Theme.of(context).disabledColor,
                                 fontSize: 16,
@@ -158,9 +158,7 @@ class FetchModelsDrawer extends StatelessWidget {
                             onTap: () => onShowCapabilities(model),
                             trailing: IconButton(
                               icon: Icon(
-                                isSelected
-                                    ? Icons.close
-                                    : Icons.add_circle,
+                                isSelected ? Icons.close : Icons.add_circle,
                                 color: isSelected
                                     ? Theme.of(context).colorScheme.error
                                     : Theme.of(context).colorScheme.primary,

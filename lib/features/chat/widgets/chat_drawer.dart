@@ -69,7 +69,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                     },
                   ),
                   Text(
-                    'LMHub',
+                    'app_title'.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,

@@ -27,52 +27,47 @@ class SettingsScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            SettingsSectionHeader('settings.general'.tr()),
+            SettingsSectionHeader('settings.general_section'.tr()),
             SettingsCard(
               child: Column(
                 children: [
                   SettingsTile(
                     icon: Icons.api,
-                    title: 'settings.providers'.tr(),
+                    title: 'providers.title'.tr(),
                     onTap: () =>
                         Navigator.pushNamed(context, AppRoutes.providers),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.palette_outlined,
-                    title: 'settings.appearance'.tr(),
+                    title: 'settings.appearance.title'.tr(),
                     onTap: () =>
                         Navigator.pushNamed(context, AppRoutes.appearance),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.tune,
-                    title: 'settings.preferences'.tr(),
+                    title: 'settings.preferences.select_language'.tr(),
                     onTap: () =>
                         Navigator.pushNamed(context, AppRoutes.preferences),
-                  ),
-                  const Divider(height: 1, indent: 56, endIndent: 16),
-                  SettingsTile(
-                    icon: Icons.notifications_outlined,
-                    title: 'settings.notifications'.tr(),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            SettingsSectionHeader('settings.ai_features'.tr()),
+            SettingsSectionHeader('settings.features_section'.tr()),
             SettingsCard(
               child: Column(
                 children: [
                   SettingsTile(
                     icon: Icons.record_voice_over_outlined,
-                    title: 'settings.tts'.tr(),
+                    title: 'tts.title'.tr(),
                     onTap: () => Navigator.pushNamed(context, AppRoutes.tts),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.extension_outlined,
-                    title: 'settings.mcp'.tr(),
+                    title: 'mcp.title'.tr(),
                   ),
                 ],
               ),
@@ -84,12 +79,12 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   SettingsTile(
                     icon: Icons.info_outline,
-                    title: 'settings.info'.tr(),
+                    title: 'settings.info.title'.tr(),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.system_update_outlined,
-                    title: 'settings.update'.tr(),
+                    title: 'settings.update.title'.tr(),
                   ),
                 ],
               ),

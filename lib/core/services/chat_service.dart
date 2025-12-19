@@ -167,14 +167,14 @@ class ChatService {
     return builtin;
   }
 
-  static Future<String> generateReply({
+  static Stream<String> generateStream({
     required String userText,
     required List<ChatMessage> history,
     required AIAgent agent,
     required String providerName,
     required String modelName,
     List<String>? allowedToolNames,
-  }) async {
+  }) async* {
     final providerRepo = await ProviderRepository.init();
     final providers = providerRepo.getProviders();
     if (providers.isEmpty) {
@@ -188,12 +188,6 @@ class ChatService {
       orElse: () => throw Exception('Provider "$providerName" not found.'),
     );
 
-    // Ensure model exists in provider (optional validation)
-    // final model = provider.models.firstWhere(
-    //   (m) => m.name == modelName,
-    //   orElse: () => throw Exception('Model "$modelName" not found for provider.'),
-    // );
-
     final messagesWithCurrent = [
       ...history,
       ChatMessage(
@@ -204,10 +198,7 @@ class ChatService {
       ),
     ];
 
-    // Collect MCP tools configured for this agent
     var mcpTools = await _collectMcpTools(agent);
-    // If caller provides an allowlist of tool names (per-conversation persistence),
-    // further restrict the tools to only those listed.
     if (allowedToolNames != null && allowedToolNames.isNotEmpty) {
       mcpTools = mcpTools
           .where((t) => allowedToolNames.contains(t.name))
@@ -218,11 +209,9 @@ class ChatService {
 
     switch (provider.type) {
       case ProviderType.google:
-        // Tự động bổ sung 2 built-in tools cho Gemini (bật/tắt bằng AIModel flags)
         final builtinTools = _collectGeminiBuiltinTools(provider, modelName);
         final allTools = [...mcpTools, ...builtinTools];
 
-        // Chuẩn hóa messages và nhúng system instruction vào user message đầu
         final aiMessages = messagesWithCurrent
             .map(
               (m) => AIMessage(
@@ -250,7 +239,6 @@ class ChatService {
           );
         }
 
-        // Chọn dịch vụ: Vertex AI nếu có cấu hình đầy đủ, ngược lại AI Studio
         final vx = provider.vertexAIConfig;
         if (vx != null && vx.projectId.isNotEmpty) {
           final vertex = GoogleVertexAI(
@@ -263,9 +251,11 @@ class ChatService {
             model: modelName,
             messages: aiMessages,
             tools: allTools,
+            stream: true,
           );
-          final resp = await vertex.generate(aiRequest);
-          return resp.text;
+          await for (final resp in vertex.generateStream(aiRequest)) {
+            yield resp.text;
+          }
         } else {
           final studio = GoogleAIStudio(
             defaultModel: modelName,
@@ -275,10 +265,13 @@ class ChatService {
             model: modelName,
             messages: aiMessages,
             tools: allTools,
+            stream: true,
           );
-          final resp = await studio.generate(aiRequest);
-          return resp.text;
+          await for (final resp in studio.generateStream(aiRequest)) {
+            yield resp.text;
+          }
         }
+        break;
 
       case ProviderType.openai:
         final routes = provider.openAIRoutes;
@@ -299,7 +292,6 @@ class ChatService {
             )
             .toList();
 
-        // Add system instruction as first message if present
         if (systemInstruction.isNotEmpty) {
           aiMessages.insert(
             0,
@@ -316,10 +308,14 @@ class ChatService {
           model: modelName,
           messages: aiMessages,
           tools: mcpTools,
+          stream: true,
         );
 
-        final resp = await service.generate(aiRequest);
-        return resp.text;
+        final stream = service.generateStream(aiRequest);
+        await for (final resp in stream) {
+          yield resp.text;
+        }
+              break;
 
       case ProviderType.anthropic:
         final service = Anthropic(
@@ -341,12 +337,16 @@ class ChatService {
           model: modelName,
           messages: aiMessages,
           tools: mcpTools,
+          stream: true,
           extra: systemInstruction.isNotEmpty
               ? {'system': systemInstruction}
               : {},
         );
-        final resp = await service.generate(aiRequest);
-        return resp.text;
+        final stream = service.generateStream(aiRequest);
+        await for (final resp in stream) {
+          yield resp.text;
+        }
+              break;
 
       case ProviderType.ollama:
         final service = Ollama(
@@ -368,9 +368,35 @@ class ChatService {
           model: modelName,
           messages: aiMessages,
           tools: mcpTools,
+          stream: true,
         );
-        final resp = await service.generate(aiRequest);
-        return resp.text;
+        final stream = service.generateStream(aiRequest);
+        await for (final resp in stream) {
+          yield resp.text;
+        }
+              break;
     }
+  }
+
+  static Future<String> generateReply({
+    required String userText,
+    required List<ChatMessage> history,
+    required AIAgent agent,
+    required String providerName,
+    required String modelName,
+    List<String>? allowedToolNames,
+  }) async {
+    final buffer = StringBuffer();
+    await for (final chunk in generateStream(
+      userText: userText,
+      history: history,
+      agent: agent,
+      providerName: providerName,
+      modelName: modelName,
+      allowedToolNames: allowedToolNames,
+    )) {
+      buffer.write(chunk);
+    }
+    return buffer.toString();
   }
 }

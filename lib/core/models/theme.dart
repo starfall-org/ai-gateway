@@ -35,8 +35,8 @@ class ThemeSettings {
     return ThemeSettings(
       themeMode: ThemeMode.system,
       selection: ThemeSelection.system,
-      primaryColor: Colors.blue.value,
-      secondaryColor: Colors.purple.value,
+      primaryColor: Colors.blue.toARGB32(),
+      secondaryColor: Colors.purple.toARGB32(),
       pureDark: false,
       materialYou: false,
       secondaryBackgroundMode: SecondaryBackgroundMode.auto,
@@ -111,8 +111,8 @@ class ThemeSettings {
       return ThemeSettings(
         themeMode: mode,
         selection: sel,
-        primaryColor: primary ?? oldColor ?? Colors.blue.value,
-        secondaryColor: secondary ?? Colors.purple.value,
+        primaryColor: primary ?? oldColor ?? Colors.blue.toARGB32(),
+        secondaryColor: secondary ?? Colors.purple.toARGB32(),
         pureDark: pureDark,
         materialYou: materialYou,
         secondaryBackgroundMode: sbm,

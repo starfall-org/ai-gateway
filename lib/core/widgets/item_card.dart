@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// Thẻ hiển thị tài nguyên dạng lưới (Grid) theo Material 3.
 /// Dùng chung cho providers/agents/tts/mcp.
-class GridCard extends StatelessWidget {
-  final IconData icon;
+class ItemCard extends StatelessWidget {
+  final Widget icon;
   final Color? iconColor;
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
+  final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
   final double elevation;
 
-  const GridCard({
+  const ItemCard({
     super.key,
     required this.icon,
     required this.title,
     this.subtitle,
     this.onTap,
+    this.onView,
     this.onEdit,
     this.onDelete,
     this.iconColor,
@@ -31,7 +34,7 @@ class GridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = iconColor ?? theme.colorScheme.primary;
+    final _ = iconColor ?? theme.colorScheme.primary;
 
     Widget cardBody = Padding(
       padding: padding,
@@ -39,7 +42,7 @@ class GridCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 32, color: primary),
+          icon,
           const Spacer(),
           Text(
             title,
@@ -65,14 +68,18 @@ class GridCard extends StatelessWidget {
     );
 
     // Nếu có menu hành động, hiển thị nút 3 chấm ở góc trên bên phải
-    if (onEdit != null || onDelete != null) {
+    if (onView != null || onEdit != null || onDelete != null) {
       cardBody = Stack(
         children: [
           Positioned.fill(child: cardBody),
           Positioned(
             top: 4,
             right: 4,
-            child: _ActionMenu(onEdit: onEdit, onDelete: onDelete),
+            child: _ActionMenu(
+              onView: onView,
+              onEdit: onEdit,
+              onDelete: onDelete,
+            ),
           ),
         ],
       );
@@ -94,10 +101,11 @@ class GridCard extends StatelessWidget {
 }
 
 class _ActionMenu extends StatelessWidget {
+  final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const _ActionMenu({this.onEdit, this.onDelete});
+  const _ActionMenu({this.onView, this.onEdit, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +113,9 @@ class _ActionMenu extends StatelessWidget {
       icon: const Icon(Icons.more_vert),
       onSelected: (value) {
         switch (value) {
+          case _MenuAction.view:
+            onView?.call();
+            break;
           case _MenuAction.edit:
             onEdit?.call();
             break;
@@ -115,15 +126,29 @@ class _ActionMenu extends StatelessWidget {
       },
       itemBuilder: (context) {
         final items = <PopupMenuEntry<_MenuAction>>[];
+        if (onView != null) {
+          items.add(
+            PopupMenuItem(
+              value: _MenuAction.view,
+              child: Row(
+                children: [
+                  const Icon(Icons.visibility_outlined, size: 20),
+                  const SizedBox(width: 12),
+                  Text('agents.view'.tr()),
+                ],
+              ),
+            ),
+          );
+        }
         if (onEdit != null) {
           items.add(
             PopupMenuItem(
               value: _MenuAction.edit,
               child: Row(
-                children: const [
-                  Icon(Icons.edit_outlined, size: 20),
-                  SizedBox(width: 12),
-                  Text('Edit'),
+                children: [
+                  const Icon(Icons.edit_outlined, size: 20),
+                  const SizedBox(width: 12),
+                  Text('agents.edit'.tr()),
                 ],
               ),
             ),
@@ -141,7 +166,7 @@ class _ActionMenu extends StatelessWidget {
                     color: Theme.of(context).colorScheme.error,
                   ),
                   const SizedBox(width: 12),
-                  const Text('Delete'),
+                  Text('agents.delete'.tr()),
                 ],
               ),
             ),
@@ -153,7 +178,7 @@ class _ActionMenu extends StatelessWidget {
   }
 }
 
-enum _MenuAction { edit, delete }
+enum _MenuAction { view, edit, delete }
 
 /// Nút action trên AppBar để chuyển đổi giữa List và Grid theo Material Icons.
 class ViewToggleAction extends StatelessWidget {

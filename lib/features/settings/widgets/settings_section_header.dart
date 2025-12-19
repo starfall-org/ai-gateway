@@ -14,7 +14,7 @@ class SettingsSectionHeader extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
           letterSpacing: 1.2,
         ),
       ),

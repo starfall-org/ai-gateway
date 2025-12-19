@@ -7,7 +7,7 @@ enum ModelType {
   rerank,
 }
 
-enum ModelIOType { text, video, image, audio, document }
+enum ModelIOType { text, video, image, audio }
 
 class AIModel {
   final String name;

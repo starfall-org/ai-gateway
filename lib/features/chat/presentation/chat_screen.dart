@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
           );
         }
 
-        return Scaffold( 
+        return Scaffold(
           key: _viewModel.scaffoldKey,
           appBar: AppBar(
             leading: IconButton(
@@ -225,7 +225,8 @@ class _ChatScreenState extends State<ChatScreen> {
       onCopy: (m) => _viewModel.copyMessage(context, m),
       onEdit: (m) => _viewModel.openEditMessageDialog(context, m),
       onDelete: (m) => _viewModel.deleteMessage(m),
-      onOpenAttachmentsSidebar: (files) => _viewModel.openAttachmentsSidebar(files),
+      onOpenAttachmentsSidebar: (files) =>
+          _viewModel.openAttachmentsSidebar(files),
       onRegenerate: () => _viewModel.regenerateLast(context),
     );
   }
@@ -244,17 +245,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   Text(
                     'attachments.title_count'.tr(
                       namedArgs: {
-                        'count': _viewModel.inspectingAttachments.length.toString(),
+                        'count': _viewModel.inspectingAttachments.length
+                            .toString(),
                       },
                     ),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close),
-                    tooltip: 'settings.close'.tr(),
+                    tooltip: 'common.close'.tr(),
                     onPressed: _viewModel.closeEndDrawer,
                   ),
                 ],
@@ -271,7 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   : ListView.separated(
                       padding: const EdgeInsets.all(12),
                       itemCount: _viewModel.inspectingAttachments.length,
-                      separatorBuilder: (_, __) => const Divider(height: 12),
+                      separatorBuilder: (_, _) => const Divider(height: 12),
                       itemBuilder: (ctx, i) {
                         final path = _viewModel.inspectingAttachments[i];
                         return _attachmentTile(context, path);
@@ -332,7 +334,10 @@ class _ChatScreenState extends State<ChatScreen> {
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(Icons.insert_drive_file, color: Theme.of(context).iconTheme.color),
+      child: Icon(
+        Icons.insert_drive_file,
+        color: Theme.of(context).iconTheme.color,
+      ),
     );
   }
 

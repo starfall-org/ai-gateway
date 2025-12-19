@@ -7,7 +7,7 @@ import '../../../core/models/provider.dart';
 import '../../../core/widgets/resource_tile.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/confirm_dialog.dart';
-import '../../../core/widgets/grid_card.dart';
+import '../../../core/widgets/item_card.dart';
 import 'add_provider_screen.dart';
 
 class ProvidersScreen extends StatefulWidget {
@@ -32,22 +32,25 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Future<void> _loadProviders() async {
     // Only prevent if already loading (not the initial state)
     if (_isLoading && _providers.isNotEmpty) return;
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       // Add timeout to prevent infinite loading
       _repository = await ProviderRepository.init().timeout(
         const Duration(seconds: 10),
         onTimeout: () {
-          throw TimeoutException('Timeout initializing provider repository', const Duration(seconds: 10));
+          throw TimeoutException(
+            'Timeout initializing provider repository',
+            const Duration(seconds: 10),
+          );
         },
       );
-      
+
       final providers = _repository.getProviders();
-      
+
       if (mounted) {
         setState(() {
           _providers = providers;
@@ -82,7 +85,9 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('settings.provider_deleted'.tr(args: [provider.name])),
+            content: Text(
+              'providers.provider_deleted'.tr(args: [provider.name]),
+            ),
           ),
         );
       }
@@ -102,7 +107,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('settings.providers'.tr()),
+        title: Text('providers.title'.tr()),
         actions: [
           AddAction(
             onPressed: () async {
@@ -131,8 +136,8 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _providers.isEmpty
           ? EmptyState(
-              message: 'settings.no_providers'.tr(),
-              actionLabel: 'Add Provider',
+              message: 'providers.no_providers'.tr(),
+              actionLabel: 'providers.add_provider'.tr(),
               onAction: () async {
                 final result = await Navigator.push(
                   context,
@@ -171,10 +176,14 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Widget _buildProviderTile(Provider provider) {
     return ResourceTile(
       title: provider.name,
-      subtitle: 'settings.models_count'.tr(
-        namedArgs: {'count': provider.models.length.toString()},
+      subtitle: 'providers.models_count'.tr(
+        args: [provider.models.length.toString()],
       ),
-      leadingIcon: _getProviderIcon(provider.type),
+      leadingIcon: _getProviderIcon(
+        provider.type,
+        provider.vertexAI,
+        provider.azureAI,
+      ),
       onTap: () async {
         final result = await Navigator.push(
           context,
@@ -202,11 +211,15 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   }
 
   Widget _buildProviderCard(Provider provider) {
-    return GridCard(
-      icon: _getProviderIcon(provider.type),
+    return ItemCard(
+      icon: _getProviderIcon(
+        provider.type,
+        provider.vertexAI,
+        provider.azureAI,
+      ),
       title: provider.name,
-      subtitle: 'settings.models_count'.tr(
-        namedArgs: {'count': provider.models.length.toString()},
+      subtitle: 'providers.models_count'.tr(
+        args: [provider.models.length.toString()],
       ),
       onTap: () async {
         final result = await Navigator.push(
@@ -237,9 +250,9 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Future<void> _confirmDelete(Provider provider) async {
     final confirm = await ConfirmDialog.show(
       context,
-      title: 'Delete Provider',
-      content: 'Are you sure you want to delete ${provider.name}?',
-      confirmLabel: 'Delete',
+      title: 'common.delete'.tr(),
+      content: 'providers.delete_confirm'.tr(args: [provider.name]),
+      confirmLabel: 'common.delete'.tr(),
       isDestructive: true,
     );
 
@@ -250,16 +263,20 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
     }
   }
 
-  IconData _getProviderIcon(ProviderType type) {
+  Widget _getProviderIcon(ProviderType type, bool isVertexAI, bool isAzureAI) {
     switch (type) {
       case ProviderType.google:
-        return Icons.android;
+        return isVertexAI
+            ? Image.asset('assets/images/vertexai-color.png')
+            : Image.asset('assets/images/google.png');
       case ProviderType.openai:
-        return Icons.smart_toy;
+        return isAzureAI
+            ? Image.asset('assets/images/azureai-color.png')
+            : Image.asset('assets/images/openai.png');
       case ProviderType.anthropic:
-        return Icons.psychology;
+        return Image.asset('assets/images/anthropic.png');
       case ProviderType.ollama:
-        return Icons.terminal;
+        return Image.asset('assets/images/ollama.png');
     }
   }
 }

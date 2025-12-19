@@ -8,8 +8,11 @@ import 'package:easy_localization/easy_localization.dart';
 
 class AddProviderViewModel extends ChangeNotifier {
   // Form State
-  ProviderType _selectedType = ProviderType.google;
-  final _nameController = TextEditingController(text: 'Google');
+  ProviderType _selectedType = ProviderType.openai;
+  bool _vertexAI = false;
+  bool _azureAI = false;
+  bool _responsesApi = false;
+  final _nameController = TextEditingController(text: 'OpenAI');
   final _apiKeyController = TextEditingController();
   final _baseUrlController = TextEditingController();
   final List<MapEntry<TextEditingController, TextEditingController>> _headers =
@@ -39,6 +42,11 @@ class AddProviderViewModel extends ChangeNotifier {
   AIModel? get selectedModelToAdd => _selectedModelToAdd;
   bool get isFetchingModels => _isFetchingModels;
 
+  // Getters
+  bool get vertexAI => _vertexAI;
+  bool get azureAI => _azureAI;
+  bool get responsesApi => _responsesApi;
+
   // Expose custom route controllers
   TextEditingController get openAIChatCompletionsRouteController =>
       _openAIChatCompletionsRouteController;
@@ -53,6 +61,9 @@ class AddProviderViewModel extends ChangeNotifier {
       _baseUrlController.text = (provider.baseUrl.isNotEmpty == true)
           ? provider.baseUrl
           : getDefaultBaseUrl();
+      _vertexAI = provider.vertexAI;
+      _azureAI = provider.azureAI;
+      _responsesApi = provider.responsesApi;
 
       provider.headers.forEach((key, value) {
         _headers.add(
@@ -170,9 +181,11 @@ class AddProviderViewModel extends ChangeNotifier {
           break;
       }
 
-      final url = modelsRoute.startsWith('http') 
+      final url = modelsRoute.startsWith('http')
           ? Uri.parse(modelsRoute)
-          : Uri.parse('$baseUrl${modelsRoute.startsWith('/') ? '' : '/'}$modelsRoute');
+          : Uri.parse(
+              '$baseUrl${modelsRoute.startsWith('/') ? '' : '/'}$modelsRoute',
+            );
 
       final headers = {
         'Authorization': 'Bearer ${_apiKeyController.text}',
@@ -312,6 +325,21 @@ class AddProviderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateVertexAI(bool value) {
+    _vertexAI = value;
+    notifyListeners();
+  }
+
+  void updateAzureAI(bool value) {
+    _azureAI = value;
+    notifyListeners();
+  }
+
+  void updateResponsesApi(bool value) {
+    _responsesApi = value;
+    notifyListeners();
+  }
+
   Future<void> saveProvider(
     BuildContext context, {
     Provider? existingProvider,
@@ -350,6 +378,9 @@ class AddProviderViewModel extends ChangeNotifier {
         baseUrl: _baseUrlController.text.isNotEmpty
             ? _baseUrlController.text
             : null,
+        vertexAI: _vertexAI,
+        azureAI: _azureAI,
+        responsesApi: _responsesApi,
         headers: headersMap,
         models: _selectedModels,
         openAIRoutes: openaiRoutes ?? const OpenAIRoutes(),

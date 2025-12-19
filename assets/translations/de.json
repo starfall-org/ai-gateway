@@ -1,5 +1,5 @@
 {
-  "app_title": "LMHub",
+  "app_title": "AI Gateway",
   "chat": {
     "title": "Chat & Support",
     "start": "Starte eine Unterhaltung!",
@@ -19,13 +19,22 @@
     "no_history": "Kein Verlauf"
   },
   "input": {
-    "ask": "LMHub fragen",
+    "ask": "Fragen Sie {}",
     "attach_files": "Dateien anhängen",
     "pick_images": "Bilder/Dateien auswählen",
     "placeholder": "Nachricht eingeben...",
     "mic_tts": "Mikrofon/TTS",
     "send": "Senden",
     "menu": "Menü"
+  },
+  "menu": {
+    "title": "Menü",
+    "settings": "Einstellungen",
+    "settings_desc": "App-Einstellungen verwalten",
+    "about": "Über",
+    "about_desc": "Informationen über die App",
+    "help": "Hilfe",
+    "help_desc": "Hilfe und Anleitung erhalten"
   },
   "attachment_options": {
     "title": "Anhangsoptionen",
@@ -57,92 +66,116 @@
   },
   "settings": {
     "title": "Einstellungen",
-    "providers": "Anbieter",
-    "appearance": "Erscheinungsbild",
-    "preferences": "Präferenzen",
-    "notifications": "Benachrichtigungen",
-    "tts": "TTS",
-    "mcp": "MCP",
-    "info": "Info",
-    "update": "Update",
-    "no_providers": "Keine Anbieter konfiguriert",
-    "provider_deleted": "{} gelöscht",
+    "general_section": "Allgemein",
+    "features_section": "Online-Funktionen",
+    "about_section": "Über",
+    "notifications": {
+      "title": "Benachrichtigungen"
+    },
+    "info": {
+      "title": "Info"
+    },
+    "update": {
+      "title": "Update"
+    },
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "theme_mode": "Themen-Modus",
+      "brand_color": "Markenfarbe",
+      "system_default": "Systemstandard",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "custom": "Benutzerdefiniert",
+      "primary_color": "Primärfarbe",
+      "secondary_color": "Sekundärfarbe",
+      "color_presets": "Farbvoreinstellungen",
+      "custom_color": "Benutzerdefinierte Farbe",
+      "pure_dark": "SuperDark Modus",
+      "pure_dark_desc": "Tiefschwarz für AMOLED-Displays verwenden",
+      "material_you": "Dynamische Farben",
+      "material_you_desc": "Verwenden Sie dynamische Systemfarben",
+      "primary_background": "Primäre Hintergrundfarbe",
+      "secondary_background": "Sekundäre Hintergrundfarbe",
+      "secondary_bg_mode": "Hintergrundfarbmodus",
+      "secondary_bg_on": "Dual",
+      "secondary_bg_off": "Single",
+      "secondary_bg_auto": "Automatisch",
+      "preview_title": "Vorschau-Titel",
+      "preview_subtitle": "Untertitel kommt hierhin",
+      "preview_button": "Haupt-Schaltfläche"
+    },
+    "preferences": {
+      "auto_detect": "Automatisch",
+      "select_language": "Sprachen",
+      "about": "Über",
+      "current_language": "Aktuelle Sprache",
+      "language_changed": "Sprache wurde geändert",
+      "language_change_error": "Sprache konnte nicht geändert werden",
+      "auto_detect_enabled": "Automatisch wurde aktiviert",
+      "auto_detect_error": "Automatisch konnte nicht umgeschaltet werden",
+      "chat_settings": "Chat-Einstellungen",
+      "persist_chat_selection": "Auswahlen beibehalten",
+      "prefer_agent_settings": "Agent-Einstellungen bevorzugen"
+    }
+  },
+  "providers": {
+    "title": "Anbieter",
+    "no_providers": "Keine Anbieter gefunden",
+    "custom_routes": "Benutzerdefinierte Routen",
+    "provider_deleted": "Anbieter {} gelöscht",
     "add_provider": "Anbieter hinzufügen",
     "edit_provider": "Anbieter bearbeiten",
-    "edit_tab": "Bearbeiten",
-    "models_tab": "Modelle",
-    "provider_type": "Anbieter-Typ",
+    "provider_type": "Kompatibilität",
     "name": "Name",
     "api_key": "API-Schlüssel",
-    "base_url": "Basis-URL (Optional)",
-    "custom_headers": "Benutzerdefinierte Header",
-    "header_key": "Schlüssel",
-    "header_value": "Wert",
-    "available_models": "Verfügbare Modelle",
-    "theme_mode": "Themen-Modus",
-    "brand_color": "Markenfarbe",
-    "system_default": "Systemstandard",
-    "light": "Hell",
-    "dark": "Dunkel",
-    "preview_title": "Vorschau-Titel",
-    "preview_subtitle": "Untertitel kommt hierhin",
-    "preview_button": "Haupt-Schaltfläche",
-    "inputs": "Eingaben",
-    "outputs": "Ausgaben",
+    "base_url": "Basis-URL",
+    "custom_headers": {
+      "title": "Header",
+      "header_key": "Schlüssel",
+      "header_value": "Wert"
+    },
+    "chat_completions_route": "Chat Completions Pfad",
+    "models_route_or_url": "Models Pfad oder URL",
+    "available_models": "Modelle",
     "capabilities": "Fähigkeiten",
-    "close": "Schließen",
-    "enter_api_key": "Bitte geben Sie zuerst den API-Schlüssel ein",
-    "fill_required": "Bitte füllen Sie Name und API-Schlüssel aus",
-    "fetch_models": "Modelle abrufen",
-    "add_model": "Modell hinzufügen",
-    "models_count": "{count} Modelle",
-    "found_models": "{} Modelle gefunden",
+    "responses_api": "Responses API",
+    "inputs": "Eingabetypen",
+    "outputs": "Ausgabetypen",
+    "connection_error": "Verbindungsfehler",
+    "timeout_error": "Anfrage zeitüberschritten",
+    "invalid_format": "Ungültiges Antwortformat von der API",
+    "no_models_added": "Noch keine Modelle hinzugefügt",
+    "add_all": "Alle",
+    "no_models_found": "Keine Modelle gefunden",
     "fetch_error": "Modelle konnten nicht abgerufen werden",
-    "auth_error": "Authentifizierung fehlgeschlagen. Bitte überprüfen Sie Ihren API-Schlüssel.",
-    "connection_error": "Verbindungsfehler. Bitte überprüfen Sie URL und Netzwerk.",
-    "timeout_error": "Anfrage zeitüberschritten. Bitte versuchen Sie es erneut.",
-    "invalid_format": "Ungültiges Antwortformat von der API.",
-    "tap_to_fetch_models": "Tippen Sie, um Modelle abzurufen",
-    "selected_models": "Ausgewählte Modelle",
-    "no_models_selected": "Keine Modelle ausgewählt",
-    "tap_fab_to_add": "Tippen Sie auf die FAB, um Modelle hinzuzufügen",
-    "no_models_fetched": "Noch keine Modelle abgerufen",
-    "models_available": "Modelle verfügbar",
-    "fetch": "Abrufen",
-    "manage_models": "Modelle verwalten"
+    "auth_error": "Authentifizierung fehlgeschlagen"
   },
   "agents": {
-    "add_new_agent": "Neuen Agent hinzufügen",
+    "title": "Agenten",
+    "add_new_agent": "Agent hinzufügen",
     "name": "Agent-Name",
     "system_prompt": "System-Prompt",
     "parameters": "Parameter",
-    "top_p": "Top P",
-    "top_k": "Top K",
+    "top_p": "P",
+    "top_k": "K",
     "temperature": "Temperatur",
     "context_window": "Kontextfenster",
     "conversation_length": "Gesprächslänge",
     "max_tokens": "Max Tokens",
-    "active_mcp_servers": "Aktive MCP-Server",
-    "persist_section_title": "Chat-Auswahl beibehalten",
-    "persist_follow_global": "Globale Einstellungen folgen",
-    "persist_force_on": "Für diesen Agenten ERZWINGEN",
-    "persist_force_off": "Für diesen Agenten DEAKTIVIEREN",
-    "save": "Speichern",
-    "cancel": "Abbrechen"
+    "mcp_servers": "MCP-Server",
+    "persist_selection": "Auswahl beibehalten",
+    "persist_on": "EIN",
+    "persist_off": "AUS",
+    "persist_disable": "Deaktivieren",
+    "edit_agent": "Agent bearbeiten",
+    "agent_details": "Agent-Details",
+    "agent_deleted": "Agent {} gelöscht"
   },
-  "preferences": {
-    "auto_detect": "Automatische Erkennung",
-    "auto_detect_language": "Sprache automatisch erkennen",
-    "select_language": "Sprache auswählen",
-    "about": "Über",
-    "current_language": "Aktuelle Sprache",
-    "language_changed": "Die Sprache wurde geändert. Die App wird neu gestartet.",
-    "language_change_error": "Fehler beim Ändern der Sprache. Bitte versuchen Sie es erneut.",
-    "auto_detect_enabled": "Automatische Spracherkennung wurde aktiviert. Die App wird neu gestartet.",
-    "auto_detect_error": "Fehler beim Umschalten der automatischen Erkennung. Bitte versuchen Sie es erneut.",
-    "chat_settings": "Chat-Einstellungen",
-    "persist_chat_selection": "Anbieter/Modell und Tools pro Konversation beibehalten",
-    "prefer_agent_settings": "Agent-Einstellungen gegenüber Globalen bevorzugen"
+  "tts": {
+    "title": "TTS-Profile"
+  },
+  "mcp": {
+    "title": "MCP-Server"
   },
   "message": {
     "copy": "Kopieren",
@@ -151,14 +184,20 @@
     "read": "Lesen",
     "reasoning": "Begründungsinhalt"
   },
- "dialog": {
+  "dialog": {
     "edit_message": "Nachricht bearbeiten",
     "message": "Nachricht",
     "attachments": "Anhänge",
     "add": "Hinzufügen",
-    "save_and_resend": "Speichern & erneut senden"
+    "resend": "Erneut senden"
   },
   "common": {
-    "more": "Mehr"
+    "more": "Mehr",
+    "close": "Schließen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
   }
 }

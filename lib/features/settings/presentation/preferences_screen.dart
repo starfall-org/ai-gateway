@@ -21,10 +21,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   // App (chat) preferences
   bool _persistChatSelection = false; // mặc định không lưu
-  bool _preferAgentSettings = false;  // mặc định ưu tiên global
+  bool _preferAgentSettings = false; // mặc định ưu tiên global
 
   final List<Map<String, dynamic>> _supportedLanguages = [
-    {'code': 'auto', 'name': 'preferences.auto_detect', 'flag': '🌐'},
+    {'code': 'auto', 'name': 'settings.preferences.auto_detect', 'flag': '🌐'},
     {'code': 'en', 'name': 'English', 'flag': '🇺🇸'},
     {'code': 'vi', 'name': 'Tiếng Việt', 'flag': '🇻🇳'},
     {'code': 'zh_CN', 'name': '简体中文', 'flag': '🇨🇳'},
@@ -74,7 +74,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('preferences.auto_detect_enabled'.tr()),
+              content: Text('settings.preferences.auto_detect_enabled'.tr()),
               duration: const Duration(seconds: 1),
             ),
           );
@@ -88,7 +88,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('preferences.auto_detect_error'.tr()),
+            content: Text('settings.preferences.auto_detect_error'.tr()),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -122,7 +122,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('preferences.language_changed'.tr()),
+            content: Text('settings.preferences.language_changed'.tr()),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -135,7 +135,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('preferences.language_change_error'.tr()),
+            content: Text('settings.preferences.language_change_error'.tr()),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -178,7 +178,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'settings.preferences'.tr(),
+          'settings.preferences.select_language'.tr(),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -190,14 +190,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       body: ListView(
         children: [
           // Chat preferences section
-          SettingsSectionHeader('preferences.chat_settings'.tr()),
+          SettingsSectionHeader('settings.preferences.chat_settings'.tr()),
           const SizedBox(height: 12),
           SettingsCard(
             child: Column(
               children: [
                 SettingsTile(
                   icon: Icons.save_outlined,
-                  title: 'preferences.persist_chat_selection'.tr(),
+                  title: 'settings.preferences.persist_chat_selection'.tr(),
                   trailing: Switch(
                     value: _persistChatSelection,
                     onChanged: (val) async {
@@ -206,9 +206,12 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         await AppPreferencesRepository.instance
                             .setPersistChatSelection(val);
                       } catch (_) {
-                        setState(() => _persistChatSelection =
-                            AppPreferencesRepository
-                                .instance.currentPreferences.persistChatSelection);
+                        setState(
+                          () => _persistChatSelection = AppPreferencesRepository
+                              .instance
+                              .currentPreferences
+                              .persistChatSelection,
+                        );
                       }
                     },
                   ),
@@ -216,7 +219,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 const Divider(height: 1, indent: 56, endIndent: 16),
                 SettingsTile(
                   icon: Icons.manage_accounts_outlined,
-                  title: 'preferences.prefer_agent_settings'.tr(),
+                  title: 'settings.preferences.prefer_agent_settings'.tr(),
                   trailing: Switch(
                     value: _preferAgentSettings,
                     onChanged: (val) async {
@@ -225,9 +228,12 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         await AppPreferencesRepository.instance
                             .setPreferAgentSettings(val);
                       } catch (_) {
-                        setState(() => _preferAgentSettings =
-                            AppPreferencesRepository
-                                .instance.currentPreferences.preferAgentSettings);
+                        setState(
+                          () => _preferAgentSettings = AppPreferencesRepository
+                              .instance
+                              .currentPreferences
+                              .preferAgentSettings,
+                        );
                       }
                     },
                   ),
@@ -238,14 +244,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
           // Language section
           const SizedBox(height: 24),
-          SettingsSectionHeader('preferences.language'.tr()),
+          SettingsSectionHeader('settings.preferences.select_language'.tr()),
           const SizedBox(height: 12),
           SettingsCard(
             child: Column(
               children: [
                 SettingsTile(
                   icon: Icons.language_outlined,
-                  title: 'preferences.auto_detect_language'.tr(),
+                  title: 'settings.preferences.auto_detect'.tr(),
                   trailing: Switch(
                     value: _autoDetectLanguage,
                     onChanged: _toggleAutoDetect,
@@ -255,7 +261,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.translate_outlined,
-                    title: 'preferences.select_language'.tr(),
+                    title: 'settings.preferences.current_language'.tr(),
                     subtitle: _getCurrentLanguageName(),
                     onTap: () => _showLanguagePicker(),
                   ),
@@ -294,7 +300,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'preferences.select_language'.tr(),
+                'settings.preferences.select_language'.tr(),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -305,25 +311,26 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 children: _supportedLanguages
                     .where((lang) => lang['code'] != 'auto')
                     .map((language) {
-                  final isSelected = _selectedLanguage == language['code'];
-                  return ListTile(
-                    leading: Text(
-                      language['flag'],
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    title: Text(language['name']),
-                    trailing: isSelected
-                        ? Icon(
-                            Icons.check_circle,
-                            color: Theme.of(context).colorScheme.primary,
-                          )
-                        : null,
-                    onTap: () {
-                      Navigator.pop(context);
-                      _selectLanguage(language['code']);
-                    },
-                  );
-                }).toList(),
+                      final isSelected = _selectedLanguage == language['code'];
+                      return ListTile(
+                        leading: Text(
+                          language['flag'],
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        title: Text(language['name'].tr()),
+                        trailing: isSelected
+                            ? Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                            : null,
+                        onTap: () {
+                          Navigator.pop(context);
+                          _selectLanguage(language['code']);
+                        },
+                      );
+                    })
+                    .toList(),
               ),
             ),
           ],
@@ -334,7 +341,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   String _getCurrentLanguageName() {
     if (_autoDetectLanguage) {
-      return 'preferences.auto_detect'.tr();
+      return 'settings.preferences.auto_detect'.tr();
     }
 
     final selected = _supportedLanguages.firstWhere(
@@ -342,6 +349,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       orElse: () => _supportedLanguages.first,
     );
 
-    return selected['name'];
+    return selected['name'].tr();
   }
 }

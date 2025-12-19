@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai_model.dart';
 import '../../../core/models/provider.dart';
-import '../widgets/fetch_models_drawer.dart';
 import '../../../core/widgets/dropdown.dart';
+import '../widgets/add_model_drawer.dart';
+import '../widgets/fetch_models_drawer.dart';
 import '../widgets/model_card.dart';
 import 'add_provider_viewmodel.dart';
 
@@ -43,24 +44,34 @@ class _AddProviderScreenState extends State<AddProviderScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: _tabController.index == 1
-          ? FloatingActionButton.extended(
-              onPressed: _showFetchModelsDrawer,
-              icon: const Icon(Icons.cloud_download),
-              label: Text('settings.fetch_models'.tr()),
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  onPressed: _showFetchModelsDrawer,
+                  child: const Icon(Icons.cloud_download),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: _showAddModelDrawer,
+                  child: const Icon(Icons.note_add),
+                ),
+              ],
             )
           : null,
       appBar: AppBar(
         title: Text(
           widget.provider != null
-              ? 'settings.edit_provider'.tr()
-              : 'settings.add_provider'.tr(),
+              ? 'providers.edit_provider'.tr()
+              : 'providers.add_provider'.tr(),
         ),
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'settings.edit_tab'.tr()),
-            Tab(text: 'settings.models_tab'.tr()),
+            Tab(icon: Icon(Icons.edit)),
+            Tab(icon: Icon(Icons.list)),
+            Tab(icon: Icon(Icons.abc)),
           ],
         ),
         actions: [
@@ -75,7 +86,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [_buildEditTab(), _buildModelsTab()],
+        children: [_buildEditTab(), _buildModelsTab(), _buildABCBTab()],
       ),
     );
   }
@@ -89,12 +100,16 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           children: [
             CommonDropdown<ProviderType>(
               value: _viewModel.selectedType,
-              labelText: 'settings.provider_type'.tr(),
+              labelText: 'providers.provider_type'.tr(),
               options: ProviderType.values.map((type) {
                 return DropdownOption<ProviderType>(
                   value: type,
                   label: type.name,
-                  icon: _iconForProviderType(type),
+                  icon: _iconForProviderType(
+                    type,
+                    _viewModel.vertexAI,
+                    _viewModel.azureAI,
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -104,11 +119,33 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                 }
               },
             ),
+            if (_viewModel.selectedType == ProviderType.openai)
+              CheckboxListTile(
+                title: Text('providers.azure_ai'.tr()),
+                value: _viewModel.azureAI,
+                onChanged: (value) {
+                  if (value != null) {
+                    _viewModel.updateAzureAI(value);
+                  }
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+            if (_viewModel.selectedType == ProviderType.google)
+              CheckboxListTile(
+                title: Text('providers.vertex_ai'.tr()),
+                value: _viewModel.vertexAI,
+                onChanged: (value) {
+                  if (value != null) {
+                    _viewModel.updateVertexAI(value);
+                  }
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
             const SizedBox(height: 16),
             TextField(
               controller: _viewModel.nameController,
               decoration: InputDecoration(
-                labelText: 'settings.name'.tr(),
+                labelText: 'providers.name'.tr(),
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -116,7 +153,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             TextField(
               controller: _viewModel.apiKeyController,
               decoration: InputDecoration(
-                labelText: 'settings.api_key'.tr(),
+                labelText: 'providers.api_key'.tr(),
                 border: const OutlineInputBorder(),
               ),
               obscureText: true,
@@ -125,15 +162,29 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             TextField(
               controller: _viewModel.baseUrlController,
               decoration: InputDecoration(
-                labelText: 'settings.base_url'.tr(),
+                labelText: 'providers.base_url'.tr(),
                 border: const OutlineInputBorder(),
               ),
             ),
+
             const SizedBox(height: 8),
             if (_viewModel.selectedType == ProviderType.openai)
+              CheckboxListTile(
+                title: Text('providers.responses_api'.tr()),
+                value: _viewModel.responsesApi,
+                onChanged: (value) {
+                  if (value != null) {
+                    _viewModel.updateResponsesApi(value);
+                  }
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+            const SizedBox(height: 8),
+            if (_viewModel.selectedType == ProviderType.openai &&
+                _viewModel.responsesApi == false)
               ExpansionTile(
                 tilePadding: EdgeInsets.zero,
-                title: Text('settings.custom_routes'.tr()),
+                title: Text('providers.custom_routes'.tr()),
                 subtitle: Text(_viewModel.selectedType.name),
                 children: [
                   Padding(
@@ -147,7 +198,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'settings.custom_headers'.tr(),
+                  'providers.custom_headers.title'.tr(),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -170,7 +221,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                       child: TextField(
                         controller: header.key,
                         decoration: InputDecoration(
-                          labelText: 'settings.header_key'.tr(),
+                          labelText: 'providers.custom_headers.header_key'.tr(),
                           border: const OutlineInputBorder(),
                           isDense: true,
                         ),
@@ -181,7 +232,8 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                       child: TextField(
                         controller: header.value,
                         decoration: InputDecoration(
-                          labelText: 'settings.header_value'.tr(),
+                          labelText: 'providers.custom_headers.header_value'
+                              .tr(),
                           border: const OutlineInputBorder(),
                           isDense: true,
                         ),
@@ -211,12 +263,12 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           children: [
             _routeField(
               _viewModel.openAIChatCompletionsRouteController,
-              'settings.chat_completions_route'.tr(),
+              'providers.chat_completions_route'.tr(),
             ),
             const SizedBox(height: 8),
             _routeField(
               _viewModel.openAIModelsRouteOrUrlController,
-              'settings.models_route_or_url'.tr(),
+              'providers.models_route_or_url'.tr(),
             ),
           ],
         );
@@ -236,12 +288,20 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     );
   }
 
-  Widget _iconForProviderType(ProviderType type) {
+  Widget _iconForProviderType(
+    ProviderType type,
+    bool isVertexAI,
+    bool isAzureFoundry,
+  ) {
     switch (type) {
       case ProviderType.google:
-        return Image.asset('assets/brand_logos/aistudio.png');
+        return isVertexAI
+            ? Image.asset('assets/brand_logos/vertexai-color.png')
+            : Image.asset('assets/brand_logos/aistudio.png');
       case ProviderType.openai:
-        return Image.asset('assets/brand_logos/openai.png');
+        return isAzureFoundry
+            ? Image.asset('assets/brand_logos/azureai-color.png')
+            : Image.asset('assets/brand_logos/openai.png');
       case ProviderType.anthropic:
         return Image.asset('assets/brand_logos/anthropic.png');
       case ProviderType.ollama:
@@ -258,24 +318,6 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Selected Models Section Header
-              Row(
-                children: [
-                  Icon(
-                    Icons.model_training,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'settings.selected_models'.tr(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
               const SizedBox(height: 12),
 
               // Selected Models List
@@ -294,22 +336,13 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'settings.no_models_selected'.tr(),
+                              'providers.no_models_added'.tr(),
                               style: TextStyle(
                                 color: Theme.of(context).disabledColor,
                                 fontSize: 16,
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              'settings.tap_fab_to_add'.tr(),
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).disabledColor.withValues(alpha: 0.7),
-                                fontSize: 14,
-                              ),
-                            ),
                           ],
                         ),
                       )
@@ -342,8 +375,11 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     );
   }
 
+  Widget _buildABCBTab() {
+    return Container();
+  }
+
   void _showFetchModelsDrawer() {
-    // Bắt đầu fetch ngay khi ấn FAB để kết quả hiển thị tức thời trong drawer
     _viewModel.fetchModels(context);
 
     showModalBottomSheet(
@@ -357,10 +393,23 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     );
   }
 
+  void _showAddModelDrawer() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => AddModelDrawer(
+        viewModel: _viewModel,
+        onShowCapabilities: _showModelCapabilities,
+      ),
+    );
+  }
+
   void _updateNameForType(ProviderType type) {
     if (_viewModel.nameController.text == 'Google' ||
         _viewModel.nameController.text == 'OpenAI' ||
-        _viewModel.nameController.text == 'Anthropic') {
+        _viewModel.nameController.text == 'Anthropic' ||
+        _viewModel.nameController.text == 'Ollama') {
       switch (type) {
         case ProviderType.google:
           _viewModel.nameController.text = 'Google';
@@ -387,19 +436,92 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${'settings.inputs'.tr()}: ${model.input.map((e) => e.name).join(", ")}',
+            Row(
+              children: model.input
+                  .map(
+                    (t) => t == ModelIOType.text
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.text_fields),
+                              Text(
+                                'common.text'.tr(),
+                                style: TextStyle(color: Colors.orange),
+                              ),
+                            ],
+                          )
+                        : t == ModelIOType.image
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.image_outlined),
+                              Text(
+                                'common.image'.tr(),
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          )
+                        : t == ModelIOType.audio
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.headset_outlined),
+                              Text(
+                                'common.audio'.tr(),
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          )
+                        : Icon(Icons.movie_outlined),
+                  )
+                  .toList(),
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${'settings.outputs'.tr()}: ${model.output.map((e) => e.name).join(", ")}',
+            Row(
+              children: model.output
+                  .map(
+                    (t) => t == ModelIOType.text
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.text_fields),
+                              Text(
+                                'common.text'.tr(),
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          )
+                        : t == ModelIOType.image
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.image),
+                              Text(
+                                'common.image'.tr(),
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          )
+                        : t == ModelIOType.audio
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.music_note),
+                              Text(
+                                'common.audio'.tr(),
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          )
+                        : Icon(Icons.movie),
+                  )
+                  .toList(),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('settings.close'.tr()),
+            child: Text('common.close'.tr()),
           ),
         ],
       ),

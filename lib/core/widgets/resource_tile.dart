@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ResourceTile extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final IconData leadingIcon;
+  final Widget leadingIcon;
   final Color? leadingColor;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
@@ -45,10 +45,7 @@ class ResourceTile extends StatelessWidget {
             ),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            leadingIcon,
-            color: leadingColor ?? Theme.of(context).primaryColor,
-          ),
+          child: leadingIcon,
         ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: subtitle != null

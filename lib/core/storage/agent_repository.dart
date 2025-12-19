@@ -60,6 +60,10 @@ class AgentRepository extends BaseRepository<AIAgent> {
     }
   }
 
+  Future<void> updateAgent(AIAgent agent) async {
+    await updateItem(agent);
+  }
+
   Future<void> deleteAgent(String id) async {
     await deleteItem(id);
 

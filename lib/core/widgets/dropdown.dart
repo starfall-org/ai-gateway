@@ -222,6 +222,8 @@ class _DropdownRow extends StatelessWidget {
 
   // Simple luminance-based contrast helper
   static Color _bestOnColor(Color bg) {
-    return bg.computeLuminance() < 0.5 ? Colors.white : Colors.black;
+    return bg.computeLuminance() < 0.5
+        ? const Color.fromARGB(255, 177, 176, 176)
+        : const Color.fromARGB(255, 90, 89, 89);
   }
 }

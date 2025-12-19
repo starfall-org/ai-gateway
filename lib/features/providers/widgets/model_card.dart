@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/ai_model.dart';
+import '../../../core/utils.dart';
 
 class ModelCard extends StatelessWidget {
   final AIModel model;
@@ -22,11 +23,7 @@ class ModelCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(
-                  _getModelIcon(),
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  size: 20,
-                ),
+                child: _getModelIcon(),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -48,7 +45,7 @@ class ModelCard extends StatelessWidget {
                         _buildTag(context, _getModelTypeLabel(), Colors.purple),
                         ..._buildIOTags(context),
                         if (model.parameters != null)
-                          _buildTag(
+                          _buildTextTag(
                             context,
                             _formatParameters(model.parameters!),
                             Colors.orange,
@@ -66,70 +63,67 @@ class ModelCard extends StatelessWidget {
     );
   }
 
-  IconData _getModelIcon() {
-    switch (model.type) {
-      case ModelType.textGeneration:
-        return Icons.smart_toy;
-      case ModelType.imageGeneration:
-        return Icons.image;
-      case ModelType.audioGeneration:
-        return Icons.audiotrack;
-      case ModelType.videoGeneration:
-        return Icons.video_library;
-      case ModelType.embedding:
-        return Icons.hub;
-      case ModelType.rerank:
-        return Icons.sort;
-    }
+  Widget _getModelIcon() {
+    return buildBrandLogo(model.name, model.name);
   }
 
-  String _getModelTypeLabel() {
+  Widget _getModelTypeLabel() {
     switch (model.type) {
       case ModelType.textGeneration:
-        return 'Text';
+        return Row(children: [Icon(Icons.text_snippet), Text('Text')]);
       case ModelType.imageGeneration:
-        return 'Image';
+        return Row(children: [Icon(Icons.image_search), Text('Image')]);
       case ModelType.audioGeneration:
-        return 'Audio';
+        return Row(children: [Icon(Icons.music_video), Text('Audio')]);
       case ModelType.videoGeneration:
-        return 'Video';
+        return Row(children: [Icon(Icons.local_movies), Text('Video')]);
       case ModelType.embedding:
-        return 'Embed';
+        return Row(children: [Icon(Icons.compress_rounded), Text('Embedding')]);
       case ModelType.rerank:
-        return 'Rerank';
+        return Row(children: [Icon(Icons.leaderboard), Text('Rerank')]);
     }
   }
 
   List<Widget> _buildIOTags(BuildContext context) {
     final List<Widget> tags = [];
- 
+
     // Input tags
     if (model.input.isNotEmpty) {
-      final inputStr = model.input.map((e) => _getIOIcon(e)).join('');
-      tags.add(_buildTag(context, 'In: $inputStr', Colors.blue));
+      final inputList = model.input.map((e) => _getIOIcon(e)).toList();
+      tags.add(
+        _buildTag(
+          context,
+          Row(mainAxisSize: MainAxisSize.min, children: inputList),
+          Colors.orange,
+        ),
+      );
     }
- 
+
     // Output tags
     if (model.output.isNotEmpty) {
-      final outputStr = model.output.map((e) => _getIOIcon(e)).join('');
-      tags.add(_buildTag(context, 'Out: $outputStr', Colors.green));
+      final outputList = model.output.map((e) => _getIOIcon(e)).toList();
+      tags.add(
+        _buildTag(
+          context,
+          Row(mainAxisSize: MainAxisSize.min, children: outputList),
+          Colors.green,
+        ),
+      );
     }
- 
+
     return tags;
   }
 
-  String _getIOIcon(ModelIOType type) {
+  Icon _getIOIcon(ModelIOType type) {
     switch (type) {
       case ModelIOType.text:
-        return '📝';
+        return Icon(Icons.text_fields);
       case ModelIOType.image:
-        return '🖼️';
+        return Icon(Icons.image_outlined);
       case ModelIOType.audio:
-        return '🔊';
+        return Icon(Icons.music_note);
       case ModelIOType.video:
-        return '🎬';
-      case ModelIOType.document:
-        return '📄';
+        return Icon(Icons.movie);
     }
   }
 
@@ -144,27 +138,25 @@ class ModelCard extends StatelessWidget {
     return params.toString();
   }
 
-  Widget _buildTag(BuildContext context, String label, Color color) {
+  Widget _buildTag(BuildContext context, Widget label, Color color) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark
+    final boxColor = isDark
         ? Color.lerp(color, Colors.white, 0.7)!
         : Color.lerp(color, Colors.black, 0.5)!;
- 
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+        color: boxColor.withValues(alpha: isDark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withValues(alpha: isDark ? 0.4 : 0.3)),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          color: textColor,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      color: color,
+      child: label,
     );
+  }
+
+  Widget _buildTextTag(BuildContext context, String label, Color color) {
+    return _buildTag(context, Text(label), color);
   }
 }

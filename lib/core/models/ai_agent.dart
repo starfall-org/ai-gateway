@@ -4,6 +4,7 @@ class AIAgent {
   final String id;
   final String name;
   final String systemPrompt;
+  final bool enableStream;
   final double? topP;
   final double? topK;
   final double? temperature;
@@ -21,6 +22,7 @@ class AIAgent {
     required this.id,
     required this.name,
     required this.systemPrompt,
+    this.enableStream = true,
     this.topP,
     this.topK,
     this.temperature,
@@ -36,6 +38,7 @@ class AIAgent {
       'id': id,
       'name': name,
       'systemPrompt': systemPrompt,
+      'enableStream': enableStream,
       'topP': topP,
       'topK': topK,
       'temperature': temperature,
@@ -53,6 +56,7 @@ class AIAgent {
       id: json['id'] as String,
       name: json['name'] as String,
       systemPrompt: json['systemPrompt'] as String,
+      enableStream: json['enableStream'] as bool,
       topP: json['topP'] as double?,
       topK: json['topK'] as double?,
       temperature: json['temperature'] as double?,

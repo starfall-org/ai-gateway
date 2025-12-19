@@ -166,7 +166,8 @@ class Provider {
   final String baseUrl;
   final OpenAIRoutes openAIRoutes;
   final bool vertexAI;
-  final bool azureFoundry;
+  final bool azureAI;
+  final bool responsesApi;
   final VertexAIConfig? vertexAIConfig;
   final AzureConfig? azureConfig;
   final Map<String, String> headers;
@@ -180,7 +181,8 @@ class Provider {
     String? baseUrl,
     this.openAIRoutes = const OpenAIRoutes(),
     this.vertexAI = false,
-    this.azureFoundry = false,
+    this.azureAI = false,
+    this.responsesApi = false,
     this.vertexAIConfig,
     this.azureConfig,
     this.headers = const {},
@@ -224,7 +226,8 @@ class Provider {
       'headers': headers,
       'openAIRoutes': openAIRoutes.toJson(),
       'vertexAI': vertexAI,
-      'azureFoundry': azureFoundry,
+      'azureAI': azureAI,
+      'responsesApi': responsesApi,
       if (vertexAIConfig != null) 'vertexAIConfig': vertexAIConfig!.toJson(),
       if (azureConfig != null) 'azureConfig': azureConfig!.toJson(),
       'models': models.map((m) => m.toJson()).toList(),
@@ -259,8 +262,9 @@ class Provider {
           ? OpenAIRoutes.fromJson(json['openAIRoutes'])
           : const OpenAIRoutes(),
       vertexAI: json['vertexAI'] != null || json['vertexAI'] != false,
-      azureFoundry:
-          json['azureFoundry'] != null || json['azureFoundry'] != false,
+      azureAI: json['azureAI'] != null || json['azureAI'] != false,
+      responsesApi:
+          json['responsesApi'] != null || json['responsesApi'] != false,
       vertexAIConfig: json['vertexAIConfig'] != null
           ? VertexAIConfig.fromJson(json['vertexAIConfig'])
           : null,

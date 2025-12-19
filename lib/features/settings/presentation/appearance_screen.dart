@@ -96,7 +96,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     final isDark = _settings.themeMode == ThemeMode.dark;
     return Scaffold(
       appBar: AppBar(
-        title: Text('settings.appearance'.tr()),
+        title: Text('settings.appearance.title'.tr()),
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         iconTheme: IconThemeData(
@@ -111,7 +111,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           // Theme selection: system, light, dark, custom
-          SettingsSectionHeader('settings.theme_mode'.tr()),
+          SettingsSectionHeader('settings.appearance.theme_mode'.tr()),
           const SizedBox(height: 12),
           _buildThemeSegmented(),
 
@@ -135,13 +135,13 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     blurRadius: 20,
                     spreadRadius: -4,
                     offset: const Offset(0, 12),
                   ),
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     blurRadius: 0,
                     spreadRadius: 1,
                     offset: const Offset(0, 1),
@@ -152,7 +152,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                 backgroundColor: Colors.transparent,
                 child: SwitchListTile(
                   title: Text(
-                    'settings.pure_dark'.tr(),
+                    'settings.appearance.pure_dark'.tr(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -168,15 +168,15 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                     ),
                   ),
                   subtitle: Text(
-                    'settings.pure_dark_desc'.tr(),
+                    'settings.appearance.pure_dark_desc'.tr(),
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 12,
                     ),
                   ),
                   value: _settings.pureDark,
                   activeThumbColor: Colors.white,
-                  activeTrackColor: Colors.white.withOpacity(0.3),
+                  activeTrackColor: Colors.white.withValues(alpha: 0.3),
                   onChanged: (val) => _togglePureDark(val),
                 ),
               ),
@@ -186,19 +186,17 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           const SizedBox(height: 24),
 
           // Material You toggle
-          SettingsSectionHeader('settings.material_you'.tr()),
+          SettingsSectionHeader('settings.appearance.material_you'.tr()),
           DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
               final bool supported =
                   (lightDynamic != null || darkDynamic != null);
               return SettingsCard(
                 child: SwitchListTile(
-                  title: Text('settings.material_you'.tr()),
-                  subtitle: Text(
-                    supported
-                        ? 'settings.material_you_desc'.tr()
-                        : 'settings.material_you_unsupported'.tr(),
-                  ),
+                  title: Text('settings.appearance.material_you'.tr()),
+                  subtitle: supported
+                      ? Text('settings.appearance.material_you_desc'.tr())
+                      : null,
                   value: _settings.materialYou,
                   onChanged: supported
                       ? (val) => _toggleMaterialYou(val)
@@ -211,20 +209,11 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           // Secondary Background Mode (only when Material You is OFF)
           if (!_settings.materialYou) ...[
             const SizedBox(height: 12),
-            SettingsSectionHeader('settings.secondary_background'.tr()),
+            SettingsSectionHeader(
+              'settings.appearance.secondary_background'.tr(),
+            ),
             const SizedBox(height: 12),
             _buildSecondaryBgSegmented(),
-            Padding(
-              padding: const EdgeInsets.only(left: 4, top: 12),
-              child: Text(
-                'settings.secondary_bg_border_rule'.tr(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurfaceVariant.withOpacity(0.7),
-                ),
-              ),
-            ),
           ],
 
           const SizedBox(height: 24),
@@ -232,20 +221,20 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           // Color customization is only visible in Custom mode and disabled when Material You is enabled
           if (!_settings.materialYou &&
               _settings.selection == ThemeSelection.custom) ...[
-            SettingsSectionHeader('settings.primary_color'.tr()),
+            SettingsSectionHeader('settings.appearance.primary_color'.tr()),
             const SizedBox(height: 8),
             _buildColorSelector(
               current: Color(_settings.primaryColor),
-              onSelect: (c) => _updatePrimary(c.value),
+              onSelect: (c) => _updatePrimary(c.toARGB32()),
             ),
 
             const SizedBox(height: 16),
 
-            SettingsSectionHeader('settings.secondary_color'.tr()),
+            SettingsSectionHeader('settings.appearance.secondary_color'.tr()),
             const SizedBox(height: 8),
             _buildColorSelector(
               current: Color(_settings.secondaryColor),
-              onSelect: (c) => _updateSecondary(c.value),
+              onSelect: (c) => _updateSecondary(c.toARGB32()),
             ),
             const SizedBox(height: 24),
           ],
@@ -264,22 +253,22 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           ButtonSegment(
             value: ThemeSelection.system,
             label: const Icon(Icons.brightness_auto_outlined),
-            tooltip: 'settings.system_default'.tr(),
+            tooltip: 'settings.appearance.system_default'.tr(),
           ),
           ButtonSegment(
             value: ThemeSelection.light,
             label: const Icon(Icons.light_mode_outlined),
-            tooltip: 'settings.light'.tr(),
+            tooltip: 'settings.appearance.light'.tr(),
           ),
           ButtonSegment(
             value: ThemeSelection.dark,
             label: const Icon(Icons.dark_mode_outlined),
-            tooltip: 'settings.dark'.tr(),
+            tooltip: 'settings.appearance.dark'.tr(),
           ),
           ButtonSegment(
             value: ThemeSelection.custom,
             label: const Icon(Icons.palette_outlined),
-            tooltip: 'settings.custom'.tr(),
+            tooltip: 'settings.appearance.custom'.tr(),
           ),
         ],
         selected: {_settings.selection},
@@ -299,17 +288,17 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           ButtonSegment(
             value: SecondaryBackgroundMode.on,
             label: const Icon(Icons.layers_outlined),
-            tooltip: 'settings.secondary_bg_on'.tr(),
+            tooltip: 'settings.appearance.secondary_bg_on'.tr(),
           ),
           ButtonSegment(
             value: SecondaryBackgroundMode.auto,
             label: const Icon(Icons.auto_awesome_outlined),
-            tooltip: 'settings.secondary_bg_auto'.tr(),
+            tooltip: 'settings.appearance.secondary_bg_auto'.tr(),
           ),
           ButtonSegment(
             value: SecondaryBackgroundMode.off,
             label: const Icon(Icons.layers_clear_outlined),
-            tooltip: 'settings.secondary_bg_off'.tr(),
+            tooltip: 'settings.appearance.secondary_bg_off'.tr(),
           ),
         ],
         selected: {_settings.secondaryBackgroundMode},
@@ -333,7 +322,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
-              'settings.color_presets'.tr(),
+              'settings.appearance.color_presets'.tr(),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
@@ -341,7 +330,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
             spacing: 16,
             runSpacing: 16,
             children: _presets.map((color) {
-              final isSelected = current.value == color.value;
+              final isSelected = current.toARGB32() == color.toARGB32();
               return GestureDetector(
                 onTap: () => onSelect(color),
                 child: Container(
@@ -353,12 +342,12 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                     boxShadow: [
                       if (isSelected)
                         BoxShadow(
-                          color: color.withOpacity(0.4),
+                          color: color.withValues(alpha: 0.4),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -385,7 +374,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: OutlinedButton.icon(
               icon: const Icon(Icons.color_lens_outlined),
-              label: Text('settings.custom_color'.tr()),
+              label: Text('settings.appearance.custom_color'.tr()),
               onPressed: () async {
                 final picked = await _pickColor(context, initial: current);
                 if (picked != null) {
@@ -404,15 +393,15 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     required Color initial,
   }) async {
     Color temp = initial;
-    int r = temp.red;
-    int g = temp.green;
-    int b = temp.blue;
+    int r = temp.r.round();
+    int g = temp.g.round();
+    int b = temp.b.round();
 
     return showDialog<Color>(
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text('settings.custom_color'.tr()),
+          title: Text('settings.appearance.custom_color'.tr()),
           content: StatefulBuilder(
             builder: (context, setState) {
               temp = Color.fromARGB(255, r, g, b);
@@ -439,12 +428,12 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: Text('settings.close'.tr()),
+              child: Text('common.close'.tr()),
             ),
             ElevatedButton(
               onPressed: () =>
                   Navigator.of(ctx).pop(Color.fromARGB(255, r, g, b)),
-              child: Text('settings.update'.tr()),
+              child: Text('settings.update.title'.tr()),
             ),
           ],
         );
@@ -480,7 +469,6 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SettingsSectionHeader('settings.preview'.tr()),
         const SizedBox(height: 12),
         SettingsCard(
           backgroundColor: surface,
@@ -503,14 +491,14 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: Text(
-                      'Hello! This is a preview of how messages look.',
+                      'settings.appearance.preview_subtitle'.tr(),
                       style: TextStyle(color: onSurface, fontSize: 13),
                     ),
                   ),
@@ -530,7 +518,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       ),
                     ),
                     child: Text(
-                      'Looks amazing and very modern!',
+                      'settings.appearance.preview_button'.tr(),
                       style: TextStyle(
                         color: primary.computeLuminance() < 0.5
                             ? Colors.white

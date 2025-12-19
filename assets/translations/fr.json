@@ -1,5 +1,5 @@
 {
-  "app_title": "LMHub",
+  "app_title": "AI Gateway",
   "chat": {
     "title": "Chat et Support",
     "start": "Commencez une conversation !",
@@ -19,13 +19,22 @@
     "no_history": "Aucun historique"
   },
   "input": {
-    "ask": "Demander à LMHub",
+    "ask": "Demander {}",
     "attach_files": "Joindre des fichiers",
     "pick_images": "Choisir des images/fichiers",
     "placeholder": "Tapez un message...",
     "mic_tts": "Micro/TTS",
     "send": "Envoyer",
     "menu": "Menu"
+  },
+  "menu": {
+    "title": "Menu",
+    "settings": "Paramètres",
+    "settings_desc": "Gérer les paramètres de l'application",
+    "about": "À propos",
+    "about_desc": "Informations sur l'application",
+    "help": "Aide",
+    "help_desc": "Obtenir de l'aide et des conseils"
   },
   "attachment_options": {
     "title": "Options de pièce jointe",
@@ -57,94 +66,118 @@
   },
   "settings": {
     "title": "Paramètres",
-    "providers": "Fournisseurs",
-    "appearance": "Apparence",
-    "preferences": "Préférences",
-    "notifications": "Notifications",
-    "tts": "TTS",
-    "mcp": "MCP",
-    "info": "Infos",
-    "update": "Mise à jour",
-    "no_providers": "Aucun fournisseur configuré",
-    "provider_deleted": "{} supprimé",
+    "general_section": "Général",
+    "features_section": "Fonctionnalités en ligne",
+    "about_section": "À propos",
+    "notifications": {
+      "title": "Notifications"
+    },
+    "info": {
+      "title": "Infos"
+    },
+    "update": {
+      "title": "Mise à jour"
+    },
+    "appearance": {
+      "title": "Apparence",
+      "theme_mode": "Mode thème",
+      "brand_color": "Couleur de marque",
+      "system_default": "Défaut du système",
+      "light": "Clair",
+      "dark": "Sombre",
+      "custom": "Personnalisé",
+      "primary_color": "Couleur primaire",
+      "secondary_color": "Couleur secondaire",
+      "color_presets": "Préréglages de couleurs",
+      "custom_color": "Couleur personnalisée",
+      "pure_dark": "Mode SuperDark",
+      "pure_dark_desc": "Utiliser le noir profond pour les écrans AMOLED",
+      "material_you": "Couleurs dynamiques",
+      "material_you_desc": "Utiliser les couleurs dynamiques du système",
+      "primary_background": "Couleur d'arrière-plan primaire",
+      "secondary_background": "Couleur d'arrière-plan secondaire",
+      "secondary_bg_mode": "Mode d'arrière-plan secondaire",
+      "secondary_bg_on": "Double",
+      "secondary_bg_off": "Simple",
+      "secondary_bg_auto": "Automatique",
+      "preview_title": "Titre d'aperçu",
+      "preview_subtitle": "Le sous-titre va ici",
+      "preview_button": "Bouton principal"
+    },
+    "preferences": {
+      "auto_detect": "Automatique",
+      "select_language": "Langues",
+      "about": "À propos",
+      "current_language": "Langue actuelle",
+      "language_changed": "La langue a été changée",
+      "language_change_error": "Échec du changement de langue",
+      "auto_detect_enabled": "Automatique a été activé",
+      "auto_detect_error": "Échec de l'activation automatique",
+      "chat_settings": "Paramètres de discussion",
+      "persist_chat_selection": "Conserver les sélections",
+      "prefer_agent_settings": "Préférer les paramètres de l'agent"
+    }
+  },
+  "providers": {
+    "title": "Fournisseurs",
+    "no_providers": "Aucun fournisseur trouvé",
+    "custom_routes": "Routes personnalisées",
+    "provider_deleted": "Fournisseur {} supprimé",
     "add_provider": "Ajouter un fournisseur",
     "edit_provider": "Modifier le fournisseur",
-    "edit_tab": "Modifier",
-    "models_tab": "Modèles",
-    "provider_type": "Type de fournisseur",
+    "provider_type": "Compatibilité",
     "name": "Nom",
     "api_key": "Clé API",
-    "base_url": "URL de base (Optionnel)",
-    "custom_headers": "En-têtes personnalisés",
-    "header_key": "Clé",
-    "header_value": "Valeur",
-    "available_models": "Modèles disponibles",
-    "theme_mode": "Mode thème",
-    "brand_color": "Couleur de marque",
-    "system_default": "Défaut du système",
-    "light": "Clair",
-    "dark": "Sombre",
-    "preview_title": "Titre d'aperçu",
-    "preview_subtitle": "Le sous-titre va ici",
-    "preview_button": "Bouton principal",
-    "inputs": "Entrées",
-    "outputs": "Sorties",
+    "base_url": "URL de base",
+    "custom_headers": {
+      "title": "En-têtes",
+      "header_key": "Clé",
+      "header_value": "Valeur"
+    },
+    "chat_completions_route": "Chemin Chat Completions",
+    "models_route_or_url": "Chemin Models ou URL",
+    "available_models": "Modèles",
     "capabilities": "Capacités",
-    "close": "Fermer",
-    "enter_api_key": "Veuillez d'abord entrer la clé API",
-    "fill_required": "Veuillez remplir le nom et la clé API",
-    "fetch_models": "Récupérer les modèles",
-    "add_model": "Ajouter un modèle",
-    "models_count": "{count} modèles",
-    "found_models": "{} modèles trouvés",
+    "responses_api": "Responses API",
+    "inputs": "Types d'entrée",
+    "outputs": "Types de sortie",
+    "connection_error": "Erreur de connexion",
+    "timeout_error": "Délai d'attente dépassé",
+    "invalid_format": "Format de réponse invalide de l'API",
+    "no_models_added": "Aucun modèle ajouté encore",
+    "add_all": "Tous",
+    "no_models_found": "Aucun modèle trouvé",
     "fetch_error": "Échec de la récupération des modèles",
-    "auth_error": "Échec de l'authentification. Veuillez vérifier votre clé API.",
-    "connection_error": "Erreur de connexion. Veuillez vérifier l'URL et le réseau.",
-    "timeout_error": "Délai d'attente dépassé. Veuillez réessayer.",
-    "invalid_format": "Format de réponse invalide de l'API.",
-    "tap_to_fetch_models": "Appuyez pour récupérer les modèles",
-    "selected_models": "Modèles sélectionnés",
-    "no_models_selected": "Aucun modèle sélectionné",
-    "tap_fab_to_add": "Appuyez sur le bouton flottant pour ajouter des modèles",
-    "no_models_fetched": "Aucun modèle récupéré",
-    "models_available": "modèles disponibles",
-    "fetch": "Récupérer",
-    "manage_models": "Gérer les modèles"
+    "auth_error": "Échec de l'authentification"
   },
   "agents": {
-    "add_new_agent": "Ajouter un nouvel agent",
+    "title": "Agents",
+    "add_new_agent": "Ajouter un agent",
     "name": "Nom de l'agent",
     "system_prompt": "Invite système",
     "parameters": "Paramètres",
-    "top_p": "Top P",
-    "top_k": "Top K",
+    "top_p": "P",
+    "top_k": "K",
     "temperature": "Température",
     "context_window": "Fenêtre de contexte",
     "conversation_length": "Longueur de conversation",
     "max_tokens": "Jetons max",
-    "active_mcp_servers": "Serveurs MCP actifs",
-    "persist_section_title": "Conserver la sélection de discussion",
-    "persist_follow_global": "Suivre les paramètres globaux",
-    "persist_force_on": "Forcer activation pour cet agent",
-    "persist_force_off": "Forcer désactivation pour cet agent",
-    "save": "Enregistrer",
-    "cancel": "Annuler"
+    "mcp_servers": "Serveurs MCP",
+    "persist_selection": "Conserver la sélection",
+    "persist_on": "ACTIVÉ",
+    "persist_off": "DÉSACTIVÉ",
+    "persist_disable": "Désactiver",
+    "edit_agent": "Modifier l'agent",
+    "agent_details": "Détails de l'agent",
+    "agent_deleted": "Agent {} supprimé"
   },
-  "preferences": {
-    "auto_detect": "Détection automatique",
-    "auto_detect_language": "Détection automatique de la langue",
-    "select_language": "Sélectionner la langue",
-    "about": "À propos",
-    "current_language": "Langue actuelle",
-    "language_changed": "La langue a été changée. L'application redémarrera.",
-    "language_change_error": "Échec du changement de langue. Veuillez réessayer.",
-    "auto_detect_enabled": "La détection automatique de la langue a été activée. L'application redémarrera.",
-    "auto_detect_error": "Échec de la modification de la détection automatique. Veuillez réessayer.",
-    "chat_settings": "Paramètres de discussion",
-    "persist_chat_selection": "Conserver le fournisseur/modèle et les outils par conversation",
-    "prefer_agent_settings": "Préférer les paramètres de l'agent aux paramètres globaux"
+  "tts": {
+    "title": "Profils TTS"
   },
- "message": {
+  "mcp": {
+    "title": "Serveurs MCP"
+  },
+  "message": {
     "copy": "Copier",
     "edit": "Modifier",
     "delete": "Supprimer",
@@ -156,9 +189,15 @@
     "message": "Message",
     "attachments": "Pièces jointes",
     "add": "Ajouter",
-    "save_and_resend": "Enregistrer et renvoyer"
+    "resend": "Renvoyer"
   },
   "common": {
-    "more": "Plus"
+    "more": "Plus",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   }
 }

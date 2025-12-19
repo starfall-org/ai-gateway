@@ -119,36 +119,103 @@ extension ChatViewModelActions on ChatViewModel {
       allowedToolNames = currentSession!.enabledToolNames;
     }
 
-    final reply = await ChatService.generateReply(
-      userText: modelInput,
-      history: currentSession!.messages,
-      agent: selectedAgent ??
-          AIAgent(
-            id: const Uuid().v4(),
-            name: 'Default Agent',
-            systemPrompt: '',
-          ),
-      providerName: providerName,
-      modelName: modelName,
-      allowedToolNames: allowedToolNames,
-    );
+    final doStream = selectedAgent?.enableStream ?? true;
+    if (doStream) {
+      final stream = ChatService.generateStream(
+        userText: modelInput,
+        history: currentSession!.messages
+            .take(currentSession!.messages.length - 1)
+            .toList(),
+        agent: selectedAgent ??
+            AIAgent(
+              id: const Uuid().v4(),
+              name: 'Default Agent',
+              systemPrompt: '',
+            ),
+        providerName: providerName,
+        modelName: modelName,
+        allowedToolNames: allowedToolNames,
+      );
 
-    final modelMessage = ChatMessage(
-      id: const Uuid().v4(),
-      role: ChatRole.model,
-      content: reply,
-      timestamp: DateTime.now(),
-    );
+      final modelId = const Uuid().v4();
+      var acc = '';
+      final placeholder = ChatMessage(
+        id: modelId,
+        role: ChatRole.model,
+        content: '',
+        timestamp: DateTime.now(),
+      );
 
-    currentSession = currentSession!.copyWith(
-      messages: [...currentSession!.messages, modelMessage],
-      updatedAt: DateTime.now(),
-    );
-    isGenerating = false;
-    notify();
+      currentSession = currentSession!.copyWith(
+        messages: [...currentSession!.messages, placeholder],
+        updatedAt: DateTime.now(),
+      );
+      notify();
 
-    await chatRepository!.saveConversation(currentSession!);
-    scrollToBottom();
+      try {
+        await for (final chunk in stream) {
+          if (chunk.isEmpty) continue;
+          acc += chunk;
+          final msgs = List<ChatMessage>.from(currentSession!.messages);
+          final idx = msgs.indexWhere((m) => m.id == modelId);
+          if (idx != -1) {
+            final old = msgs[idx];
+            msgs[idx] = ChatMessage(
+              id: old.id,
+              role: old.role,
+              content: acc,
+              timestamp: old.timestamp,
+              attachments: old.attachments,
+              reasoningContent: old.reasoningContent,
+              aiMedia: old.aiMedia,
+            );
+            currentSession = currentSession!.copyWith(
+              messages: msgs,
+              updatedAt: DateTime.now(),
+            );
+            notify();
+            scrollToBottom();
+          }
+        }
+      } finally {
+        isGenerating = false;
+        notify();
+        await chatRepository!.saveConversation(currentSession!);
+      }
+    } else {
+      final reply = await ChatService.generateReply(
+        userText: modelInput,
+        history: currentSession!.messages
+            .take(currentSession!.messages.length - 1)
+            .toList(),
+        agent: selectedAgent ??
+            AIAgent(
+              id: const Uuid().v4(),
+              name: 'Default Agent',
+              systemPrompt: '',
+            ),
+        providerName: providerName,
+        modelName: modelName,
+        allowedToolNames: allowedToolNames,
+      );
+
+      final modelMessage = ChatMessage(
+        id: const Uuid().v4(),
+        role: ChatRole.model,
+        content: reply,
+        timestamp: DateTime.now(),
+      );
+
+      currentSession = currentSession!.copyWith(
+        messages: [...currentSession!.messages, modelMessage],
+        updatedAt: DateTime.now(),
+      );
+      isGenerating = false;
+      notify();
+
+      await chatRepository!.saveConversation(currentSession!);
+      scrollToBottom();
+    }
   }
 
   void scrollToBottom() {
@@ -307,38 +374,102 @@ extension ChatViewModelActions on ChatViewModel {
       allowedToolNames = currentSession!.enabledToolNames;
     }
 
-    final reply = await ChatService.generateReply(
-      userText: userText,
-      history: history,
-      agent: selectedAgent ??
-          AIAgent(
-            id: const Uuid().v4(),
-            name: 'Default Agent',
-            systemPrompt: '',
-          ),
-      providerName: providerName,
-      modelName: modelName,
-      allowedToolNames: allowedToolNames,
-    );
+    final doStream = selectedAgent?.enableStream ?? true;
+    if (doStream) {
+      final stream = ChatService.generateStream(
+        userText: userText,
+        history: history,
+        agent: selectedAgent ??
+            AIAgent(
+              id: const Uuid().v4(),
+              name: 'Default Agent',
+              systemPrompt: '',
+            ),
+        providerName: providerName,
+        modelName: modelName,
+        allowedToolNames: allowedToolNames,
+      );
 
-    final modelMessage = ChatMessage(
-      id: const Uuid().v4(),
-      role: ChatRole.model,
-      content: reply,
-      timestamp: DateTime.now(),
-    );
+      final modelId = const Uuid().v4();
+      var acc = '';
+      final placeholder = ChatMessage(
+        id: modelId,
+        role: ChatRole.model,
+        content: '',
+        timestamp: DateTime.now(),
+      );
 
-    final newMessages = [...history, msgs[lastUserIndex], modelMessage];
+      final baseMessages = [...history, msgs[lastUserIndex]];
+      currentSession = currentSession!.copyWith(
+        messages: [...baseMessages, placeholder],
+        updatedAt: DateTime.now(),
+      );
+      notify();
 
-    currentSession = currentSession!.copyWith(
-      messages: newMessages,
-      updatedAt: DateTime.now(),
-    );
-    isGenerating = false;
-    notify();
+      try {
+        await for (final chunk in stream) {
+          if (chunk.isEmpty) continue;
+          acc += chunk;
+          final msgs2 = List<ChatMessage>.from(currentSession!.messages);
+          final idx = msgs2.indexWhere((m) => m.id == modelId);
+          if (idx != -1) {
+            final old = msgs2[idx];
+            msgs2[idx] = ChatMessage(
+              id: old.id,
+              role: old.role,
+              content: acc,
+              timestamp: old.timestamp,
+              attachments: old.attachments,
+              reasoningContent: old.reasoningContent,
+              aiMedia: old.aiMedia,
+            );
+            currentSession = currentSession!.copyWith(
+              messages: msgs2,
+              updatedAt: DateTime.now(),
+            );
+            notify();
+            scrollToBottom();
+          }
+        }
+      } finally {
+        isGenerating = false;
+        notify();
+        await chatRepository!.saveConversation(currentSession!);
+      }
+    } else {
+      final reply = await ChatService.generateReply(
+        userText: userText,
+        history: history,
+        agent: selectedAgent ??
+            AIAgent(
+              id: const Uuid().v4(),
+              name: 'Default Agent',
+              systemPrompt: '',
+            ),
+        providerName: providerName,
+        modelName: modelName,
+        allowedToolNames: allowedToolNames,
+      );
 
-    await chatRepository!.saveConversation(currentSession!);
-    scrollToBottom();
+      final modelMessage = ChatMessage(
+        id: const Uuid().v4(),
+        role: ChatRole.model,
+        content: reply,
+        timestamp: DateTime.now(),
+      );
+
+      final newMessages = [...history, msgs[lastUserIndex], modelMessage];
+
+      currentSession = currentSession!.copyWith(
+        messages: newMessages,
+        updatedAt: DateTime.now(),
+      );
+      isGenerating = false;
+      notify();
+
+      await chatRepository!.saveConversation(currentSession!);
+      scrollToBottom();
+    }
   }
 
   Future<void> speakLastModelMessage() async {
@@ -409,6 +540,7 @@ extension ChatViewModelActions on ChatViewModel {
       initialAttachments: message.attachments,
     );
     if (result == null) return;
+    if (!context.mounted) return;
     await applyMessageEdit(
       message,
       result.content,
@@ -449,7 +581,7 @@ extension ChatViewModelActions on ChatViewModel {
     notify();
     await chatRepository!.saveConversation(currentSession!);
 
-    if (resend && context != null) {
+    if (resend && context != null && context.mounted) {
       await regenerateLast(context);
     }
   }
