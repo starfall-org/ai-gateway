@@ -16,43 +16,43 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  // Initialize Firebase for Analytics and FCM
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize Hive
   await Hive.initFlutter();
 
-  // Initialize ThemeRepository
   await ThemeRepository.init();
 
-  // Initialize LanguageRepository
   await LanguageRepository.init();
 
-  // Initialize AppPreferencesRepository (global preferences)
   await AppPreferencesRepository.init();
 
-  // On Android, prevent content from drawing under status/navigation bars
   await SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.manual,
+    SystemUiMode.edgeToEdge,
     overlays: SystemUiOverlay.values,
   );
 
-  // Lấy preferences ngôn ngữ đã lưu với error handling
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   Locale selectedLocale;
   try {
     final languageRepo = LanguageRepository.instance;
     final preferences = languageRepo.currentPreferences;
 
     if (preferences.autoDetectLanguage || preferences.languageCode == 'auto') {
-      // Tự động phát hiện ngôn ngữ thiết bị
       final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
       selectedLocale = _getSupportedLocale(deviceLocale);
     } else {
-      // Sử dụng ngôn ngữ đã lưu với error handling
       selectedLocale = _getLocaleFromPreferences(preferences);
     }
   } catch (e) {
-    // Nếu có lỗi khi đọc preferences, fallback sang tiếng Anh
     debugPrint('Error loading language preferences: $e');
     selectedLocale = const Locale('en');
   }
@@ -80,12 +80,10 @@ Future<void> main() async {
 
 Locale _getSupportedLocale(Locale deviceLocale) {
   try {
-    // Validate device locale
     if (deviceLocale.languageCode.isEmpty) {
       return const Locale('en');
     }
 
-    // Danh sách các locale được hỗ trợ
     const supportedLocales = [
       Locale('en'),
       Locale('vi'),
@@ -96,7 +94,6 @@ Locale _getSupportedLocale(Locale deviceLocale) {
       Locale('de'),
     ];
 
-    // Kiểm tra xem locale của thiết bị có được hỗ trợ trực tiếp không
     for (final supportedLocale in supportedLocales) {
       if (supportedLocale.languageCode == deviceLocale.languageCode &&
           supportedLocale.countryCode == deviceLocale.countryCode) {
@@ -104,10 +101,8 @@ Locale _getSupportedLocale(Locale deviceLocale) {
       }
     }
 
-    // Kiểm tra xem ngôn ngữ có được hỗ trợ không (không quan tâm đến quốc gia)
     for (final supportedLocale in supportedLocales) {
       if (supportedLocale.languageCode == deviceLocale.languageCode) {
-        // Đối với tiếng Trung, ưu tiên giản thể nếu không có quốc gia cụ thể
         if (deviceLocale.languageCode == 'zh') {
           return const Locale('zh', 'CN');
         }
@@ -115,7 +110,6 @@ Locale _getSupportedLocale(Locale deviceLocale) {
       }
     }
 
-    // Fallback sang tiếng Anh
     return const Locale('en');
   } catch (e) {
     debugPrint('Error getting supported locale: $e');
@@ -123,21 +117,17 @@ Locale _getSupportedLocale(Locale deviceLocale) {
   }
 }
 
-// Hàm để lấy locale từ preferences với error handling
 Locale _getLocaleFromPreferences(LanguagePreferences preferences) {
   try {
-    // Validate language code
     if (preferences.languageCode.isEmpty) {
       return const Locale('en');
     }
 
-    // Check if the language is supported
     final supportedLanguages = ['en', 'vi', 'zh', 'ja', 'fr', 'de'];
     if (!supportedLanguages.contains(preferences.languageCode)) {
       return const Locale('en');
     }
 
-    // For Chinese, we need country code
     if (preferences.languageCode == 'zh') {
       if (preferences.countryCode != null &&
           (preferences.countryCode == 'CN' ||
@@ -148,7 +138,6 @@ Locale _getLocaleFromPreferences(LanguagePreferences preferences) {
       }
     }
 
-    // For other languages, country code is optional
     if (preferences.countryCode != null &&
         preferences.countryCode!.isNotEmpty) {
       return Locale(preferences.languageCode, preferences.countryCode);

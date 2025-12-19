@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'ai_model.dart';
 
 enum ProviderType {
-  google('Google'),
   openai("OpenAI"),
+  google('Google'),
   anthropic("Anthropic"),
   ollama("Ollama");
 
@@ -165,6 +165,8 @@ class Provider {
   final String logoUrl;
   final String baseUrl;
   final OpenAIRoutes openAIRoutes;
+  final bool vertexAI;
+  final bool azureFoundry;
   final VertexAIConfig? vertexAIConfig;
   final AzureConfig? azureConfig;
   final Map<String, String> headers;
@@ -177,6 +179,8 @@ class Provider {
     this.logoUrl = '',
     String? baseUrl,
     this.openAIRoutes = const OpenAIRoutes(),
+    this.vertexAI = false,
+    this.azureFoundry = false,
     this.vertexAIConfig,
     this.azureConfig,
     this.headers = const {},
@@ -219,6 +223,8 @@ class Provider {
       'baseUrl': baseUrl,
       'headers': headers,
       'openAIRoutes': openAIRoutes.toJson(),
+      'vertexAI': vertexAI,
+      'azureFoundry': azureFoundry,
       if (vertexAIConfig != null) 'vertexAIConfig': vertexAIConfig!.toJson(),
       if (azureConfig != null) 'azureConfig': azureConfig!.toJson(),
       'models': models.map((m) => m.toJson()).toList(),
@@ -252,6 +258,9 @@ class Provider {
       openAIRoutes: json['openAIRoutes'] != null
           ? OpenAIRoutes.fromJson(json['openAIRoutes'])
           : const OpenAIRoutes(),
+      vertexAI: json['vertexAI'] != null || json['vertexAI'] != false,
+      azureFoundry:
+          json['azureFoundry'] != null || json['azureFoundry'] != false,
       vertexAIConfig: json['vertexAIConfig'] != null
           ? VertexAIConfig.fromJson(json['vertexAIConfig'])
           : null,

@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai_model.dart';
 import '../../../core/models/provider.dart';
 import '../widgets/fetch_models_drawer.dart';
+import '../../../core/widgets/dropdown.dart';
 import '../widgets/model_card.dart';
 import 'add_provider_viewmodel.dart';
-import '../../../core/widgets/dropdown.dart';
 
 class AddProviderScreen extends StatefulWidget {
   final Provider? provider;
@@ -94,7 +94,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                 return DropdownOption<ProviderType>(
                   value: type,
                   label: type.name,
-                  icon: Icon(_iconForProviderType(type)),
+                  icon: _iconForProviderType(type),
                 );
               }).toList(),
               onChanged: (value) {
@@ -130,17 +130,18 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               ),
             ),
             const SizedBox(height: 8),
-            ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              title: Text('settings.custom_routes'.tr()),
-              subtitle: Text(_viewModel.selectedType.name),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: _buildCustomRoutesSection(),
-                ),
-              ],
-            ),
+            if (_viewModel.selectedType == ProviderType.openai)
+              ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                title: Text('settings.custom_routes'.tr()),
+                subtitle: Text(_viewModel.selectedType.name),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: _buildCustomRoutesSection(),
+                  ),
+                ],
+              ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -235,16 +236,16 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     );
   }
 
-  IconData _iconForProviderType(ProviderType type) {
+  Widget _iconForProviderType(ProviderType type) {
     switch (type) {
       case ProviderType.google:
-        return Icons.cloud;
+        return Image.asset('assets/brand_logos/aistudio.png');
       case ProviderType.openai:
-        return Icons.api;
+        return Image.asset('assets/brand_logos/openai.png');
       case ProviderType.anthropic:
-        return Icons.psychology_alt;
+        return Image.asset('assets/brand_logos/anthropic.png');
       case ProviderType.ollama:
-        return Icons.memory;
+        return Image.asset('assets/brand_logos/ollama.png');
     }
   }
 
@@ -289,7 +290,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                               size: 64,
                               color: Theme.of(
                                 context,
-                              ).disabledColor.withOpacity(0.4),
+                              ).disabledColor.withValues(alpha: 0.4),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -305,7 +306,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                               style: TextStyle(
                                 color: Theme.of(
                                   context,
-                                ).disabledColor.withOpacity(0.7),
+                                ).disabledColor.withValues(alpha: 0.7),
                                 fontSize: 14,
                               ),
                             ),

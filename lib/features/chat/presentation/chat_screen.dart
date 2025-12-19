@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
           );
         }
 
-        return Scaffold(
+        return Scaffold( 
           key: _viewModel.scaffoldKey,
           appBar: AppBar(
             leading: IconButton(

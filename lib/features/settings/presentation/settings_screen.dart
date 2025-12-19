@@ -23,71 +23,79 @@ class SettingsScreen extends StatelessWidget {
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SettingsSectionHeader('settings.general'.tr()),
-          SettingsCard(
-            child: Column(
-              children: [
-                SettingsTile(
-                  icon: Icons.smart_toy_outlined,
-                  title: 'settings.providers'.tr(),
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.providers),
-                ),
-                const Divider(height: 1, indent: 56, endIndent: 16),
-                SettingsTile(
-                  icon: Icons.palette_outlined,
-                  title: 'settings.appearance'.tr(),
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.appearance),
-                ),
-                const Divider(height: 1, indent: 56, endIndent: 16),
-                SettingsTile(
-                  icon: Icons.tune,
-                  title: 'settings.preferences'.tr(),
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.preferences),
-                ),
-                const Divider(height: 1, indent: 56, endIndent: 16),
-                SettingsTile(
-                  icon: Icons.notifications_outlined,
-                  title: 'settings.notifications'.tr(),
-                ),
-              ],
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            SettingsSectionHeader('settings.general'.tr()),
+            SettingsCard(
+              child: Column(
+                children: [
+                  SettingsTile(
+                    icon: Icons.api,
+                    title: 'settings.providers'.tr(),
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.providers),
+                  ),
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.palette_outlined,
+                    title: 'settings.appearance'.tr(),
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.appearance),
+                  ),
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.tune,
+                    title: 'settings.preferences'.tr(),
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.preferences),
+                  ),
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.notifications_outlined,
+                    title: 'settings.notifications'.tr(),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          SettingsSectionHeader('settings.ai_features'.tr()),
-          SettingsCard(
-            child: Column(
-              children: [
-                SettingsTile(
-                  icon: Icons.record_voice_over_outlined,
-                  title: 'settings.tts'.tr(),
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.tts),
-                ),
-                const Divider(height: 1, indent: 56, endIndent: 16),
-                SettingsTile(
-                  icon: Icons.extension_outlined,
-                  title: 'settings.mcp'.tr(),
-                ),
-              ],
+            const SizedBox(height: 24),
+            SettingsSectionHeader('settings.ai_features'.tr()),
+            SettingsCard(
+              child: Column(
+                children: [
+                  SettingsTile(
+                    icon: Icons.record_voice_over_outlined,
+                    title: 'settings.tts'.tr(),
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.tts),
+                  ),
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.extension_outlined,
+                    title: 'settings.mcp'.tr(),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          SettingsSectionHeader('settings.about_section'.tr()),
-          SettingsCard(
-            child: Column(
-              children: [
-                SettingsTile(icon: Icons.info_outline, title: 'settings.info'.tr()),
-                const Divider(height: 1, indent: 56, endIndent: 16),
-                SettingsTile(
-                  icon: Icons.system_update_outlined,
-                  title: 'settings.update'.tr(),
-                ),
-              ],
+            const SizedBox(height: 24),
+            SettingsSectionHeader('settings.about_section'.tr()),
+            SettingsCard(
+              child: Column(
+                children: [
+                  SettingsTile(
+                    icon: Icons.info_outline,
+                    title: 'settings.info'.tr(),
+                  ),
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.system_update_outlined,
+                    title: 'settings.update'.tr(),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

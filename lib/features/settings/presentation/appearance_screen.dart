@@ -175,7 +175,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                     ),
                   ),
                   value: _settings.pureDark,
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor: Colors.white.withOpacity(0.3),
                   onChanged: (val) => _togglePureDark(val),
                 ),

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// - Each dropdown item has a leading icon box area
 ///
 /// Example:
-/// CommonDropdown<String>(
+/// CommonDropdown<\String>(
 ///   labelText: 'Provider',
 ///   hintText: 'Select a provider',
 ///   value: selected,
@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 ///   ],
 /// )
 class CommonDropdown<T> extends StatelessWidget {
+  final Widget? icon;
+
   const CommonDropdown({
     super.key,
     required this.options,
@@ -28,12 +30,16 @@ class CommonDropdown<T> extends StatelessWidget {
     this.enabled = true,
     this.isExpanded = true,
     this.radius = 12,
-    this.contentPadding = const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    this.contentPadding = const EdgeInsets.symmetric(
+      horizontal: 12,
+      vertical: 10,
+    ),
     this.menuMaxHeight = 320,
     this.iconBoxSize = 28,
     this.iconBoxRadius = 8,
     this.iconBoxBorder,
     this.iconBoxBackground,
+    this.icon,
   });
 
   /// Options to show in the dropdown
@@ -70,8 +76,10 @@ class CommonDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final BorderSide defaultBorderSide =
-        BorderSide(color: scheme.outlineVariant.withOpacity(0.6), width: 1);
+    final BorderSide defaultBorderSide = BorderSide(
+      color: scheme.outlineVariant.withValues(alpha: 0.6),
+      width: 1,
+    );
     final OutlineInputBorder outline = OutlineInputBorder(
       borderRadius: BorderRadius.circular(radius),
       borderSide: defaultBorderSide,
@@ -86,7 +94,8 @@ class CommonDropdown<T> extends StatelessWidget {
     );
 
     final Color boxBg =
-        iconBoxBackground ?? scheme.surfaceContainerHighest.withOpacity(0.8);
+        iconBoxBackground ??
+        scheme.surfaceContainerHighest.withValues(alpha: 0.8);
     final BorderSide boxBorder =
         iconBoxBorder ?? BorderSide(color: scheme.outlineVariant, width: 1);
 
@@ -150,15 +159,12 @@ class CommonDropdown<T> extends StatelessWidget {
 class DropdownOption<T> {
   final T value;
   final String label;
+
   /// Optional icon widget displayed inside the leading icon box area.
   /// Example: const Icon(Icons.person)
   final Widget? icon;
 
-  const DropdownOption({
-    required this.value,
-    required this.label,
-    this.icon,
-  });
+  const DropdownOption({required this.value, required this.label, this.icon});
 }
 
 class _DropdownRow extends StatelessWidget {
@@ -208,11 +214,7 @@ class _DropdownRow extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Flexible(
-          child: Text(
-            label,
-            style: textStyle,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: Text(label, style: textStyle, overflow: TextOverflow.ellipsis),
         ),
       ],
     );
