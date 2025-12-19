@@ -74,10 +74,10 @@ class ResourceTile extends StatelessWidget {
                   ),
                 if (onDelete != null)
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete_outline,
                       size: 20,
-                      color: Colors.red,
+                      color: Theme.of(context).colorScheme.error,
                     ),
                     onPressed: onDelete,
                     tooltip: 'Delete',

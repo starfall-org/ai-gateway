@@ -21,8 +21,12 @@ class ModelCard extends StatelessWidget {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: Colors.blue[100],
-                child: Icon(_getModelIcon(), color: Colors.blue[600], size: 20),
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(
+                  _getModelIcon(),
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -41,10 +45,11 @@ class ModelCard extends StatelessWidget {
                       spacing: 4,
                       runSpacing: 4,
                       children: [
-                        _buildTag(_getModelTypeLabel(), Colors.purple),
-                        ..._buildIOTags(),
+                        _buildTag(context, _getModelTypeLabel(), Colors.purple),
+                        ..._buildIOTags(context),
                         if (model.parameters != null)
                           _buildTag(
+                            context,
                             _formatParameters(model.parameters!),
                             Colors.orange,
                           ),
@@ -95,21 +100,21 @@ class ModelCard extends StatelessWidget {
     }
   }
 
-  List<Widget> _buildIOTags() {
+  List<Widget> _buildIOTags(BuildContext context) {
     final List<Widget> tags = [];
-
+ 
     // Input tags
     if (model.input.isNotEmpty) {
       final inputStr = model.input.map((e) => _getIOIcon(e)).join('');
-      tags.add(_buildTag('In: $inputStr', Colors.blue));
+      tags.add(_buildTag(context, 'In: $inputStr', Colors.blue));
     }
-
+ 
     // Output tags
     if (model.output.isNotEmpty) {
       final outputStr = model.output.map((e) => _getIOIcon(e)).join('');
-      tags.add(_buildTag('Out: $outputStr', Colors.green));
+      tags.add(_buildTag(context, 'Out: $outputStr', Colors.green));
     }
-
+ 
     return tags;
   }
 
@@ -139,19 +144,24 @@ class ModelCard extends StatelessWidget {
     return params.toString();
   }
 
-  Widget _buildTag(String label, Color color) {
+  Widget _buildTag(BuildContext context, String label, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? Color.lerp(color, Colors.white, 0.7)!
+        : Color.lerp(color, Colors.black, 0.5)!;
+ 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha: isDark ? 0.4 : 0.3)),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 11,
-          color: Color.lerp(color, Colors.black, 0.3)!,
+          color: textColor,
           fontWeight: FontWeight.w500,
         ),
       ),

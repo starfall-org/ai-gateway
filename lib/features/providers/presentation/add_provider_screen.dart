@@ -47,7 +47,6 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               onPressed: _showFetchModelsDrawer,
               icon: const Icon(Icons.cloud_download),
               label: Text('settings.fetch_models'.tr()),
-              backgroundColor: Colors.blue,
             )
           : null,
       appBar: AppBar(
@@ -56,14 +55,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               ? 'settings.edit_provider'.tr()
               : 'settings.add_provider'.tr(),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black54),
-        titleTextStyle: const TextStyle(color: Colors.black87, fontSize: 20),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.blue,
-          unselectedLabelColor: Colors.grey,
           tabs: [
             Tab(text: 'settings.edit_tab'.tr()),
             Tab(text: 'settings.models_tab'.tr()),
@@ -138,7 +132,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             const SizedBox(height: 8),
             ExpansionTile(
               tilePadding: EdgeInsets.zero,
-              title: const Text('Custom routes'),
+              title: Text('settings.custom_routes'.tr()),
               subtitle: Text(_viewModel.selectedType.name),
               children: [
                 Padding(
@@ -193,9 +187,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.remove_circle_outline,
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                       onPressed: () => _viewModel.removeHeader(index),
                     ),
@@ -211,44 +205,22 @@ class _AddProviderScreenState extends State<AddProviderScreen>
 
   Widget _buildCustomRoutesSection() {
     switch (_viewModel.selectedType) {
-      case ProviderType.google:
-        return Column(
-          children: [
-            _routeField(_viewModel.googleGenerateContentController, 'Generate Content'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.googleGenerateContentStreamController, 'Generate Content Stream'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.googleModelsRouteController, 'Models'),
-          ],
-        );
       case ProviderType.openai:
         return Column(
           children: [
-            _routeField(_viewModel.openAIChatCompletionsRouteController, 'Chat Completions'),
+            _routeField(
+              _viewModel.openAIChatCompletionsRouteController,
+              'settings.chat_completions_route'.tr(),
+            ),
             const SizedBox(height: 8),
-            _routeField(_viewModel.openAIResponsesRouteController, 'Responses'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.openAIEmbeddingsRouteController, 'Embeddings'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.openAIModelsRouteController, 'Models'),
+            _routeField(
+              _viewModel.openAIModelsRouteOrUrlController,
+              'settings.models_route_or_url'.tr(),
+            ),
           ],
         );
-      case ProviderType.anthropic:
-        return Column(
-          children: [
-            _routeField(_viewModel.anthropicMessagesRouteController, 'Messages'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.anthropicModelsRouteController, 'Models'),
-          ],
-        );
-      case ProviderType.ollama:
-        return Column(
-          children: [
-            _routeField(_viewModel.ollamaChatRouteController, 'Chat'),
-            const SizedBox(height: 8),
-            _routeField(_viewModel.ollamaTagsRouteController, 'Tags'),
-          ],
-        );
+      default:
+        return const SizedBox.shrink();
     }
   }
 
@@ -288,7 +260,10 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               // Selected Models Section Header
               Row(
                 children: [
-                  Icon(Icons.model_training, color: Colors.blue[600]),
+                  Icon(
+                    Icons.model_training,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'settings.selected_models'.tr(),
@@ -312,13 +287,15 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             Icon(
                               Icons.model_training,
                               size: 64,
-                              color: Colors.grey[400],
+                              color: Theme.of(
+                                context,
+                              ).disabledColor.withOpacity(0.4),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'settings.no_models_selected'.tr(),
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: Theme.of(context).disabledColor,
                                 fontSize: 16,
                               ),
                             ),
@@ -326,7 +303,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             Text(
                               'settings.tap_fab_to_add'.tr(),
                               style: TextStyle(
-                                color: Colors.grey[500],
+                                color: Theme.of(
+                                  context,
+                                ).disabledColor.withOpacity(0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -343,9 +322,9 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             model: model,
                             onTap: () => _showModelCapabilities(model),
                             trailing: IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.delete,
-                                color: Colors.red,
+                                color: Theme.of(context).colorScheme.error,
                                 size: 20,
                               ),
                               onPressed: () =>
@@ -363,17 +342,15 @@ class _AddProviderScreenState extends State<AddProviderScreen>
   }
 
   void _showFetchModelsDrawer() {
+    // Bắt đầu fetch ngay khi ấn FAB để kết quả hiển thị tức thời trong drawer
+    _viewModel.fetchModels(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => FetchModelsDrawer(
-        availableModels: _viewModel.availableModels,
-        selectedModels: _viewModel.selectedModels,
-        isFetchingModels: _viewModel.isFetchingModels,
-        onFetchModels: () => _viewModel.fetchModels(context),
-        onAddModel: _viewModel.addModelDirectly,
-        onRemoveModel: _viewModel.removeModelDirectly,
+        viewModel: _viewModel,
         onShowCapabilities: _showModelCapabilities,
       ),
     );

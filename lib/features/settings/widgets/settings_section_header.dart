@@ -8,13 +8,14 @@ class SettingsSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(left: 4, bottom: 8, top: 12),
       child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
+        title.toUpperCase(),
+        style: TextStyle(
+          fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+          letterSpacing: 1.2,
         ),
       ),
     );

@@ -51,7 +51,10 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
         mode = _settings.themeMode;
         break;
     }
-    final newSettings = _settings.copyWith(selection: selection, themeMode: mode);
+    final newSettings = _settings.copyWith(
+      selection: selection,
+      themeMode: mode,
+    );
     await _repository.updateSettings(newSettings);
     setState(() => _settings = newSettings);
   }
@@ -80,7 +83,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     setState(() => _settings = newSettings);
   }
 
-  Future<void> _updateSecondaryBackgroundMode(SecondaryBackgroundMode mode) async {
+  Future<void> _updateSecondaryBackgroundMode(
+    SecondaryBackgroundMode mode,
+  ) async {
     final newSettings = _settings.copyWith(secondaryBackgroundMode: mode);
     await _repository.updateSettings(newSettings);
     setState(() => _settings = newSettings);
@@ -107,21 +112,76 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
         children: [
           // Theme selection: system, light, dark, custom
           SettingsSectionHeader('settings.theme_mode'.tr()),
-          const SizedBox(height: 8),
-          _buildThemeSelection(),
+          const SizedBox(height: 12),
+          _buildThemeSegmented(),
 
-          const SizedBox(height: 24),
-
-          // Pure dark toggle (applies only to dark theme)
-          SettingsSectionHeader('settings.pure_dark'.tr()),
-          SettingsCard(
-            child: SwitchListTile(
-              title: Text('settings.pure_dark'.tr()),
-              subtitle: Text('settings.pure_dark_desc'.tr()),
-              value: _settings.pureDark,
-              onChanged: (val) => _togglePureDark(val),
+          // SuperDark Mode toggle - only visible when Dark mode is selected
+          if (_settings.themeMode == ThemeMode.dark) ...[
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0D0D0D),
+                    Color(0xFF2D2D2D),
+                    Color(0xFF888888), // Refraction streak
+                    Color(0xFF2D2D2D),
+                    Color(0xFF0D0D0D),
+                  ],
+                  stops: [0.0, 0.44, 0.5, 0.56, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.6),
+                    blurRadius: 20,
+                    spreadRadius: -4,
+                    offset: const Offset(0, 12),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.15),
+                    blurRadius: 0,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: SettingsCard(
+                backgroundColor: Colors.transparent,
+                child: SwitchListTile(
+                  title: Text(
+                    'settings.pure_dark'.tr(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      letterSpacing: 0.5,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                  subtitle: Text(
+                    'settings.pure_dark_desc'.tr(),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 12,
+                    ),
+                  ),
+                  value: _settings.pureDark,
+                  activeColor: Colors.white,
+                  activeTrackColor: Colors.white.withOpacity(0.3),
+                  onChanged: (val) => _togglePureDark(val),
+                ),
+              ),
             ),
-          ),
+          ],
 
           const SizedBox(height: 24),
 
@@ -129,7 +189,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           SettingsSectionHeader('settings.material_you'.tr()),
           DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-              final bool supported = (lightDynamic != null || darkDynamic != null);
+              final bool supported =
+                  (lightDynamic != null || darkDynamic != null);
               return SettingsCard(
                 child: SwitchListTile(
                   title: Text('settings.material_you'.tr()),
@@ -139,7 +200,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                         : 'settings.material_you_unsupported'.tr(),
                   ),
                   value: _settings.materialYou,
-                  onChanged: supported ? (val) => _toggleMaterialYou(val) : null,
+                  onChanged: supported
+                      ? (val) => _toggleMaterialYou(val)
+                      : null,
                 ),
               );
             },
@@ -149,49 +212,17 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           if (!_settings.materialYou) ...[
             const SizedBox(height: 12),
             SettingsSectionHeader('settings.secondary_background'.tr()),
-            SettingsCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                    child: Text(
-                      'settings.secondary_background_desc'.tr(),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  RadioGroup<SecondaryBackgroundMode>(
-                    groupValue: _settings.secondaryBackgroundMode,
-                    onChanged: (val) {
-                      if (val != null) _updateSecondaryBackgroundMode(val);
-                    },
-                    child: Column(
-                      children: [
-                        RadioListTile<SecondaryBackgroundMode>(
-                          title: Text('settings.secondary_bg_on'.tr()),
-                          value: SecondaryBackgroundMode.on,
-                        ),
-                        RadioListTile<SecondaryBackgroundMode>(
-                          title: Text('settings.secondary_bg_auto'.tr()),
-                          subtitle: Text('settings.secondary_bg_auto_desc'.tr()),
-                          value: SecondaryBackgroundMode.auto,
-                        ),
-                        RadioListTile<SecondaryBackgroundMode>(
-                          title: Text('settings.secondary_bg_off'.tr()),
-                          subtitle: Text('settings.secondary_bg_off_desc'.tr()),
-                          value: SecondaryBackgroundMode.off,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 4),
-                          child: Text(
-                            'settings.secondary_bg_border_rule'.tr(),
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 12),
+            _buildSecondaryBgSegmented(),
+            Padding(
+              padding: const EdgeInsets.only(left: 4, top: 12),
+              child: Text(
+                'settings.secondary_bg_border_rule'.tr(),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                ),
               ),
             ),
           ],
@@ -199,7 +230,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           const SizedBox(height: 24),
 
           // Color customization is only visible in Custom mode and disabled when Material You is enabled
-          if (!_settings.materialYou && _settings.selection == ThemeSelection.custom) ...[
+          if (!_settings.materialYou &&
+              _settings.selection == ThemeSelection.custom) ...[
             SettingsSectionHeader('settings.primary_color'.tr()),
             const SizedBox(height: 8),
             _buildColorSelector(
@@ -224,33 +256,67 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     );
   }
 
-  Widget _buildThemeSelection() {
-    return SettingsCard(
-      child: RadioGroup<ThemeSelection>(
-        groupValue: _settings.selection,
-        onChanged: (val) {
-          if (val != null) _updateSelection(val);
+  Widget _buildThemeSegmented() {
+    return SizedBox(
+      width: double.infinity,
+      child: SegmentedButton<ThemeSelection>(
+        segments: [
+          ButtonSegment(
+            value: ThemeSelection.system,
+            label: const Icon(Icons.brightness_auto_outlined),
+            tooltip: 'settings.system_default'.tr(),
+          ),
+          ButtonSegment(
+            value: ThemeSelection.light,
+            label: const Icon(Icons.light_mode_outlined),
+            tooltip: 'settings.light'.tr(),
+          ),
+          ButtonSegment(
+            value: ThemeSelection.dark,
+            label: const Icon(Icons.dark_mode_outlined),
+            tooltip: 'settings.dark'.tr(),
+          ),
+          ButtonSegment(
+            value: ThemeSelection.custom,
+            label: const Icon(Icons.palette_outlined),
+            tooltip: 'settings.custom'.tr(),
+          ),
+        ],
+        selected: {_settings.selection},
+        onSelectionChanged: (Set<ThemeSelection> newSelection) {
+          _updateSelection(newSelection.first);
         },
-        child: Column(
-          children: [
-            RadioListTile<ThemeSelection>(
-              title: Text('settings.system_default'.tr()),
-              value: ThemeSelection.system,
-            ),
-            RadioListTile<ThemeSelection>(
-              title: Text('settings.light'.tr()),
-              value: ThemeSelection.light,
-            ),
-            RadioListTile<ThemeSelection>(
-              title: Text('settings.dark'.tr()),
-              value: ThemeSelection.dark,
-            ),
-            RadioListTile<ThemeSelection>(
-              title: Text('settings.custom'.tr()),
-              value: ThemeSelection.custom,
-            ),
-          ],
-        ),
+        showSelectedIcon: false,
+      ),
+    );
+  }
+
+  Widget _buildSecondaryBgSegmented() {
+    return SizedBox(
+      width: double.infinity,
+      child: SegmentedButton<SecondaryBackgroundMode>(
+        segments: [
+          ButtonSegment(
+            value: SecondaryBackgroundMode.on,
+            label: const Icon(Icons.layers_outlined),
+            tooltip: 'settings.secondary_bg_on'.tr(),
+          ),
+          ButtonSegment(
+            value: SecondaryBackgroundMode.auto,
+            label: const Icon(Icons.auto_awesome_outlined),
+            tooltip: 'settings.secondary_bg_auto'.tr(),
+          ),
+          ButtonSegment(
+            value: SecondaryBackgroundMode.off,
+            label: const Icon(Icons.layers_clear_outlined),
+            tooltip: 'settings.secondary_bg_off'.tr(),
+          ),
+        ],
+        selected: {_settings.secondaryBackgroundMode},
+        onSelectionChanged: (Set<SecondaryBackgroundMode> newSelection) {
+          _updateSecondaryBackgroundMode(newSelection.first);
+        },
+        showSelectedIcon: false,
       ),
     );
   }
@@ -272,41 +338,43 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
             ),
           ),
           Wrap(
-            spacing: 12,
-            runSpacing: 12,
+            spacing: 16,
+            runSpacing: 16,
             children: _presets.map((color) {
               final isSelected = current.value == color.value;
               return GestureDetector(
                 onTap: () => onSelect(color),
                 child: Container(
-                  width: 44,
-                  height: 44,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
-                    border: isSelected
-                        ? Border.all(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            width: 2,
-                          )
-                        : null,
                     boxShadow: [
                       if (isSelected)
                         BoxShadow(
-                          color: color.withOpacity(0.35),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                          color: color.withOpacity(0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
                         ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  child: isSelected
-                      ? Icon(
-                          Icons.check,
-                          color: color.computeLuminance() < 0.5
-                              ? Colors.white
-                              : Colors.black,
-                        )
-                      : null,
+                  child: AnimatedScale(
+                    scale: isSelected ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.check_circle,
+                      color: color.computeLuminance() < 0.5
+                          ? Colors.white
+                          : Colors.black,
+                      size: 28,
+                    ),
+                  ),
                 ),
               );
             }).toList(),
@@ -331,7 +399,10 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     );
   }
 
-  Future<Color?> _pickColor(BuildContext context, {required Color initial}) async {
+  Future<Color?> _pickColor(
+    BuildContext context, {
+    required Color initial,
+  }) async {
     Color temp = initial;
     int r = temp.red;
     int g = temp.green;
@@ -371,7 +442,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
               child: Text('settings.close'.tr()),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(Color.fromARGB(255, r, g, b)),
+              onPressed: () =>
+                  Navigator.of(ctx).pop(Color.fromARGB(255, r, g, b)),
               child: Text('settings.update'.tr()),
             ),
           ],
@@ -394,10 +466,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
         ),
         SizedBox(
           width: 40,
-          child: Text(
-            value.toString(),
-            textAlign: TextAlign.right,
-          ),
+          child: Text(value.toString(), textAlign: TextAlign.right),
         ),
       ],
     );
@@ -405,75 +474,79 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
 
   Widget _buildPreview({required bool isDark}) {
     final primary = Color(_settings.primaryColor);
-    final secondary = Color(_settings.secondaryColor);
+    final onSurface = isDark ? Colors.white : Colors.black;
+    final surface = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F7);
 
-    return SettingsCard(
-      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SettingsSectionHeader('settings.preview'.tr()),
+        const SizedBox(height: 12),
+        SettingsCard(
+          backgroundColor: surface,
+          child: Container(
+            height: 160,
+            padding: const EdgeInsets.all(16),
+            child: Column(
               children: [
-                CircleAvatar(
-                  backgroundColor: primary,
-                  child: Icon(
-                    Icons.person,
-                    color: primary.computeLuminance() < 0.5
-                        ? Colors.white
-                        : Colors.black,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(maxWidth: 240),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[800] : Colors.white,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(16),
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'Hello! This is a preview of how messages look.',
+                      style: TextStyle(color: onSurface, fontSize: 13),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'settings.preview_title'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: isDark ? Colors.white : Colors.black,
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    constraints: const BoxConstraints(maxWidth: 240),
+                    decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
                       ),
                     ),
-                    Text(
-                      'settings.preview_subtitle'.tr(),
+                    child: Text(
+                      'Looks amazing and very modern!',
                       style: TextStyle(
-                        color: isDark ? Colors.grey : Colors.grey[600],
+                        color: primary.computeLuminance() < 0.5
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ],
-                ),
-                const Spacer(),
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: secondary,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.grey.shade400),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primary,
-                foregroundColor: primary.computeLuminance() < 0.5
-                    ? Colors.white
-                    : Colors.black,
-                minimumSize: const Size(double.infinity, 44),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: () {},
-              child: Text('settings.preview_button'.tr()),
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 }

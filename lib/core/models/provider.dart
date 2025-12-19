@@ -14,48 +14,24 @@ enum ProviderType {
 
 class OpenAIRoutes {
   final String chatCompletion;
-  final String responses;
-  final String embeddings;
-  final String models;
-  final String imagesGenerations;
-  final String imagesEdits;
-  final String videos;
-  final String audioSpeech;
+  final String modelsRouteOrUrl;
 
   const OpenAIRoutes({
     this.chatCompletion = '/chat/completions',
-    this.responses = '/responses',
-    this.embeddings = '/embeddings',
-    this.models = '/models',
-    this.imagesGenerations = '/images/generations',
-    this.imagesEdits = '/images/edits',
-    this.videos = '/videos',
-    this.audioSpeech = '/audio/speech',
+    this.modelsRouteOrUrl = '/models',
   });
 
   Map<String, dynamic> toJson() {
     return {
       'chatCompletion': chatCompletion,
-      'responses': responses,
-      'embeddings': embeddings,
-      'models': models,
-      'imagesGenerations': imagesGenerations,
-      'imagesEdits': imagesEdits,
-      'videos': videos,
-      'audioSpeech': audioSpeech,
+      'modelsRouteOrUrl': modelsRouteOrUrl,
     };
   }
 
   static OpenAIRoutes fromJson(Map<String, dynamic> json) {
     return OpenAIRoutes(
       chatCompletion: json['chatCompletion'] ?? '/chat/completions',
-      responses: json['responses'] ?? '/responses',
-      embeddings: json['embeddings'] ?? '/embeddings',
-      models: json['models'] ?? '/models',
-      imagesGenerations: json['imagesGenerations'] ?? '/images/generations',
-      imagesEdits: json['imagesEdits'] ?? '/images/edits',
-      videos: json['videos'] ?? '/videos',
-      audioSpeech: json['audioSpeech'] ?? '/audio/speech',
+      modelsRouteOrUrl: json['modelsRouteOrUrl'] ?? json['models'] ?? '/models',
     );
   }
 }
@@ -189,9 +165,6 @@ class Provider {
   final String logoUrl;
   final String baseUrl;
   final OpenAIRoutes openAIRoutes;
-  final AnthropicRoutes anthropicRoutes;
-  final OllamaRoutes ollamaRoutes;
-  final GoogleRoutes googleRoutes;
   final VertexAIConfig? vertexAIConfig;
   final AzureConfig? azureConfig;
   final Map<String, String> headers;
@@ -204,9 +177,6 @@ class Provider {
     this.logoUrl = '',
     String? baseUrl,
     this.openAIRoutes = const OpenAIRoutes(),
-    this.anthropicRoutes = const AnthropicRoutes(),
-    this.ollamaRoutes = const OllamaRoutes(),
-    this.googleRoutes = const GoogleRoutes(),
     this.vertexAIConfig,
     this.azureConfig,
     this.headers = const {},
@@ -249,9 +219,6 @@ class Provider {
       'baseUrl': baseUrl,
       'headers': headers,
       'openAIRoutes': openAIRoutes.toJson(),
-      'anthropicRoutes': anthropicRoutes.toJson(),
-      'ollamaRoutes': ollamaRoutes.toJson(),
-      'googleRoutes': googleRoutes.toJson(),
       if (vertexAIConfig != null) 'vertexAIConfig': vertexAIConfig!.toJson(),
       if (azureConfig != null) 'azureConfig': azureConfig!.toJson(),
       'models': models.map((m) => m.toJson()).toList(),
@@ -285,15 +252,6 @@ class Provider {
       openAIRoutes: json['openAIRoutes'] != null
           ? OpenAIRoutes.fromJson(json['openAIRoutes'])
           : const OpenAIRoutes(),
-      anthropicRoutes: json['anthropicRoutes'] != null
-          ? AnthropicRoutes.fromJson(json['anthropicRoutes'])
-          : const AnthropicRoutes(),
-      ollamaRoutes: json['ollamaRoutes'] != null
-          ? OllamaRoutes.fromJson(json['ollamaRoutes'])
-          : const OllamaRoutes(),
-      googleRoutes: json['googleRoutes'] != null
-          ? GoogleRoutes.fromJson(json['googleRoutes'])
-          : const GoogleRoutes(),
       vertexAIConfig: json['vertexAIConfig'] != null
           ? VertexAIConfig.fromJson(json['vertexAIConfig'])
           : null,

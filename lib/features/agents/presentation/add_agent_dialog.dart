@@ -117,11 +117,11 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundColor: Colors.grey.shade200,
+                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.person,
                               size: 40,
-                              color: Colors.grey.shade400,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           Positioned(
@@ -129,14 +129,14 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                             right: 0,
                             child: Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.blue,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.camera_alt,
                                 size: 16,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                           ),
@@ -145,34 +145,34 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Agent Name
-                   TextField(
-                     controller: _nameController,
-                     decoration: InputDecoration(
-                       labelText: 'agents.name'.tr(),
-                       border: OutlineInputBorder(
-                         borderRadius: BorderRadius.circular(12),
-                       ),
-                       filled: true,
-                       fillColor: Colors.grey.shade50,
-                     ),
-                   ),
-                   const SizedBox(height: 16),
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'agents.name'.tr(),
+                        prefixIcon: const Icon(Icons.badge_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-                   // System Prompt
-                   TextField(
-                     controller: _promptController,
-                     maxLines: 3,
-                     decoration: InputDecoration(
-                       labelText: 'agents.system_prompt'.tr(),
-                       alignLabelWithHint: true,
-                       border: OutlineInputBorder(
-                         borderRadius: BorderRadius.circular(12),
-                       ),
-                       filled: true,
-                       fillColor: Colors.grey.shade50,
-                     ),
-                   ),
+                    // System Prompt
+                    TextField(
+                      controller: _promptController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        labelText: 'agents.system_prompt'.tr(),
+                        alignLabelWithHint: true,
+                        prefixIcon: const Padding(
+                          padding: EdgeInsets.only(bottom: 60),
+                          child: Icon(Icons.description_outlined),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
 
                     // Parameters
@@ -393,47 +393,44 @@ class _AddAgentDialogState extends State<AddAgentDialog> {
                        ),
                      ),
 
-                   // Persist chat selection override (Agent-level)
-                   Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 8),
-                     child: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       children: [
-                         Text('agents.persist_section_title'.tr()),
-                         const SizedBox(height: 8),
-                         RadioListTile<_PersistOverride>(
-                           title: Text('agents.persist_follow_global'.tr()),
-                           value: _PersistOverride.followGlobal,
-                           groupValue: _persistOverride,
-                           onChanged: (val) {
-                             if (val != null) {
-                               setState(() => _persistOverride = val);
-                             }
-                           },
-                         ),
-                         RadioListTile<_PersistOverride>(
-                           title: Text('agents.persist_force_on'.tr()),
-                           value: _PersistOverride.forceOn,
-                           groupValue: _persistOverride,
-                           onChanged: (val) {
-                             if (val != null) {
-                               setState(() => _persistOverride = val);
-                             }
-                           },
-                         ),
-                         RadioListTile<_PersistOverride>(
-                           title: Text('agents.persist_force_off'.tr()),
-                           value: _PersistOverride.forceOff,
-                           groupValue: _persistOverride,
-                           onChanged: (val) {
-                             if (val != null) {
-                               setState(() => _persistOverride = val);
-                             }
-                           },
-                         ),
-                       ],
-                     ),
-                   ),
+                    // Persist chat selection override (Agent-level)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'agents.persist_section_title'.tr(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: SegmentedButton<_PersistOverride>(
+                              segments: [
+                                ButtonSegment(
+                                  value: _PersistOverride.followGlobal,
+                                  label: Text('agents.persist_follow_global'.tr(), style: const TextStyle(fontSize: 12)),
+                                ),
+                                ButtonSegment(
+                                  value: _PersistOverride.forceOn,
+                                  label: Text('agents.persist_force_on'.tr(), style: const TextStyle(fontSize: 12)),
+                                ),
+                                ButtonSegment(
+                                  value: _PersistOverride.forceOff,
+                                  label: Text('agents.persist_force_off'.tr(), style: const TextStyle(fontSize: 12)),
+                                ),
+                              ],
+                              selected: {_persistOverride},
+                              onSelectionChanged: (Set<_PersistOverride> newSelection) {
+                                setState(() => _persistOverride = newSelection.first);
+                              },
+                              showSelectedIcon: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

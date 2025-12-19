@@ -5,14 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ai-gateway",
+            "name": "Attach to Device",
+            "type": "dart",
+            "request": "attach"
+        },
+        {
+            "name": "Release",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "env": {
+                "GRADLE_USER_HOME": "/teamspace/studios/this_studio/.cache/gradle",
+                "PUB_CACHE": "/teamspace/studios/this_studio/.cache/pub-cache"
+            }
+        },
+        {
+            "name": "Debug",
             "program": "lib/main.dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
-            "args": [
-                "--web-port=8080"
-            ],
             "env": {
                 "GRADLE_USER_HOME": "/teamspace/studios/this_studio/.cache/gradle",
                 "PUB_CACHE": "/teamspace/studios/this_studio/.cache/pub-cache"

@@ -5,6 +5,7 @@ import '../../../core/storage/language_repository.dart';
 import '../../../core/storage/app_preferences_repository.dart';
 import '../widgets/settings_section_header.dart';
 import '../widgets/settings_tile.dart';
+import '../widgets/settings_card.dart';
 
 class PreferencesScreen extends StatefulWidget {
   const PreferencesScreen({super.key});
@@ -190,105 +191,143 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
         children: [
           // Chat preferences section
           SettingsSectionHeader('preferences.chat_settings'.tr()),
-          SettingsTile(
-            icon: Icons.save_outlined,
-            title: 'preferences.persist_chat_selection'.tr(),
-            trailing: Switch(
-              value: _persistChatSelection,
-              onChanged: (val) async {
-                setState(() => _persistChatSelection = val);
-                try {
-                  await AppPreferencesRepository.instance
-                      .setPersistChatSelection(val);
-                } catch (_) {
-                  // Revert on error
-                  setState(() => _persistChatSelection =
-                      AppPreferencesRepository
-                          .instance.currentPreferences.persistChatSelection);
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('preferences.auto_detect_error'.tr()),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                  }
-                }
-              },
-            ),
-          ),
-          SettingsTile(
-            icon: Icons.manage_accounts_outlined,
-            title: 'preferences.prefer_agent_settings'.tr(),
-            trailing: Switch(
-              value: _preferAgentSettings,
-              onChanged: (val) async {
-                setState(() => _preferAgentSettings = val);
-                try {
-                  await AppPreferencesRepository.instance
-                      .setPreferAgentSettings(val);
-                } catch (_) {
-                  // Revert on error
-                  setState(() => _preferAgentSettings =
-                      AppPreferencesRepository
-                          .instance.currentPreferences.preferAgentSettings);
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('preferences.auto_detect_error'.tr()),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                  }
-                }
-              },
+          const SizedBox(height: 12),
+          SettingsCard(
+            child: Column(
+              children: [
+                SettingsTile(
+                  icon: Icons.save_outlined,
+                  title: 'preferences.persist_chat_selection'.tr(),
+                  trailing: Switch(
+                    value: _persistChatSelection,
+                    onChanged: (val) async {
+                      setState(() => _persistChatSelection = val);
+                      try {
+                        await AppPreferencesRepository.instance
+                            .setPersistChatSelection(val);
+                      } catch (_) {
+                        setState(() => _persistChatSelection =
+                            AppPreferencesRepository
+                                .instance.currentPreferences.persistChatSelection);
+                      }
+                    },
+                  ),
+                ),
+                const Divider(height: 1, indent: 56, endIndent: 16),
+                SettingsTile(
+                  icon: Icons.manage_accounts_outlined,
+                  title: 'preferences.prefer_agent_settings'.tr(),
+                  trailing: Switch(
+                    value: _preferAgentSettings,
+                    onChanged: (val) async {
+                      setState(() => _preferAgentSettings = val);
+                      try {
+                        await AppPreferencesRepository.instance
+                            .setPreferAgentSettings(val);
+                      } catch (_) {
+                        setState(() => _preferAgentSettings =
+                            AppPreferencesRepository
+                                .instance.currentPreferences.preferAgentSettings);
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Language section (existing)
-          SettingsSectionHeader('Language'),
-          SettingsTile(
-            icon: Icons.language_outlined,
-            title: 'preferences.auto_detect_language'.tr(),
-            trailing: Switch(
-              value: _autoDetectLanguage,
-              onChanged: _toggleAutoDetect,
-            ),
-          ),
-          if (!_autoDetectLanguage) ...[
-            SettingsSectionHeader('preferences.select_language'.tr()),
-            ..._supportedLanguages
-                .where((lang) => lang['code'] != 'auto')
-                .map((language) {
-              final isSelected = _selectedLanguage == language['code'];
-              return SettingsTile(
-                icon: Icons.language,
-                title: '${language['flag']} ${language['name']}',
-                trailing: isSelected
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-                onTap: () => _selectLanguage(language['code']),
-              );
-            }),
-          ],
-          SettingsSectionHeader('preferences.about'.tr()),
-          SettingsTile(
-            icon: Icons.info_outline,
-            title: 'preferences.current_language'.tr(),
-            trailing: Text(
-              _getCurrentLanguageName(),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w500,
-              ),
+          // Language section
+          const SizedBox(height: 24),
+          SettingsSectionHeader('preferences.language'.tr()),
+          const SizedBox(height: 12),
+          SettingsCard(
+            child: Column(
+              children: [
+                SettingsTile(
+                  icon: Icons.language_outlined,
+                  title: 'preferences.auto_detect_language'.tr(),
+                  trailing: Switch(
+                    value: _autoDetectLanguage,
+                    onChanged: _toggleAutoDetect,
+                  ),
+                ),
+                if (!_autoDetectLanguage) ...[
+                  const Divider(height: 1, indent: 56, endIndent: 16),
+                  SettingsTile(
+                    icon: Icons.translate_outlined,
+                    title: 'preferences.select_language'.tr(),
+                    subtitle: _getCurrentLanguageName(),
+                    onTap: () => _showLanguagePicker(),
+                  ),
+                ],
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showLanguagePicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.only(top: 8, bottom: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'preferences.select_language'.tr(),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            const Divider(),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: _supportedLanguages
+                    .where((lang) => lang['code'] != 'auto')
+                    .map((language) {
+                  final isSelected = _selectedLanguage == language['code'];
+                  return ListTile(
+                    leading: Text(
+                      language['flag'],
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    title: Text(language['name']),
+                    trailing: isSelected
+                        ? Icon(
+                            Icons.check_circle,
+                            color: Theme.of(context).colorScheme.primary,
+                          )
+                        : null,
+                    onTap: () {
+                      Navigator.pop(context);
+                      _selectLanguage(language['code']);
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

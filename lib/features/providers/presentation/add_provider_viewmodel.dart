@@ -16,31 +16,10 @@ class AddProviderViewModel extends ChangeNotifier {
       [];
 
   // Custom routes controllers
-  final TextEditingController _googleGenerateContentController =
-      TextEditingController(text: '/generateContent');
-  final TextEditingController _googleGenerateContentStreamController =
-      TextEditingController(text: '/generateContentStream');
-  final TextEditingController _googleModelsRouteController =
-      TextEditingController(text: '/models');
-
   final TextEditingController _openAIChatCompletionsRouteController =
       TextEditingController(text: '/chat/completions');
-  final TextEditingController _openAIResponsesRouteController =
-      TextEditingController(text: '/responses');
-  final TextEditingController _openAIEmbeddingsRouteController =
-      TextEditingController(text: '/embeddings');
-  final TextEditingController _openAIModelsRouteController =
+  final TextEditingController _openAIModelsRouteOrUrlController =
       TextEditingController(text: '/models');
-
-  final TextEditingController _anthropicMessagesRouteController =
-      TextEditingController(text: '/messages');
-  final TextEditingController _anthropicModelsRouteController =
-      TextEditingController(text: '/models');
-
-  final TextEditingController _ollamaChatRouteController =
-      TextEditingController(text: '/chat');
-  final TextEditingController _ollamaTagsRouteController =
-      TextEditingController(text: '/tags');
 
   // Models State
   List<AIModel> _selectedModels = [];
@@ -61,31 +40,10 @@ class AddProviderViewModel extends ChangeNotifier {
   bool get isFetchingModels => _isFetchingModels;
 
   // Expose custom route controllers
-  TextEditingController get googleGenerateContentController =>
-      _googleGenerateContentController;
-  TextEditingController get googleGenerateContentStreamController =>
-      _googleGenerateContentStreamController;
-  TextEditingController get googleModelsRouteController =>
-      _googleModelsRouteController;
-
   TextEditingController get openAIChatCompletionsRouteController =>
       _openAIChatCompletionsRouteController;
-  TextEditingController get openAIResponsesRouteController =>
-      _openAIResponsesRouteController;
-  TextEditingController get openAIEmbeddingsRouteController =>
-      _openAIEmbeddingsRouteController;
-  TextEditingController get openAIModelsRouteController =>
-      _openAIModelsRouteController;
-
-  TextEditingController get anthropicMessagesRouteController =>
-      _anthropicMessagesRouteController;
-  TextEditingController get anthropicModelsRouteController =>
-      _anthropicModelsRouteController;
-
-  TextEditingController get ollamaChatRouteController =>
-      _ollamaChatRouteController;
-  TextEditingController get ollamaTagsRouteController =>
-      _ollamaTagsRouteController;
+  TextEditingController get openAIModelsRouteOrUrlController =>
+      _openAIModelsRouteOrUrlController;
 
   void initialize(Provider? provider) {
     if (provider != null) {
@@ -106,28 +64,11 @@ class AddProviderViewModel extends ChangeNotifier {
       });
       _selectedModels = List.from(provider.models);
 
-      // Load custom routes if present for the provider type
-      switch (_selectedType) {
-        case ProviderType.google:
-          // Google does not use custom routes
-          break;
-        case ProviderType.openai:
-          final r = provider.openAIRoutes;
-          _openAIChatCompletionsRouteController.text = r.chatCompletion;
-          _openAIResponsesRouteController.text = r.responses;
-          _openAIEmbeddingsRouteController.text = r.embeddings;
-          _openAIModelsRouteController.text = r.models;
-          break;
-        case ProviderType.anthropic:
-          final r = provider.anthropicRoutes;
-          _anthropicMessagesRouteController.text = r.messages;
-          _anthropicModelsRouteController.text = r.models;
-          break;
-        case ProviderType.ollama:
-          final r = provider.ollamaRoutes;
-          _ollamaChatRouteController.text = r.chat;
-          _ollamaTagsRouteController.text = r.tags;
-          break;
+      // Load custom routes only for OpenAI
+      if (_selectedType == ProviderType.openai) {
+        final r = provider.openAIRoutes;
+        _openAIChatCompletionsRouteController.text = r.chatCompletion;
+        _openAIModelsRouteOrUrlController.text = r.modelsRouteOrUrl;
       }
     } else {
       // Defaults for new provider
@@ -142,25 +83,14 @@ class AddProviderViewModel extends ChangeNotifier {
     _apiKeyController.dispose();
     _baseUrlController.dispose();
 
-    _googleGenerateContentController.dispose();
-    _googleGenerateContentStreamController.dispose();
-    _googleModelsRouteController.dispose();
-
     _openAIChatCompletionsRouteController.dispose();
-    _openAIResponsesRouteController.dispose();
-    _openAIEmbeddingsRouteController.dispose();
-    _openAIModelsRouteController.dispose();
-
-    _anthropicMessagesRouteController.dispose();
-    _anthropicModelsRouteController.dispose();
-
-    _ollamaChatRouteController.dispose();
-    _ollamaTagsRouteController.dispose();
+    _openAIModelsRouteOrUrlController.dispose();
 
     for (var header in _headers) {
       header.key.dispose();
       header.value.dispose();
     }
+    super.dispose();
   }
 
   void updateSelectedType(ProviderType type) {
@@ -227,24 +157,22 @@ class AddProviderViewModel extends ChangeNotifier {
       String modelsRoute;
       switch (_selectedType) {
         case ProviderType.openai:
-          modelsRoute = _openAIModelsRouteController.text;
+          modelsRoute = _openAIModelsRouteOrUrlController.text;
           break;
         case ProviderType.google:
-          modelsRoute = _googleModelsRouteController.text;
+          modelsRoute = '/models';
           break;
         case ProviderType.anthropic:
-          modelsRoute = _anthropicModelsRouteController.text;
+          modelsRoute = '/models';
           break;
         case ProviderType.ollama:
-          // For Ollama, tags route returns list of models
-          modelsRoute = _ollamaTagsRouteController.text;
+          modelsRoute = '/api/tags';
           break;
       }
-      if (!modelsRoute.startsWith('/')) {
-        modelsRoute = '/$modelsRoute';
-      }
 
-      final url = Uri.parse('$baseUrl$modelsRoute');
+      final url = modelsRoute.startsWith('http') 
+          ? Uri.parse(modelsRoute)
+          : Uri.parse('$baseUrl${modelsRoute.startsWith('/') ? '' : '/'}$modelsRoute');
 
       final headers = {
         'Authorization': 'Bearer ${_apiKeyController.text}',
@@ -277,7 +205,10 @@ class AddProviderViewModel extends ChangeNotifier {
             jsonData['tags'] is List) {
           // Ollama /tags response
           models = (jsonData['tags'] as List)
-              .map((e) => (e is Map && e['name'] != null) ? e['name'] : e.toString())
+              .map(
+                (e) =>
+                    (e is Map && e['name'] != null) ? e['name'] : e.toString(),
+              )
               .toList();
         }
 
@@ -285,10 +216,12 @@ class AddProviderViewModel extends ChangeNotifier {
           throw Exception('No models found in API response');
         }
 
-        _availableModels =
-            models.map((model) => detectCapabilities(model)).toList();
-        _selectedModelToAdd =
-            _availableModels.isNotEmpty ? _availableModels.first : null;
+        _availableModels = models
+            .map((model) => detectCapabilities(model))
+            .toList();
+        _selectedModelToAdd = _availableModels.isNotEmpty
+            ? _availableModels.first
+            : null;
         _isFetchingModels = false;
         notifyListeners();
 
@@ -390,67 +323,56 @@ class AddProviderViewModel extends ChangeNotifier {
       return;
     }
 
-    final repository = await ProviderRepository.init();
+    try {
+      final repository = await ProviderRepository.init();
 
-    final Map<String, String> headersMap = {};
-    for (var entry in _headers) {
-      if (entry.key.text.isNotEmpty) {
-        headersMap[entry.key.text] = entry.value.text;
+      final Map<String, String> headersMap = {};
+      for (var entry in _headers) {
+        if (entry.key.text.isNotEmpty) {
+          headersMap[entry.key.text] = entry.value.text;
+        }
       }
-    }
 
-    // Build custom routes only for the selected provider type
-    OpenAIRoutes? openaiRoutes;
-    AnthropicRoutes? anthropicRoutes;
-    OllamaRoutes? ollamaRoutes;
+      // Build custom routes only for OpenAI
+      OpenAIRoutes? openaiRoutes;
 
-    switch (_selectedType) {
-      case ProviderType.google:
-        // Google does not use custom routes
-        break;
-      case ProviderType.openai:
+      if (_selectedType == ProviderType.openai) {
         openaiRoutes = OpenAIRoutes(
           chatCompletion: _openAIChatCompletionsRouteController.text,
-          responses: _openAIResponsesRouteController.text,
-          embeddings: _openAIEmbeddingsRouteController.text,
-          models: _openAIModelsRouteController.text,
+          modelsRouteOrUrl: _openAIModelsRouteOrUrlController.text,
         );
-        break;
-      case ProviderType.anthropic:
-        anthropicRoutes = AnthropicRoutes(
-          messages: _anthropicMessagesRouteController.text,
-          models: _anthropicModelsRouteController.text,
+      }
+
+      final provider = Provider(
+        name: _nameController.text,
+        type: _selectedType,
+        apiKey: _apiKeyController.text,
+        baseUrl: _baseUrlController.text.isNotEmpty
+            ? _baseUrlController.text
+            : null,
+        headers: headersMap,
+        models: _selectedModels,
+        openAIRoutes: openaiRoutes ?? const OpenAIRoutes(),
+      );
+
+      if (existingProvider != null) {
+        await repository.updateProvider(provider);
+      } else {
+        await repository.addProvider(provider);
+      }
+
+      if (context.mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving provider: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
-        break;
-      case ProviderType.ollama:
-        ollamaRoutes = OllamaRoutes(
-          chat: _ollamaChatRouteController.text,
-          tags: _ollamaTagsRouteController.text,
-        );
-        break;
-    }
-
-    final provider = Provider(
-      name: _nameController.text,
-      type: _selectedType,
-      apiKey: _apiKeyController.text,
-      baseUrl:
-          _baseUrlController.text.isNotEmpty ? _baseUrlController.text : null,
-      headers: headersMap,
-      models: _selectedModels,
-      openAIRoutes: openaiRoutes ?? const OpenAIRoutes(),
-      anthropicRoutes: anthropicRoutes ?? const AnthropicRoutes(),
-      ollamaRoutes: ollamaRoutes ?? const OllamaRoutes(),
-    );
-
-    if (existingProvider != null) {
-      await repository.updateProvider(provider);
-    } else {
-      await repository.addProvider(provider);
-    }
-
-    if (context.mounted) {
-      Navigator.pop(context, true);
+      }
     }
   }
 }

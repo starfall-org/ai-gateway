@@ -38,13 +38,8 @@ class _TTSScreenState extends State<TTSScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'TTS Profiles',
-          style: TextStyle(color: Colors.black87),
-        ),
-        backgroundColor: Colors.white,
+        title: const Text('TTS Profiles'),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black54),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -79,10 +74,10 @@ class _TTSScreenState extends State<TTSScreen> {
     return Dismissible(
       key: Key(profile.id),
       background: Container(
-        color: Colors.red,
+        color: Theme.of(context).colorScheme.error,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
@@ -93,12 +88,18 @@ class _TTSScreenState extends State<TTSScreen> {
       },
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.purple.shade50,
-          child: Icon(_getServiceIcon(profile.type), color: Colors.purple),
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          child: Icon(
+            _getServiceIcon(profile.type),
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
         ),
         title: Text(profile.name),
         subtitle: Text(profile.type.name.toUpperCase()),
-        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: Theme.of(context).disabledColor,
+        ),
         onTap: () async {
           // Edit functionality could be added here
         },

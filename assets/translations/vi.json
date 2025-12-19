@@ -110,8 +110,11 @@
     "no_models_fetched": "Chưa tải danh sách mô hình",
     "models_available": "mô hình khả dụng",
     "fetch": "Tải",
-    "manage_models": "Quản lý mô hình"
-  },
+    "manage_models": "Quản lý mô hình",
+    "custom_routes": "Đường dẫn tùy chỉnh",
+    "chat_completions_route": "Chat Completions Route",
+    "models_route_or_url": "Models Route/URL tùy chỉnh"
+   },
   "agents": {
     "add_new_agent": "Thêm Agent Mới",
     "name": "Tên Agent",

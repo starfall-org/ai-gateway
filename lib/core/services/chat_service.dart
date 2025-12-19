@@ -30,8 +30,10 @@ class ChatService {
       if (servers.isEmpty) return const <AIToolFunction>[];
 
       // Dùng cache nếu có
-      List<MCPTool> cachedTools =
-          servers.expand((s) => s.tools).where((t) => t.enabled).toList();
+      List<MCPTool> cachedTools = servers
+          .expand((s) => s.tools)
+          .where((t) => t.enabled)
+          .toList();
 
       if (cachedTools.isEmpty) {
         // Không có cache: fetch ngay và lưu lại
@@ -46,8 +48,10 @@ class ChatService {
             }
           }),
         );
-        cachedTools =
-            fetchedLists.expand((e) => e).where((t) => t.enabled).toList();
+        cachedTools = fetchedLists
+            .expand((e) => e)
+            .where((t) => t.enabled)
+            .toList();
       } else {
         // Có cache: làm mới ở nền khi được dùng, không chặn luồng chat
         // ignore: discarded_futures
@@ -112,21 +116,23 @@ class ChatService {
             'properties': {
               'query': {
                 'type': 'string',
-                'description': 'Search query string describing the information needed.'
+                'description':
+                    'Search query string describing the information needed.',
               },
               'topK': {
                 'type': 'integer',
                 'minimum': 1,
                 'maximum': 50,
-                'description': 'Number of search results to retrieve (default 5).'
+                'description':
+                    'Number of search results to retrieve (default 5).',
               },
               'timeRange': {
                 'type': 'string',
                 'enum': ['any', 'day', 'week', 'month', 'year'],
-                'description': 'Limit results to a recent time range.'
-              }
+                'description': 'Limit results to a recent time range.',
+              },
             },
-            'required': ['query']
+            'required': ['query'],
           },
         ),
       );
@@ -144,16 +150,16 @@ class ChatService {
                 'type': 'array',
                 'items': {'type': 'string'},
                 'minItems': 1,
-                'description': 'List of URLs to fetch.'
+                'description': 'List of URLs to fetch.',
               },
               'maxBytes': {
                 'type': 'integer',
                 'minimum': 1024,
                 'maximum': 10485760,
-                'description': 'Maximum bytes to fetch per URL.'
-              }
+                'description': 'Maximum bytes to fetch per URL.',
+              },
             },
-            'required': ['urls']
+            'required': ['urls'],
           },
         ),
       );
@@ -203,8 +209,9 @@ class ChatService {
     // If caller provides an allowlist of tool names (per-conversation persistence),
     // further restrict the tools to only those listed.
     if (allowedToolNames != null && allowedToolNames.isNotEmpty) {
-      mcpTools =
-          mcpTools.where((t) => allowedToolNames.contains(t.name)).toList();
+      mcpTools = mcpTools
+          .where((t) => allowedToolNames.contains(t.name))
+          .toList();
     }
 
     final systemInstruction = agent.systemPrompt;
@@ -213,16 +220,17 @@ class ChatService {
       case ProviderType.google:
         // Tự động bổ sung 2 built-in tools cho Gemini (bật/tắt bằng AIModel flags)
         final builtinTools = _collectGeminiBuiltinTools(provider, modelName);
-        final allTools = [
-          ...mcpTools,
-          ...builtinTools,
-        ];
+        final allTools = [...mcpTools, ...builtinTools];
 
         // Chuẩn hóa messages và nhúng system instruction vào user message đầu
-        final aiMessages = messagesWithCurrent.map((m) => AIMessage(
-          role: m.role.name,
-          content: [AIContent(type: AIContentType.text, text: m.content)],
-        )).toList();
+        final aiMessages = messagesWithCurrent
+            .map(
+              (m) => AIMessage(
+                role: m.role.name,
+                content: [AIContent(type: AIContentType.text, text: m.content)],
+              ),
+            )
+            .toList();
 
         if (systemInstruction.isNotEmpty && aiMessages.isNotEmpty) {
           final firstUserMsg = aiMessages.firstWhere(
@@ -235,7 +243,8 @@ class ChatService {
             content: [
               AIContent(
                 type: AIContentType.text,
-                text: '$systemInstruction\n\n${firstUserMsg.content.first.text}',
+                text:
+                    '$systemInstruction\n\n${firstUserMsg.content.first.text}',
               ),
             ],
           );
@@ -277,82 +286,84 @@ class ChatService {
           baseUrl: provider.baseUrl,
           apiKey: provider.apiKey,
           chatPath: routes.chatCompletion,
-          responsesPath: routes.responses,
-          modelsPath: routes.models,
-          embeddingsPath: routes.embeddings,
-          imagesGenerationsPath: routes.imagesGenerations,
-          imagesEditsPath: routes.imagesEdits,
-          videosPath: routes.videos,
-          audioSpeechPath: routes.audioSpeech,
+          modelsPath: routes.modelsRouteOrUrl,
           headers: provider.headers,
         );
-        
-        final aiMessages = messagesWithCurrent.map((m) => AIMessage(
-          role: m.role.name,
-          content: [AIContent(type: AIContentType.text, text: m.content)],
-        )).toList();
-        
+
+        final aiMessages = messagesWithCurrent
+            .map(
+              (m) => AIMessage(
+                role: m.role.name,
+                content: [AIContent(type: AIContentType.text, text: m.content)],
+              ),
+            )
+            .toList();
+
         // Add system instruction as first message if present
         if (systemInstruction.isNotEmpty) {
           aiMessages.insert(
             0,
             AIMessage(
               role: 'system',
-              content: [AIContent(type: AIContentType.text, text: systemInstruction)],
+              content: [
+                AIContent(type: AIContentType.text, text: systemInstruction),
+              ],
             ),
           );
         }
-        
+
         final aiRequest = AIRequest(
           model: modelName,
           messages: aiMessages,
           tools: mcpTools,
         );
-        
+
         final resp = await service.generate(aiRequest);
         return resp.text;
 
       case ProviderType.anthropic:
-        final routes = provider.anthropicRoutes;
         final service = Anthropic(
           baseUrl: provider.baseUrl,
           apiKey: provider.apiKey,
-          messagesPath: routes.messages,
-          modelsPath: routes.models,
-          anthropicVersion: routes.anthropicVersion,
           headers: provider.headers,
         );
-        
-        final aiMessages = messagesWithCurrent.map((m) => AIMessage(
-          role: m.role.name,
-          content: [AIContent(type: AIContentType.text, text: m.content)],
-        )).toList();
-        
+
+        final aiMessages = messagesWithCurrent
+            .map(
+              (m) => AIMessage(
+                role: m.role.name,
+                content: [AIContent(type: AIContentType.text, text: m.content)],
+              ),
+            )
+            .toList();
+
         final aiRequest = AIRequest(
           model: modelName,
           messages: aiMessages,
           tools: mcpTools,
-          extra: systemInstruction.isNotEmpty ? {'system': systemInstruction} : {},
+          extra: systemInstruction.isNotEmpty
+              ? {'system': systemInstruction}
+              : {},
         );
         final resp = await service.generate(aiRequest);
         return resp.text;
 
       case ProviderType.ollama:
-        final routes = provider.ollamaRoutes;
         final service = Ollama(
           baseUrl: provider.baseUrl,
           apiKey: provider.apiKey,
-          chatPath: routes.chat,
-          tagsPath: routes.tags,
-          embeddingsPath: routes.embeddings,
           headers: provider.headers,
         );
-        
-        final aiMessages = messagesWithCurrent.map((m) => AIMessage(
-          role: m.role.name,
-          content: [AIContent(type: AIContentType.text, text: m.content)],
-        )).toList();
-        
+
+        final aiMessages = messagesWithCurrent
+            .map(
+              (m) => AIMessage(
+                role: m.role.name,
+                content: [AIContent(type: AIContentType.text, text: m.content)],
+              ),
+            )
+            .toList();
+
         final aiRequest = AIRequest(
           model: modelName,
           messages: aiMessages,

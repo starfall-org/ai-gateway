@@ -108,10 +108,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add TTS Profile'),
-        backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black54),
-        titleTextStyle: const TextStyle(color: Colors.black87, fontSize: 20),
         actions: [
           IconButton(icon: const Icon(Icons.save), onPressed: _saveProfile),
         ],
@@ -134,7 +131,9 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
               return DropdownOption<TTSServiceType>(
                 value: type,
                 label: type.name.toUpperCase(),
-                icon: Icon(type == TTSServiceType.system ? Icons.settings : Icons.cloud),
+                icon: Icon(
+                  type == TTSServiceType.system ? Icons.settings : Icons.cloud,
+                ),
               );
             }).toList(),
             onChanged: (value) {
@@ -156,10 +155,10 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
                 final iconData = p.type == ProviderType.google
                     ? Icons.cloud
                     : p.type == ProviderType.openai
-                        ? Icons.api
-                        : p.type == ProviderType.anthropic
-                            ? Icons.psychology_alt
-                            : Icons.memory;
+                    ? Icons.api
+                    : p.type == ProviderType.anthropic
+                    ? Icons.psychology_alt
+                    : Icons.memory;
                 return DropdownOption<String>(
                   value: p.name,
                   label: p.name,

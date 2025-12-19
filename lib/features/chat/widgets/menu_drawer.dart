@@ -75,10 +75,15 @@ class MenuDrawer extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.info_outline, color: Colors.blue),
+                child: Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
               title: Text('menu.about'.tr()),
               subtitle: Text('menu.about_desc'.tr()),
@@ -96,10 +101,15 @@ class MenuDrawer extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.tertiary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.help_outline, color: Colors.orange),
+                child: Icon(
+                  Icons.help_outline,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
               title: Text('menu.help'.tr()),
               subtitle: Text('menu.help_desc'.tr()),

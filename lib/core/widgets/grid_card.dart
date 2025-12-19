@@ -39,11 +39,7 @@ class GridCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 32,
-            color: primary,
-          ),
+          Icon(icon, size: 32, color: primary),
           const Spacer(),
           Text(
             title,
@@ -76,10 +72,7 @@ class GridCard extends StatelessWidget {
           Positioned(
             top: 4,
             right: 4,
-            child: _ActionMenu(
-              onEdit: onEdit,
-              onDelete: onDelete,
-            ),
+            child: _ActionMenu(onEdit: onEdit, onDelete: onDelete),
           ),
         ],
       );
@@ -141,10 +134,14 @@ class _ActionMenu extends StatelessWidget {
             PopupMenuItem(
               value: _MenuAction.delete,
               child: Row(
-                children: const [
-                  Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                  SizedBox(width: 12),
-                  Text('Delete'),
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text('Delete'),
                 ],
               ),
             ),
@@ -188,11 +185,7 @@ class AddAction extends StatelessWidget {
   final VoidCallback onPressed;
   final String? tooltip;
 
-  const AddAction({
-    super.key,
-    required this.onPressed,
-    this.tooltip = 'Add',
-  });
+  const AddAction({super.key, required this.onPressed, this.tooltip = 'Add'});
 
   @override
   Widget build(BuildContext context) {
