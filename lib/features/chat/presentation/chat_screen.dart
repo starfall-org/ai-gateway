@@ -12,7 +12,7 @@ import '../../../core/widgets/empty_state.dart';
 import 'dart:io';
 
 
-/// TODO: Add short comments describing the feature of each code blocks for easier debug
+/// Màn hình chat chính cho ứng dụng
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -23,6 +23,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late ChatViewModel _viewModel;
 
+  // Khởi tạo viewModel và tải dữ liệu ban đầu
   @override
   void initState() {
     super.initState();
@@ -32,23 +33,27 @@ class _ChatScreenState extends State<ChatScreen> {
     _viewModel.refreshProviders();
   }
 
+  // Dọn dẹp tài nguyên khi widget bị hủy
   @override
   void dispose() {
     _viewModel.dispose();
     super.dispose();
   }
 
+  // Xây dựng giao diện chính của màn hình chat
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: _viewModel,
       builder: (context, child) {
+        // Hiển thị loading khi đang tải dữ liệu
         if (_viewModel.isLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
+        // Giao diện chính của chat
         return Scaffold(
           key: _viewModel.scaffoldKey,
           appBar: AppBar(
@@ -86,6 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
             elevation: 0.5,
             actions: [_buildAgentAvatar(), _buildPopupMenu()],
           ),
+          // Drawer bên trái chứa danh sách cuộc trò chuyện
           drawer: ChatDrawer(
             onSessionSelected: (sessionId) {
               Navigator.pop(context);
@@ -99,9 +105,11 @@ class _ChatScreenState extends State<ChatScreen> {
               _viewModel.loadSelectedAgent();
             },
           ),
+          // Drawer bên phải hiển thị tệp đính kèm
           endDrawer: _buildEndDrawer(context),
           body: Column(
             children: [
+              // Danh sách tin nhắn
               Expanded(
                 child: SafeArea(
                   top: false,
@@ -109,11 +117,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: _buildMessageList(),
                 ),
               ),
+              // Thanh tiến trình khi AI đang tạo phản hồi
               if (_viewModel.isGenerating)
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: LinearProgressIndicator(),
                 ),
+              // Khu vực nhập liệu
               SafeArea(
                 top: false,
                 child: ChatInputArea(
@@ -137,6 +147,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Xây dựng avatar của agent được chọn trong thanh AppBar
   Widget _buildAgentAvatar() {
     return InkWell(
       onTap: () async {
@@ -171,6 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Xây dựng menu popup với các tùy chọn cho cuộc trò chuyện
   Widget _buildPopupMenu() {
     return PopupMenuButton<String>(
       icon: Icon(
@@ -198,6 +210,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Mở drawer chọn model AI
   void _openModelPicker(BuildContext context) {
     ModelsDrawer.show(
       context,
@@ -214,6 +227,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Xây dựng danh sách tin nhắn hoặc hiển thị trạng thái rỗng
   Widget _buildMessageList() {
     if (_viewModel.currentSession?.messages.isEmpty ?? true) {
       return EmptyState(
@@ -234,13 +248,14 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Xây dựng drawer bên phải hiển thị danh sách tệp đính kèm
   Widget _buildEndDrawer(BuildContext context) {
     return AppSidebarRight(
       width: 320,
       child: SafeArea(
         child: Column(
           children: [
-            // Header
+            // Header của drawer đính kèm
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 8, 8),
               child: Row(
@@ -266,7 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             const Divider(height: 1),
-            // List
+            // Danh sách tệp đính kèm
             Expanded(
               child: _viewModel.inspectingAttachments.isEmpty
                   ? EmptyState(
@@ -289,6 +304,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Xây dựng tile hiển thị thông tin tệp đính kèm
   Widget _attachmentTile(BuildContext context, String path) {
     final name = path.split('/').last;
     int sizeBytes = 0;
@@ -300,6 +316,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     Widget leading;
     if (isImg) {
+      // Hiển thị ảnh thumbnail cho tệp ảnh
       leading = ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(
@@ -314,6 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     } else {
+      // Hiển thị icon mặc định cho tệp không phải ảnh
       leading = _fallbackIcon(context);
     }
 
@@ -328,6 +346,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Icon mặc định cho các tệp không phải ảnh
   Widget _fallbackIcon(BuildContext context) {
     return Container(
       width: 48,
@@ -344,6 +363,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Định dạng kích thước tệp từ bytes sang định dạng dễ đọc (KB, MB, GB...)
   String _formatBytes(int bytes, [int decimals = 1]) {
     if (bytes <= 0) return '0 B';
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -356,6 +376,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return '${v.toStringAsFixed(decimals)} ${sizes[i]}';
   }
 
+  // Kiểm tra xem đường dẫn tệp có phải là ảnh hay không
   bool _isImagePath(String path) {
     final lower = path.toLowerCase();
     return lower.endsWith('.png') ||
