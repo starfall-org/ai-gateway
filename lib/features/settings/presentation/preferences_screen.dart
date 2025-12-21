@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/app_preferences.dart';
 import '../../../core/storage/language_repository.dart';
 import '../../../core/storage/app_preferences_repository.dart';
+import '../../../core/translate.dart';
 import '../widgets/settings_section_header.dart';
 import '../widgets/settings_tile.dart';
 import '../widgets/settings_card.dart';
@@ -29,7 +29,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   bool _debugMode = false;
 
   final List<Map<String, dynamic>> _supportedLanguages = [
-    {'code': 'auto', 'name': 'settings.preferences.system', 'flag': '🌐'},
+    {'code': 'auto', 'name': 'System Language', 'flag': '🌐'},
     {'code': 'en', 'name': 'English', 'flag': '🇺🇸'},
     {'code': 'fr', 'name': 'French', 'flag': '🇫🇷'},
     {'code': 'de', 'name': 'German', 'flag': '🇩🇪'},
@@ -128,7 +128,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('settings.preferences.language_changed'.tr()),
+            content: Text(tl('Language has been changed')),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -138,7 +138,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('settings.preferences.language_change_error'.tr()),
+            content: Text(tl('Failed to change language')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -164,7 +164,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       }
     }
 
-    context.setLocale(newLocale);
+    // Note: Locale setting is handled by the language repository
   }
 
   @override
@@ -172,7 +172,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'settings.preferences.title'.tr(),
+          tl('settings.preferences.title'),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -181,17 +181,20 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      body: ListView(
-        children: [
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: ListView(
+          children: [
           // General settings
-          SettingsSectionHeader('settings.preferences.general'.tr()),
+          SettingsSectionHeader('General'),
           const SizedBox(height: 12),
           SettingsCard(
             child: Column(
               children: [
                 SettingsTile(
                   icon: Icons.save_outlined,
-                  title: 'settings.preferences.persist_chat_selection'.tr(),
+                  title: 'Persist selections',
                   trailing: Switch(
                     value: _persistChatSelection,
                     onChanged: (val) =>
@@ -201,7 +204,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 const Divider(height: 1, indent: 56, endIndent: 16),
                 SettingsTile(
                   icon: Icons.vibration_outlined,
-                  title: 'settings.preferences.vibration_enabled'.tr(),
+                  title: 'Vibration',
                   trailing: Switch(
                     value: _vibrationSettings.enable,
                     onChanged: (val) => _updateAppPreferences(
@@ -217,14 +220,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
           // Display settings
           const SizedBox(height: 24),
-          SettingsSectionHeader('settings.preferences.display'.tr()),
+          SettingsSectionHeader('Display'),
           const SizedBox(height: 12),
           SettingsCard(
             child: Column(
               children: [
                 SettingsTile(
                   icon: Icons.fullscreen_outlined,
-                  title: 'settings.preferences.hide_status_bar'.tr(),
+                  title: 'Hide Status Bar',
                   trailing: Switch(
                     value: _hideStatusBar,
                     onChanged: (val) =>
@@ -234,7 +237,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 const Divider(height: 1, indent: 56, endIndent: 16),
                 SettingsTile(
                   icon: Icons.keyboard_hide_outlined,
-                  title: 'settings.preferences.hide_navigation_bar'.tr(),
+                  title: 'Hide Navigation Bar',
                   trailing: Switch(
                     value: _hideNavigationBar,
                     onChanged: (val) =>
@@ -247,12 +250,12 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
           // Developer settings
           const SizedBox(height: 24),
-          SettingsSectionHeader('settings.preferences.developer'.tr()),
+          SettingsSectionHeader('Developer'),
           const SizedBox(height: 12),
           SettingsCard(
             child: SettingsTile(
               icon: Icons.bug_report_outlined,
-              title: 'settings.preferences.debug_mode'.tr(),
+              title: 'Debug Mode',
               trailing: Switch(
                 value: _debugMode,
                 onChanged: (val) => _updateAppPreferences(debugMode: val),
@@ -262,17 +265,18 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
           // Language section
           const SizedBox(height: 24),
-          SettingsSectionHeader('settings.preferences.select_language'.tr()),
+          SettingsSectionHeader('Languages'),
           const SizedBox(height: 12),
           SettingsCard(
             child: SettingsTile(
               icon: Icons.language_outlined,
-              title: 'settings.preferences.current_language'.tr(),
+              title: 'Current Language',
               subtitle: _getCurrentLanguageName(),
               onTap: () => _showLanguagePicker(),
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -303,7 +307,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'settings.preferences.select_language'.tr(),
+                tl('Languages'),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -318,7 +322,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       language['flag'],
                       style: const TextStyle(fontSize: 24),
                     ),
-                    title: Text(language['name'].tr()),
+                    title: Text(language['name'] as String),
                     trailing: isSelected
                         ? Icon(
                             Icons.check_circle,
@@ -341,7 +345,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
 
   String _getCurrentLanguageName() {
     if (_autoDetectLanguage) {
-      return 'settings.preferences.auto_detect'.tr();
+      return 'Auto';
     }
 
     final selected = _supportedLanguages.firstWhere(
@@ -349,6 +353,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       orElse: () => _supportedLanguages.first,
     );
 
-    return selected['name'].tr();
+    return selected['name'] as String;
   }
 }

@@ -13,11 +13,17 @@ import 'models/mcp/mcp_server.dart';
 import 'models/provider.dart';
 
 void initIcons() {
-  final hasInitialized = AppServices.instance.appPreferencesRepository.currentPreferences.hasInitializedIcons;
+  final hasInitialized = AppServices
+      .instance
+      .appPreferencesRepository
+      .currentPreferences
+      .hasInitializedIcons;
   if (!hasInitialized) {
     // Run in background, don't await
     _cacheAllIcons().then((_) async {
-       await AppServices.instance.appPreferencesRepository.setInitializedIcons(true);
+      await AppServices.instance.appPreferencesRepository.setInitializedIcons(
+        true,
+      );
     });
   }
 }

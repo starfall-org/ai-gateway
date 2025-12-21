@@ -44,13 +44,13 @@ class SpeechService {
       icon: json['icon'] as String,
       name: json['name'] as String,
       type: TTSServiceType.values.firstWhere(
-            (e) => e.name == json['type'],
+        (e) => e.name == json['type'],
         orElse: () => TTSServiceType.system,
       ),
       provider: json['provider'] != null
           ? Provider.getTypeByName(json['provider']) != null
-              ? Provider(type: Provider.getTypeByName(json['provider'])!)
-              : null
+                ? Provider(type: Provider.getTypeByName(json['provider'])!)
+                : null
           : null,
       model: json['model'] as String?,
       voiceId: json['voiceId'] as String?,

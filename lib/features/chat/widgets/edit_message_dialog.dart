@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/widgets/dialog.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import 'dart:io';
+
+import '../../../core/translate.dart';
 
 class EditMessageResult {
   final String content;
@@ -159,7 +160,10 @@ class _EditMessageDialogState extends State<EditMessageDialog> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.insert_drive_file, color: Theme.of(context).iconTheme.color),
+          Icon(
+            Icons.insert_drive_file,
+            color: Theme.of(context).iconTheme.color,
+          ),
           const SizedBox(height: 6),
           Text(
             name,
@@ -186,14 +190,14 @@ class _EditMessageDialogState extends State<EditMessageDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AppDialog(
-      title: Text('dialog.edit_message'.tr()),
+      title: Text(tl('Edit Message')),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CustomTextField(
               controller: _controller,
-              label: 'dialog.message'.tr(),
+              label: 'Message',
               minLines: 3,
               maxLines: 10,
             ),
@@ -201,14 +205,14 @@ class _EditMessageDialogState extends State<EditMessageDialog> {
             Row(
               children: [
                 Text(
-                  '${'dialog.attachments'.tr()} (${_attachments.length})',
+                  '${'Attachments'} (${_attachments.length})',
                   style: theme.textTheme.labelLarge,
                 ),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: _pickAttachments,
                   icon: const Icon(Icons.attach_file),
-                  label: Text('dialog.add'.tr()),
+                  label: Text(tl('Add')),
                 ),
               ],
             ),
@@ -226,15 +230,15 @@ class _EditMessageDialogState extends State<EditMessageDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).maybePop(),
-          child: Text('common.cancel'.tr()),
+          child: Text(tl('Cancel')),
         ),
         FilledButton.tonal(
           onPressed: () => _return(false),
-          child: Text('common.save'.tr()),
+          child: Text(tl('Save')),
         ),
         FilledButton(
           onPressed: () => _return(true),
-          child: Text('dialog.save_and_resend'.tr()),
+          child: Text(tl('dialog.save_and_resend')),
         ),
       ],
     );

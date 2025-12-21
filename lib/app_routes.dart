@@ -15,6 +15,8 @@ import 'features/datacontrols/presentation/datacontrols_screen.dart';
 import 'features/about/presentation/about_screen.dart';
 import 'features/update/presentation/update_screen.dart';
 
+import 'core/translate.dart';
+
 /// Generate a route based on the route name.
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -51,12 +53,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
       return MaterialPageRoute(
         builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('Route Not Found')),
+          appBar: AppBar(title: Text(tl('Route Not Found'))),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Route not found:'),
+                Text(tl('Route not found:')),
                 Text(settings.name ?? 'Unknown route'),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -65,7 +67,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
                     AppRoutes.chat,
                     (route) => false,
                   ),
-                  child: const Text('Go to Chat'),
+                  child: Text(tl('Go to Chat')),
                 ),
               ],
             ),

@@ -2,103 +2,98 @@ import 'package:flutter/material.dart';
 
 class AttachmentOptionsDrawer extends StatelessWidget {
   final VoidCallback onPickAttachments;
-  final VoidCallback? onMicTap;
+  final VoidCallback? onPickFromGallery;
 
   const AttachmentOptionsDrawer({
     super.key,
     required this.onPickAttachments,
-    this.onMicTap,
+    this.onPickFromGallery,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        child: Row(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Handle bar
-            Center(
-              child: Container(
-                width: 60,
-                height: 6,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Theme.of(
+            Container(
+              width: 48,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Options
+            Row(
+              children: [
+                Expanded(
+                  child: _actionTile(
                     context,
-                  ).colorScheme.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    icon: Icons.attach_file,
+                    iconColor: theme.colorScheme.primary,
+                    label: 'Files',
+                    onTap: () {
+                      Navigator.pop(context);
+                      onPickAttachments();
+                    },
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                if (onPickFromGallery != null)
+                  Expanded(
+                    child: _actionTile(
+                      context,
+                      color:
+                          theme.colorScheme.secondary.withValues(alpha: 0.1),
+                      icon: Icons.photo_library,
+                      iconColor: theme.colorScheme.secondary,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.pop(context);
+                        onPickFromGallery?.call();
+                      },
+                    ),
+                  ),
+              ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            // Attachment options
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
-              leading: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.library_add,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-
-              onTap: () {
-                Navigator.pop(context);
-                onPickAttachments();
-              },
-            ),
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
-              leading: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.secondary),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement camera pick
-              },
-            ),
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.attach_file, color: Theme.of(context).colorScheme.tertiary),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement document pick (allow multiple)
-              },
-            ),
+  Widget _actionTile(
+    BuildContext context, {
+    required Color color,
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        height: 84,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: iconColor),
+            const SizedBox(height: 8),
+            Text(label, style: Theme.of(context).textTheme.labelMedium),
           ],
         ),
       ),
@@ -109,18 +104,17 @@ class AttachmentOptionsDrawer extends StatelessWidget {
   static void show(
     BuildContext context, {
     required VoidCallback onPickAttachments,
-    VoidCallback? onMicTap,
+    VoidCallback? onPickFromGallery,
   }) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) => AttachmentOptionsDrawer(
         onPickAttachments: onPickAttachments,
-        onMicTap: onMicTap,
+        onPickFromGallery: onPickFromGallery,
       ),
     );
   }

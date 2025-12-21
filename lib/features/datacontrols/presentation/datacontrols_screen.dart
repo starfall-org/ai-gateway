@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
+import '../../../core/translate.dart';
 
 /// Màn hình điều khiển dữ liệu cho phép quản lý và kiểm soát dữ liệu ứng dụng
 class DataControlsScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'datacontrols.title'.tr(),
+              tl('Data Controls'),
               style: TextStyle(
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontSize: 16,
@@ -37,7 +37,7 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
               ),
             ),
             Text(
-              'datacontrols.subtitle'.tr(),
+              tl('Manage and control data'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 12,
@@ -49,7 +49,11 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.5,
       ),
-      body: _buildBody(),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _buildBody(),
+      ),
     );
   }
 
@@ -93,14 +97,13 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'datacontrols.overview.title'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        tl('Data Overview'),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'datacontrols.overview.subtitle'.tr(),
+                        tl('App data statistics and information'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
@@ -125,19 +128,11 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
       children: [
         _buildStatItem(
           icon: Icons.chat_bubble,
-          label: 'datacontrols.stats.conversations'.tr(),
+          label: 'Conversations',
           value: '0',
         ),
-        _buildStatItem(
-          icon: Icons.person,
-          label: 'datacontrols.stats.profiles'.tr(),
-          value: '0',
-        ),
-        _buildStatItem(
-          icon: Icons.cloud,
-          label: 'datacontrols.stats.providers'.tr(),
-          value: '0',
-        ),
+        _buildStatItem(icon: Icons.person, label: 'Profiles', value: '0'),
+        _buildStatItem(icon: Icons.cloud, label: 'Providers', value: '0'),
       ],
     );
   }
@@ -150,11 +145,7 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
   }) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-          size: 24,
-        ),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
         const SizedBox(height: 4),
         Text(
           value,
@@ -178,10 +169,10 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'datacontrols.management.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Data Management'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -189,22 +180,22 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
             children: [
               _buildControlTile(
                 icon: Icons.backup,
-                title: 'datacontrols.management.backup'.tr(),
-                subtitle: 'datacontrols.management.backup_desc'.tr(),
+                title: 'Backup Data',
+                subtitle: 'Create backup of app data',
                 onTap: () => _handleBackup(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.restore,
-                title: 'datacontrols.management.restore'.tr(),
-                subtitle: 'datacontrols.management.restore_desc'.tr(),
+                title: 'Restore Data',
+                subtitle: 'Restore from backup',
                 onTap: () => _handleRestore(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.import_export,
-                title: 'datacontrols.management.export'.tr(),
-                subtitle: 'datacontrols.management.export_desc'.tr(),
+                title: 'Export Data',
+                subtitle: 'Export data to file',
                 onTap: () => _handleExport(),
               ),
             ],
@@ -220,10 +211,10 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'datacontrols.privacy.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Privacy'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -231,15 +222,15 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
             children: [
               _buildControlTile(
                 icon: Icons.visibility_off,
-                title: 'datacontrols.privacy.anonymize'.tr(),
-                subtitle: 'datacontrols.privacy.anonymize_desc'.tr(),
+                title: 'Anonymize Data',
+                subtitle: 'Remove personally identifiable information',
                 onTap: () => _handleAnonymize(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.delete_forever,
-                title: 'datacontrols.privacy.delete_all'.tr(),
-                subtitle: 'datacontrols.privacy.delete_all_desc'.tr(),
+                title: 'Delete All Data',
+                subtitle: 'Permanently delete all app data',
                 onTap: () => _handleDeleteAll(),
                 isDestructive: true,
               ),
@@ -256,10 +247,10 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'datacontrols.storage.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Storage Controls'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -267,15 +258,15 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
             children: [
               _buildControlTile(
                 icon: Icons.cleaning_services,
-                title: 'datacontrols.storage.clean_cache'.tr(),
-                subtitle: 'datacontrols.storage.clean_cache_desc'.tr(),
+                title: 'Clean Cache',
+                subtitle: 'Clear temporary cache files',
                 onTap: () => _handleCleanCache(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.folder_open,
-                title: 'datacontrols.storage.manage_files'.tr(),
-                subtitle: 'datacontrols.storage.manage_files_desc'.tr(),
+                title: 'Manage Files',
+                subtitle: 'View and manage saved files',
                 onTap: () => _handleManageFiles(),
               ),
             ],
@@ -296,16 +287,14 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive 
+        color: isDestructive
             ? Theme.of(context).colorScheme.error
             : Theme.of(context).colorScheme.primary,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive 
-              ? Theme.of(context).colorScheme.error
-              : null,
+          color: isDestructive ? Theme.of(context).colorScheme.error : null,
         ),
       ),
       subtitle: Text(subtitle),
@@ -315,51 +304,55 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
 
   /// Handlers cho các hành động
   void _handleBackup() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.backup_started'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Data backup started'))));
   }
 
   void _handleRestore() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.restore_started'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Data restore started'))));
   }
 
   void _handleExport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.export_started'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Data export started'))));
   }
 
   void _handleAnonymize() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.anonymize_started'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Data anonymization started'))));
   }
 
   void _handleDeleteAll() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('datacontrols.delete_all_confirm.title'.tr()),
-        content: Text('datacontrols.delete_all_confirm.message'.tr()),
+        title: Text(tl('Confirm Delete All')),
+        content: Text(
+          tl(
+            'This action will permanently delete all app data. Are you sure you want to continue?',
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
+            child: Text(tl('Cancel')),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('datacontrols.actions.delete_all_completed'.tr())),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(tl('All data deleted'))));
             },
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: Text('common.delete'.tr()),
+            child: Text(tl('Delete')),
           ),
         ],
       ),
@@ -367,14 +360,14 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
   }
 
   void _handleCleanCache() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.cache_cleaned'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Cache cleaned'))));
   }
 
   void _handleManageFiles() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('datacontrols.actions.manage_files_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('File manager opened'))));
   }
 }

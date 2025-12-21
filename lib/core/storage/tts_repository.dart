@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/speech_service.dart';
 import 'shared_prefs_base_repository.dart';
@@ -38,6 +39,9 @@ class TTSRepository extends SharedPreferencesBaseRepository<SpeechService> {
   }
 
   List<SpeechService> getProfiles() => getItems();
+
+  /// Reactive stream of TTS profiles; emits immediately and on each change.
+  Stream<List<SpeechService>> get profilesStream => itemsStream;
 
   Future<void> addProfile(SpeechService profile) => saveItem(profile);
 

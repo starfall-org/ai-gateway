@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/mcp/mcp_server.dart';
 import 'shared_prefs_base_repository.dart';
@@ -28,8 +29,9 @@ class MCPRepository extends SharedPreferencesBaseRepository<MCPServer> {
     return MCPServer.fromJson(fields);
   }
 
-  /// Get all enabled servers
-  List<MCPServer> getMCPServers() {
-    return getItems();
-  }
+  /// Get all servers
+  List<MCPServer> getMCPServers() => getItems();
+
+  /// Reactive stream of MCP servers; emits immediately and on each change.
+  Stream<List<MCPServer>> get mcpServersStream => itemsStream;
 }

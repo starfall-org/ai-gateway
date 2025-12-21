@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/storage/provider_repository.dart';
@@ -10,6 +9,8 @@ import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/item_card.dart';
 import '../../../core/utils.dart';
 import 'add_provider_screen.dart';
+
+import '../../../core/translate.dart';
 
 class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});
@@ -65,7 +66,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading providers: $e'),
+            content: Text(tl('Error loading providers: $e')),
             backgroundColor: Theme.of(context).colorScheme.error,
             action: SnackBarAction(
               label: 'Retry',
@@ -80,23 +81,18 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
 
   Future<void> _deleteProvider(String name) async {
     try {
-      final provider = _providers.firstWhere((p) => p.name == name);
       await _repository.deleteProvider(name);
       await _loadProviders(); // Use await to ensure proper sequencing
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'providers.provider_deleted'.tr(args: [provider.name]),
-            ),
-          ),
+          SnackBar(content: Text(tl('Provider $name has been deleted'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error deleting provider: $e'),
+            content: Text(tl('Error deleting provider: $e')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -108,7 +104,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('providers.title'.tr()),
+        title: Text(tl('Providers')),
         actions: [
           AddAction(
             onPressed: () async {
@@ -133,53 +129,56 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _providers.isEmpty
-          ? EmptyState(
-              message: 'providers.no_providers'.tr(),
-              actionLabel: 'providers.add_provider'.tr(),
-              onAction: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddProviderScreen(),
-                  ),
-                );
-                if (result == true) {
-                  _loadProviders();
-                }
-              },
-            )
-          : _isGridView
-          ? GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: _providers.length,
-              itemBuilder: (context, index) =>
-                  _buildProviderCard(_providers[index]),
-            )
-          : ListView.builder(
-              // Changed to Builder for better perf
-              itemCount: _providers.length,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemBuilder: (context, index) =>
-                  _buildProviderTile(_providers[index]),
-            ),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _providers.isEmpty
+                ? EmptyState(
+                    message: 'No providers found',
+                    actionLabel: 'Add Provider',
+                    onAction: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddProviderScreen(),
+                        ),
+                      );
+                      if (result == true) {
+                        _loadProviders();
+                      }
+                    },
+                  )
+                : _isGridView
+                    ? GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 1.5,
+                        ),
+                        itemCount: _providers.length,
+                        itemBuilder: (context, index) =>
+                            _buildProviderCard(_providers[index]),
+                      )
+                    : ListView.builder(
+                        // Changed to Builder for better perf
+                        itemCount: _providers.length,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemBuilder: (context, index) =>
+                            _buildProviderTile(_providers[index]),
+                      ),
+      ),
     );
   }
 
   Widget _buildProviderTile(Provider provider) {
     return ResourceTile(
       title: provider.name,
-      subtitle: 'providers.models_count'.tr(
-        args: [provider.models.length.toString()],
-      ),
+      subtitle: '${provider.models.length} models',
       leadingIcon: buildLogoIcon(provider, size: 24),
       onTap: () async {
         final result = await Navigator.push(
@@ -211,9 +210,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
     return ItemCard(
       icon: buildLogoIcon(provider, size: 24),
       title: provider.name,
-      subtitle: 'providers.models_count'.tr(
-        args: [provider.models.length.toString()],
-      ),
+      subtitle: '${provider.models.length} models',
       onTap: () async {
         final result = await Navigator.push(
           context,
@@ -243,9 +240,9 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Future<void> _confirmDelete(Provider provider) async {
     final confirm = await ConfirmDialog.show(
       context,
-      title: 'common.delete'.tr(),
-      content: 'providers.delete_confirm'.tr(args: [provider.name]),
-      confirmLabel: 'common.delete'.tr(),
+      title: 'Delete',
+      content: 'Are you sure you want to delete ${provider.name}?',
+      confirmLabel: 'Delete',
       isDestructive: true,
     );
 
@@ -255,6 +252,4 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       ); // Using name as ID based on repo implementation
     }
   }
-
-
 }

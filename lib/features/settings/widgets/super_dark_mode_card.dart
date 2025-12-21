@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'settings_card.dart';
+
+import '../../../core/translate.dart';
 
 class SuperDarkModeCard extends StatelessWidget {
   final bool value;
@@ -48,7 +49,7 @@ class SuperDarkModeCard extends StatelessWidget {
         backgroundColor: Colors.transparent,
         child: SwitchListTile(
           title: Text(
-            'settings.appearance.super_dark_mode'.tr(),
+            tl('Super Dark Mode'),
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
@@ -64,7 +65,7 @@ class SuperDarkModeCard extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            'settings.appearance.super_dark_mode_desc'.tr(),
+            tl('Use deep black for AMOLED displays'),
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'empty_state.dart';
 
+import '../translate.dart';
+
 /// A utility widget that handles common screen states:
 /// - Loading: Shows a progress indicator
 /// - Error: Shows an error message with optional retry action
@@ -39,7 +41,7 @@ class ScreenState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator());
     }
 
     if (error != null) {
@@ -68,7 +70,7 @@ class ScreenState extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
+                  label: Text(tl('Retry')),
                 ),
               ],
             ],

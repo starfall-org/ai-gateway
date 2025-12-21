@@ -7,16 +7,10 @@ class SecondarySurface extends ThemeExtension<SecondarySurface> {
   final Color backgroundColor;
   final BorderSide? borderSide;
 
-  const SecondarySurface({
-    required this.backgroundColor,
-    this.borderSide,
-  });
+  const SecondarySurface({required this.backgroundColor, this.borderSide});
 
   @override
-  SecondarySurface copyWith({
-    Color? backgroundColor,
-    BorderSide? borderSide,
-  }) {
+  SecondarySurface copyWith({Color? backgroundColor, BorderSide? borderSide}) {
     return SecondarySurface(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       borderSide: borderSide ?? this.borderSide,
@@ -28,7 +22,8 @@ class SecondarySurface extends ThemeExtension<SecondarySurface> {
     if (other is! SecondarySurface) return this;
     return SecondarySurface(
       backgroundColor:
-          Color.lerp(backgroundColor, other.backgroundColor, t) ?? backgroundColor,
+          Color.lerp(backgroundColor, other.backgroundColor, t) ??
+          backgroundColor,
       borderSide: _lerpBorder(borderSide, other.borderSide, t),
     );
   }
@@ -36,8 +31,10 @@ class SecondarySurface extends ThemeExtension<SecondarySurface> {
   static BorderSide? _lerpBorder(BorderSide? a, BorderSide? b, double t) {
     if (a == null && b == null) return null;
     // Treat null as transparent 0-width so lerp works smoothly
-    final BorderSide aSide = a ?? const BorderSide(color: Colors.transparent, width: 0);
-    final BorderSide bSide = b ?? const BorderSide(color: Colors.transparent, width: 0);
+    final BorderSide aSide =
+        a ?? const BorderSide(color: Colors.transparent, width: 0);
+    final BorderSide bSide =
+        b ?? const BorderSide(color: Colors.transparent, width: 0);
     return BorderSide.lerp(aSide, bSide, t);
   }
 }

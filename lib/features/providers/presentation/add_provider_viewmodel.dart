@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../../../core/models/ai/ai_model.dart';
 import '../../../core/storage/provider_repository.dart';
 import '../../../core/models/provider.dart';
-import 'package:easy_localization/easy_localization.dart';
+import '../../../core/translate.dart';
 
 class AddProviderViewModel extends ChangeNotifier {
   // Form State
@@ -153,7 +153,7 @@ class AddProviderViewModel extends ChangeNotifier {
     if (_apiKeyController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('settings.enter_api_key'.tr())));
+      ).showSnackBar(SnackBar(content: Text(tl('settings.enter_api_key'))));
       return;
     }
 
@@ -245,18 +245,14 @@ class AddProviderViewModel extends ChangeNotifier {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'settings.found_models'.tr(args: [models.length.toString()]),
-              ),
-            ),
+            SnackBar(content: Text(tl('Found ${models.length} models'))),
           );
         }
       } else if (response.statusCode == 401) {
-        throw Exception('settings.auth_error'.tr());
+        throw Exception('settings.auth_error');
       } else {
         throw Exception(
-          '${'settings.fetch_error'.tr()}: ${response.statusCode} ${response.reasonPhrase}',
+          '${'settings.fetch_error'}: ${response.statusCode} ${response.reasonPhrase}',
         );
       }
     } catch (e) {
@@ -264,14 +260,14 @@ class AddProviderViewModel extends ChangeNotifier {
       notifyListeners();
 
       if (context.mounted) {
-        String errorMessage = 'settings.fetch_error'.tr();
+        String errorMessage = 'settings.fetch_error';
         if (e.toString().contains('SocketException') ||
             e.toString().contains('ClientException')) {
-          errorMessage = 'settings.connection_error'.tr();
+          errorMessage = tl("Connection error");
         } else if (e.toString().contains('TimeoutException')) {
-          errorMessage = 'settings.timeout_error'.tr();
+          errorMessage = tl("Timeout error");
         } else if (e.toString().contains('FormatException')) {
-          errorMessage = 'settings.invalid_format'.tr();
+          errorMessage = tl("Invalid format");
         } else {
           errorMessage = e.toString().replaceFirst('Exception: ', '');
         }
@@ -352,7 +348,7 @@ class AddProviderViewModel extends ChangeNotifier {
     if (_nameController.text.isEmpty || _apiKeyController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('settings.fill_required'.tr())));
+      ).showSnackBar(SnackBar(content: Text(tl('settings.fill_required'))));
       return;
     }
 
@@ -404,7 +400,7 @@ class AddProviderViewModel extends ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving provider: $e'),
+            content: Text(tl('Error saving provider: $e')),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

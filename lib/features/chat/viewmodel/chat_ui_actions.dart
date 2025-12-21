@@ -28,7 +28,7 @@ extension ChatViewModelUIActions on ChatViewModel {
     scaffoldKey.currentState?.openEndDrawer();
   }
 
- void closeEndDrawer() {
+  void closeEndDrawer() {
     scaffoldKey.currentState?.closeEndDrawer();
   }
 }

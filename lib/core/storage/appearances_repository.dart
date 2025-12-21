@@ -14,6 +14,15 @@ class AppearancesRepository
 
   AppearancesRepository(super.prefs) {
     _loadInitialTheme();
+    // Auto-refresh notifier on any storage change (no restart needed)
+    changes.listen((_) {
+      final items = getItems();
+      if (items.isNotEmpty) {
+        themeNotifier.value = items.first;
+      } else {
+        themeNotifier.value = Appearances.defaults();
+      }
+    });
   }
 
   void _loadInitialTheme() {

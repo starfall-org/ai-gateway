@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../models/ai/ai_profile.dart';
@@ -94,6 +95,27 @@ class AIProfileRepository extends SharedPreferencesBaseRepository<AIProfile> {
 
   List<AIProfile> getProfiles() => getItems();
 
+  // Reactive streams
+  Stream<List<AIProfile>> get profilesStream => itemsStream;
+
+  Stream<AIProfile> get selectedProfileStream {
+    final controller = StreamController<AIProfile>.broadcast();
+    StreamSubscription<void>? sub;
+    controller.onListen = () async {
+      final profile = await getOrInitSelectedProfile();
+      controller.add(profile);
+      sub = changes.listen((_) async {
+        final p = await getOrInitSelectedProfile();
+        controller.add(p);
+      });
+    };
+    controller.onCancel = () async {
+      await sub?.cancel();
+      sub = null;
+    };
+    return controller.stream;
+  }
+
   Future<void> addProfile(AIProfile profile) async {
     await saveItem(profile);
     // If no selection yet, select the newly added profile by default
@@ -126,9 +148,11 @@ class AIProfileRepository extends SharedPreferencesBaseRepository<AIProfile> {
   // --- Selection helpers ---
 
   String? getSelectedProfileId() => prefs.getString(_selectedKey);
-
+  
   Future<void> setSelectedProfileId(String id) async {
     await prefs.setString(_selectedKey, id);
+    // Notify listeners so selected profile updates propagate live
+    changeNotifier.value++;
   }
 
   Future<AIProfile> getOrInitSelectedProfile() async {

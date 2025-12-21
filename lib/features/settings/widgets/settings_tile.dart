@@ -29,7 +29,8 @@ class SettingsTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (iconColor ?? Theme.of(context).colorScheme.primary).withValues(alpha: 0.1),
+                color: (iconColor ?? Theme.of(context).colorScheme.primary)
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -58,7 +59,9 @@ class SettingsTile extends StatelessWidget {
                       subtitle!,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -71,7 +74,9 @@ class SettingsTile extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 size: 20,
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
               ),
           ],
         ),

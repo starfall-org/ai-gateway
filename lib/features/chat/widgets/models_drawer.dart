@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/provider.dart';
+
+import '../../../core/translate.dart';
 
 class ModelsDrawer extends StatelessWidget {
   final List<Provider> providers;
@@ -48,7 +49,7 @@ class ModelsDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
               child: Text(
-                'model_picker.title'.tr(),
+                tl('Select Model'),
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -59,7 +60,7 @@ class ModelsDrawer extends StatelessWidget {
             if (providers.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('model_picker.no_providers'.tr()),
+                child: Text(tl('No providers configured')),
               )
             else
               Flexible(

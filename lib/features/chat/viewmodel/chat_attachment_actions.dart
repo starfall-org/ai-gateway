@@ -19,11 +19,7 @@ extension ChatViewModelAttachmentActions on ChatViewModel {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'chat.unable_pick'.tr(namedArgs: {'error': e.toString()}),
-            ),
-          ),
+          SnackBar(content: Text(tl('Unable to pick files: ${e.toString()}'))),
         );
       }
     }
@@ -47,11 +43,7 @@ extension ChatViewModelAttachmentActions on ChatViewModel {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'chat.unable_pick'.tr(namedArgs: {'error': e.toString()}),
-            ),
-          ),
+          SnackBar(content: Text(tl('Unable to pick files: ${e.toString()}'))),
         );
       }
     }

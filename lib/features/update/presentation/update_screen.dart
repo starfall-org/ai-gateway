@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
+import '../../../core/translate.dart';
 
 /// Màn hình cập nhật ứng dụng
 class UpdateScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'update.title'.tr(),
+              tl('Update'),
               style: TextStyle(
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontSize: 16,
@@ -41,7 +41,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
               ),
             ),
             Text(
-              'update.subtitle'.tr(),
+              tl('Check and install updates'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 12,
@@ -62,7 +62,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
         ],
       ),
-      body: _buildBody(),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _buildBody(),
+      ),
     );
   }
 
@@ -106,14 +110,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'update.current_version'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        tl('Current Version'),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'update.current_version_desc'.tr(),
+                        tl('Current app version information'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
@@ -124,20 +127,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildVersionInfo(
-              'update.version_number'.tr(),
-              _currentVersion,
-            ),
+            _buildVersionInfo('Version Number', _currentVersion),
             const SizedBox(height: 8),
-            _buildVersionInfo(
-              'update.build_date'.tr(),
-              '2024-12-21',
-            ),
+            _buildVersionInfo('Build Date', '2024-12-21'),
             const SizedBox(height: 8),
-            _buildVersionInfo(
-              'update.update_channel'.tr(),
-              'update.stable_channel'.tr(),
-            ),
+            _buildVersionInfo('Update Channel', 'Stable'),
           ],
         ),
       ),
@@ -151,9 +145,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
         Text(
           value,
@@ -186,18 +180,15 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'update.check_status'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        tl('Check for Updates'),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _hasUpdate 
-                            ? 'update.update_available'.tr()
-                            : 'update.up_to_date'.tr(),
+                        _hasUpdate ? 'Update available' : 'Up to date',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: _hasUpdate 
+                          color: _hasUpdate
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).textTheme.bodySmall?.color,
                         ),
@@ -220,9 +211,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       )
                     : const Icon(Icons.refresh),
                 label: Text(
-                  _isCheckingForUpdates 
-                      ? 'update.checking'.tr()
-                      : 'update.check_now'.tr(),
+                  _isCheckingForUpdates ? 'Checking...' : 'Check Now',
                 ),
               ),
             ),
@@ -253,14 +242,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'update.new_version_available'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        tl('New version available'),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${'update.latest_version'.tr()}: $_latestVersion',
+                        '${'Latest version'}: $_latestVersion',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
@@ -278,14 +266,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => _skipUpdate(),
-                    child: Text('update.skip_this_version'.tr()),
+                    child: Text(tl('Skip this version')),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => _downloadUpdate(),
-                    child: Text('update.download_update'.tr()),
+                    child: Text(tl('Download Update')),
                   ),
                 ),
               ],
@@ -302,30 +290,32 @@ class _UpdateScreenState extends State<UpdateScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'update.whats_new'.tr(),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('What\'s New'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         ...[
-          'update.feature_1'.tr(),
-          'update.feature_2'.tr(),
-          'update.feature_3'.tr(),
-        ].map((feature) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          child: Row(
-            children: [
-              Icon(
-                Icons.check_circle,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Expanded(child: Text(feature)),
-            ],
+          'Performance and speed improvements',
+          'Optimized user interface',
+          'New features and bug fixes',
+        ].map(
+          (feature) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(child: Text(feature)),
+              ],
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -336,10 +326,10 @@ class _UpdateScreenState extends State<UpdateScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'update.update_history'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Update History'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -348,19 +338,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
               _buildHistoryItem(
                 version: '1.0.0',
                 date: '2024-12-21',
-                features: [
-                  'update.history_1_feature_1'.tr(),
-                  'update.history_1_feature_2'.tr(),
-                ],
+                features: ['Initial release', 'Basic chat features'],
               ),
               const Divider(height: 1),
               _buildHistoryItem(
                 version: '0.9.0',
                 date: '2024-12-01',
-                features: [
-                  'update.history_2_feature_1'.tr(),
-                  'update.history_2_feature_2'.tr(),
-                ],
+                features: ['UI improvements', 'Performance optimization'],
               ),
             ],
           ),
@@ -383,33 +367,32 @@ class _UpdateScreenState extends State<UpdateScreen> {
           Row(
             children: [
               Text(
-                'v$version',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                tl('v$version'),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              Text(
-                date,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              Text(date, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           const SizedBox(height: 8),
-          ...features.map((feature) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.circle,
-                  size: 4,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(child: Text(feature)),
-              ],
+          ...features.map(
+            (feature) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.circle,
+                    size: 4,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(feature)),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -431,22 +414,22 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('update.update_check_completed'.tr())),
+        SnackBar(content: Text(tl('update.update_check_completed'))),
       );
     }
   }
 
   /// Bỏ qua cập nhật
   void _skipUpdate() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('update.update_skipped'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('update.update_skipped'))));
   }
 
   /// Tải xuống cập nhật
   void _downloadUpdate() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('update.download_started'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('update.download_started'))));
   }
 }

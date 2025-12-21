@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai/ai_model.dart';
 import 'attachment_options_drawer.dart';
+
+import '../../../core/translate.dart';
 
 class ChatInputArea extends StatelessWidget {
   final TextEditingController controller;
@@ -10,6 +11,7 @@ class ChatInputArea extends StatelessWidget {
   // Bổ sung: danh sách file đính kèm (đường dẫn), và callback thao tác
   final List<String> attachments;
   final VoidCallback onPickAttachments;
+  final VoidCallback? onPickFromGallery;
   final void Function(int index) onRemoveAttachment;
   // Nút mở drawer chọn model
   final VoidCallback onOpenModelPicker;
@@ -18,8 +20,6 @@ class ChatInputArea extends StatelessWidget {
   // Trạng thái sinh câu trả lời để disable input/nút gửi
   final bool isGenerating;
 
-  // Tuỳ chọn: hành động cho nút mic (ví dụ TTS)
-  final VoidCallback? onMicTap;
   // Nút mở drawer menu
   final VoidCallback? onOpenMenu;
 
@@ -29,11 +29,11 @@ class ChatInputArea extends StatelessWidget {
     required this.onSubmitted,
     this.attachments = const [],
     required this.onPickAttachments,
+    this.onPickFromGallery,
     required this.onRemoveAttachment,
     required this.onOpenModelPicker,
     this.selectedAIModel,
     this.isGenerating = false,
-    this.onMicTap,
     this.onOpenMenu,
   });
 
@@ -93,7 +93,7 @@ class ChatInputArea extends StatelessWidget {
                 minLines: 1,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'input.ask'.tr(),
+                  hintText: tl('Ask {}'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,
@@ -126,10 +126,10 @@ class ChatInputArea extends StatelessWidget {
                           AttachmentOptionsDrawer.show(
                             context,
                             onPickAttachments: onPickAttachments,
-                            onMicTap: onMicTap,
+                            onPickFromGallery: onPickFromGallery,
                           );
                         },
-                        tooltip: 'input.attach_files'.tr(),
+                        tooltip: tl('Attach files'),
                       ),
                       IconButton(
                         icon: Icon(
@@ -139,7 +139,7 @@ class ChatInputArea extends StatelessWidget {
                         onPressed: () {
                           onOpenMenu?.call();
                         },
-                        tooltip: 'input.menu'.tr(),
+                        tooltip: tl('Menu'),
                       ),
                     ],
                   ),
@@ -184,7 +184,7 @@ class ChatInputArea extends StatelessWidget {
                                 child: Icon(Icons.token, size: 20),
                               ),
                               Text(
-                                'model_picker.title'.tr(),
+                                tl('Select Model'),
                                 style: TextStyle(
                                   color: Theme.of(context).iconTheme.color,
                                 ),
@@ -219,7 +219,7 @@ class ChatInputArea extends StatelessWidget {
                           onPressed: canSend
                               ? () => onSubmitted(controller.text)
                               : null,
-                          tooltip: 'input.send'.tr(),
+                          tooltip: tl('Send'),
                         ),
                       ),
                     ],

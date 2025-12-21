@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/ai/ai_profile.dart';
@@ -6,6 +5,8 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../settings/widgets/settings_card.dart';
 import '../viewmodel/add_agent_viewmodel.dart';
 import 'view_profile_screen.dart';
+
+import '../../../core/translate.dart';
 
 class AddProfileScreen extends StatefulWidget {
   final AIProfile? profile;
@@ -50,9 +51,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            isEditing ? 'agents.edit_agent'.tr() : 'agents.add_new_agent'.tr(),
-          ),
+          title: Text(isEditing ? 'Edit AI Profile' : 'Add AI Profile'),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'General'),
@@ -64,7 +63,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
             if (isEditing)
               IconButton(
                 icon: const Icon(Icons.info_outline),
-                tooltip: 'agents.agent_details'.tr(),
+                tooltip: tl('AI Profile Details'),
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -78,12 +77,16 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
             IconButton(icon: const Icon(Icons.check), onPressed: _saveAgent),
           ],
         ),
-        body: TabBarView(
-          children: [
-            _buildGeneralTab(),
-            _buildRequestTab(),
-            _buildMCPServerTab(),
-          ],
+        body: SafeArea(
+          top: false,
+          bottom: true,
+          child: TabBarView(
+            children: [
+              _buildGeneralTab(),
+              _buildRequestTab(),
+              _buildMCPServerTab(),
+            ],
+          ),
         ),
       ),
     );
@@ -134,7 +137,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
 
             CustomTextField(
               controller: _viewModel.nameController,
-              label: 'agents.name'.tr(),
+              label: 'AI Profile Name',
               prefixIcon: Icons.badge_outlined,
             ),
             const SizedBox(height: 24),
@@ -142,7 +145,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
             // System Prompt
             CustomTextField(
               controller: _viewModel.promptController,
-              label: 'agents.system_prompt'.tr(),
+              label: 'System Prompt',
               maxLines: 6,
               prefixIcon: Icons.description_outlined,
             ),
@@ -150,7 +153,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
 
             // Persist chat selection override
             Text(
-              'agents.persist_selection'.tr(),
+              tl('Persist Selection'),
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -163,21 +166,21 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ButtonSegment(
                     value: PersistOverride.on,
                     label: Text(
-                      'agents.persist_on'.tr(),
+                      tl('Always On'),
                       style: const TextStyle(fontSize: 12),
                     ),
                   ),
                   ButtonSegment(
                     value: PersistOverride.off,
                     label: Text(
-                      'agents.persist_off'.tr(),
+                      tl('Always Off'),
                       style: const TextStyle(fontSize: 12),
                     ),
                   ),
                   ButtonSegment(
                     value: PersistOverride.disable,
                     label: Text(
-                      'agents.persist_disable'.tr(),
+                      tl('Follow Global'),
                       style: const TextStyle(fontSize: 12),
                     ),
                   ),
@@ -204,7 +207,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
           children: [
             // Parameters Section
             Text(
-              'agents.parameters'.tr(),
+              tl('Parameters'),
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -215,84 +218,84 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               child: Column(
                 children: [
                   SwitchListTile(
-                      title: Text('agents.stream'.tr()),
-                      subtitle: Text('agents.stream_desc'.tr()),
-                      value: _viewModel.enableStream,
-                      onChanged: (value) => _viewModel.toggleStream(value),
-                    ),
-                    const Divider(),
+                    title: Text(tl('Stream')),
+                    subtitle: Text(tl('Enable streaming responses')),
+                    value: _viewModel.enableStream,
+                    onChanged: (value) => _viewModel.toggleStream(value),
+                  ),
+                  const Divider(),
 
-                    // Top P
-                    SwitchListTile(
-                      title: Text('agents.top_p'.tr()),
-                      value: _viewModel.isTopPEnabled,
-                      onChanged: (value) => _viewModel.toggleTopP(value),
+                  // Top P
+                  SwitchListTile(
+                    title: Text(tl('Top P')),
+                    value: _viewModel.isTopPEnabled,
+                    onChanged: (value) => _viewModel.toggleTopP(value),
+                  ),
+                  if (_viewModel.isTopPEnabled)
+                    _buildSlider(
+                      value: _viewModel.topPValue,
+                      min: 0,
+                      max: 1,
+                      divisions: 20,
+                      label: _viewModel.topPValue.toStringAsFixed(2),
+                      onChanged: (v) => _viewModel.setTopPValue(v),
                     ),
-                    if (_viewModel.isTopPEnabled)
-                      _buildSlider(
-                        value: _viewModel.topPValue,
-                        min: 0,
-                        max: 1,
-                        divisions: 20,
-                        label: _viewModel.topPValue.toStringAsFixed(2),
-                        onChanged: (v) => _viewModel.setTopPValue(v),
-                      ),
 
-                    const Divider(),
-                    // Top K
-                    SwitchListTile(
-                      title: Text('agents.top_k'.tr()),
-                      value: _viewModel.isTopKEnabled,
-                      onChanged: (value) => _viewModel.toggleTopK(value),
+                  const Divider(),
+                  // Top K
+                  SwitchListTile(
+                    title: Text(tl('Top K')),
+                    value: _viewModel.isTopKEnabled,
+                    onChanged: (value) => _viewModel.toggleTopK(value),
+                  ),
+                  if (_viewModel.isTopKEnabled)
+                    _buildSlider(
+                      value: _viewModel.topKValue,
+                      min: 1,
+                      max: 100,
+                      divisions: 99,
+                      label: _viewModel.topKValue.round().toString(),
+                      onChanged: (v) => _viewModel.setTopKValue(v),
                     ),
-                    if (_viewModel.isTopKEnabled)
-                      _buildSlider(
-                        value: _viewModel.topKValue,
-                        min: 1,
-                        max: 100,
-                        divisions: 99,
-                        label: _viewModel.topKValue.round().toString(),
-                        onChanged: (v) => _viewModel.setTopKValue(v),
-                      ),
 
-                    const Divider(),
-                    // Temperature
-                    SwitchListTile(
-                      title: Text('agents.temperature'.tr()),
-                      value: _viewModel.isTemperatureEnabled,
-                      onChanged: (value) => _viewModel.toggleTemperature(value),
+                  const Divider(),
+                  // Temperature
+                  SwitchListTile(
+                    title: Text(tl('Temperature')),
+                    value: _viewModel.isTemperatureEnabled,
+                    onChanged: (value) => _viewModel.toggleTemperature(value),
+                  ),
+                  if (_viewModel.isTemperatureEnabled)
+                    _buildSlider(
+                      value: _viewModel.temperatureValue,
+                      min: 0,
+                      max: 2,
+                      divisions: 20,
+                      label: _viewModel.temperatureValue.toStringAsFixed(2),
+                      onChanged: (v) => _viewModel.setTemperatureValue(v),
                     ),
-                    if (_viewModel.isTemperatureEnabled)
-                      _buildSlider(
-                        value: _viewModel.temperatureValue,
-                        min: 0,
-                        max: 2,
-                        divisions: 20,
-                        label: _viewModel.temperatureValue.toStringAsFixed(2),
-                        onChanged: (v) => _viewModel.setTemperatureValue(v),
-                      ),
-                  ],
+                ],
               ),
             ),
             const SizedBox(height: 24),
 
             // Context window etc.
             _buildNumberField(
-              label: 'agents.context_window'.tr(),
+              label: 'Context Window',
               value: _viewModel.contextWindowValue,
               onChanged: (v) => _viewModel.setContextWindowValue(v),
               icon: Icons.window_outlined,
             ),
             const SizedBox(height: 16),
             _buildNumberField(
-              label: 'agents.conversation_length'.tr(),
+              label: 'Conversation Length',
               value: _viewModel.conversationLengthValue,
               onChanged: (v) => _viewModel.setConversationLengthValue(v),
               icon: Icons.history_outlined,
             ),
             const SizedBox(height: 16),
             _buildNumberField(
-              label: 'agents.max_tokens'.tr(),
+              label: 'Max Tokens',
               value: _viewModel.maxTokensValue,
               onChanged: (v) => _viewModel.setMaxTokensValue(v),
               icon: Icons.token_outlined,
@@ -312,7 +315,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
           children: [
             if (_viewModel.availableMCPServers.isNotEmpty) ...[
               Text(
-                'agents.mcp_servers'.tr(),
+                tl('MCP Servers'),
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -337,7 +340,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 32.0),
-                  child: Text('agents.no_mcp_servers'.tr()),
+                  child: Text(tl('No MCP servers available')),
                 ),
               ),
           ],

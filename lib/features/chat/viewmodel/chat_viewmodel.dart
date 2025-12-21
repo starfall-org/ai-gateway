@@ -13,13 +13,13 @@ import '../../../core/storage/app_preferences_repository.dart';
 import '../../../core/storage/mcp_repository.dart';
 import '../../../core/models/mcp/mcp_server.dart';
 import '../../../core/services/tts_service.dart';
+import '../../../core/translate.dart';
 import '../widgets/edit_message_dialog.dart';
 import 'chat_navigation_interface.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'dart:async';
 
 import '../utils/chat_logic_utils.dart';

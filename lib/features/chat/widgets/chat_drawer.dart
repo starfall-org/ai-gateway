@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/chat/conversation.dart';
+import '../../../core/models/ai/ai_model.dart';
 import '../../../core/routes.dart';
+import '../../../core/utils.dart';
 import '../../ai_profiles/presentation/ai_profiles_screen.dart';
 import '../../../core/storage/chat_repository.dart';
-import 'package:easy_localization/easy_localization.dart';
+
+import '../../../core/translate.dart';
 
 class ChatDrawer extends StatefulWidget {
   final Function(String) onSessionSelected;
   final VoidCallback onNewChat;
   final VoidCallback? onAgentChanged;
+  final String? selectedProviderName;
+  final String? selectedModelName;
 
   const ChatDrawer({
     super.key,
     required this.onSessionSelected,
     required this.onNewChat,
     this.onAgentChanged,
+    this.selectedProviderName,
+    this.selectedModelName,
   });
 
   @override
@@ -69,7 +76,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                     },
                   ),
                   Text(
-                    'app_title'.tr(),
+                    tl('AI Gateway'),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -81,7 +88,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                       Icons.add,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    tooltip: 'drawer.new_chat'.tr(),
+                    tooltip: tl('New Chat'),
                     onPressed: widget.onNewChat,
                   ),
                 ],
@@ -98,7 +105,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                       vertical: 8,
                     ),
                     child: Text(
-                      'drawer.recent'.tr(),
+                      tl('Recent'),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -112,7 +119,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'drawer.no_history'.tr(),
+                        tl('No history'),
                         style: TextStyle(
                           color: Theme.of(
                             context,
@@ -132,12 +139,12 @@ class _ChatDrawerState extends State<ChatDrawer> {
                   _buildDrawerItem(
                     context,
                     Icons.help_outline,
-                    'drawer.help_activity'.tr(),
+                    'Help & Activity',
                   ),
                   _buildDrawerItem(
                     context,
                     Icons.settings_outlined,
-                    'drawer.settings'.tr(),
+                    'Settings',
                     onTap: () {
                       Navigator.pop(context); // Close drawer
                       Navigator.pushNamed(context, AppRoutes.settings);
@@ -146,7 +153,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
                   _buildDrawerItem(
                     context,
                     Icons.swap_horiz_outlined,
-                    'drawer.change_agent'.tr(),
+                    'Change AI Profile',
                     onTap: () async {
                       Navigator.pop(context); // Close drawer
                       final result = await Navigator.push(
@@ -176,11 +183,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
         color: Theme.of(context).colorScheme.error,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        child: Icon(
-          Icons.delete,
-          color: Theme.of(context).colorScheme.onError,
-          size: 20,
-        ),
+        child: SizedBox(width: 24, height: 24, child: _buildModelIcon()),
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
@@ -202,6 +205,24 @@ class _ChatDrawerState extends State<ChatDrawer> {
         dense: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
+    );
+  }
+
+  Widget _buildModelIcon() {
+    if (widget.selectedProviderName != null &&
+        widget.selectedModelName != null) {
+      // Tạo một AIModel giả để sử dụng buildLogoIcon
+      final fakeModel = AIModel(
+        name: widget.selectedModelName!,
+        displayName: widget.selectedModelName!,
+      );
+      return buildLogoIcon(fakeModel, size: 20);
+    }
+    // Fallback to delete icon if no model info
+    return Icon(
+      Icons.delete,
+      color: Theme.of(context).colorScheme.onError,
+      size: 20,
     );
   }
 

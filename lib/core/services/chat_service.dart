@@ -123,13 +123,24 @@ class ChatService {
     if (supportsSearch &&
         profile.activeBuiltInTools.contains('google_search')) {
       // Use reserved name for Google Search Grounding
-      builtin.add(const AIToolFunction(name: '__google_search__', description: '', parameters: {}));
+      builtin.add(
+        const AIToolFunction(
+          name: '__google_search__',
+          description: '',
+          parameters: {},
+        ),
+      );
     }
 
-    if (supportsCode &&
-        profile.activeBuiltInTools.contains('code_execution')) {
+    if (supportsCode && profile.activeBuiltInTools.contains('code_execution')) {
       // Use reserved name for Code Execution
-      builtin.add(const AIToolFunction(name: '__code_execution__', description: '', parameters: {}));
+      builtin.add(
+        const AIToolFunction(
+          name: '__code_execution__',
+          description: '',
+          parameters: {},
+        ),
+      );
     }
 
     return builtin;
@@ -177,7 +188,11 @@ class ChatService {
 
     switch (provider.type) {
       case ProviderType.google:
-        final builtinTools = _collectGeminiBuiltinTools(provider, modelName, profile);
+        final builtinTools = _collectGeminiBuiltinTools(
+          provider,
+          modelName,
+          profile,
+        );
         final allTools = [...mcpTools, ...builtinTools];
 
         final aiMessages = messagesWithCurrent

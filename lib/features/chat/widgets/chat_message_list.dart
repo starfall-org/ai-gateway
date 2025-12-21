@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/chat/message.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../../../core/theme_extensions.dart';
 import 'dart:io';
+
+import '../../../core/translate.dart';
 
 class ChatMessageList extends StatelessWidget {
   final List<ChatMessage> messages;
@@ -15,6 +16,7 @@ class ChatMessageList extends StatelessWidget {
   final void Function(ChatMessage message)? onDelete;
   final void Function(List<String> attachments)? onOpenAttachmentsSidebar;
   final VoidCallback? onRegenerate;
+  final void Function(ChatMessage message)? onRead;
 
   const ChatMessageList({
     super.key,
@@ -25,6 +27,7 @@ class ChatMessageList extends StatelessWidget {
     this.onDelete,
     this.onOpenAttachmentsSidebar,
     this.onRegenerate,
+    this.onRead,
   });
 
   @override
@@ -48,9 +51,11 @@ class ChatMessageList extends StatelessWidget {
   // ----------------------
   Widget _buildUserMessage(BuildContext context, ChatMessage message) {
     final secondary = Theme.of(context).extension<SecondarySurface>();
-    final bg = secondary?.backgroundColor ??
+    final bg =
+        secondary?.backgroundColor ??
         Theme.of(context).colorScheme.surfaceContainerHighest;
-    final borderSide = secondary?.borderSide ??
+    final borderSide =
+        secondary?.borderSide ??
         BorderSide(
           color: Theme.of(context).dividerColor.withAlpha(80),
           width: 1,
@@ -69,7 +74,10 @@ class ChatMessageList extends StatelessWidget {
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderSide.color, width: borderSide.width),
+              border: Border.all(
+                color: borderSide.color,
+                width: borderSide.width,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +102,10 @@ class ChatMessageList extends StatelessWidget {
     );
   }
 
-  Widget _buildUserAttachmentsBar(BuildContext context, List<String> attachments) {
+  Widget _buildUserAttachmentsBar(
+    BuildContext context,
+    List<String> attachments,
+  ) {
     final count = attachments.length;
     final showOverflow = count > 4;
     final visible = showOverflow ? attachments.take(3).toList() : attachments;
@@ -103,8 +114,7 @@ class ChatMessageList extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (showOverflow)
-          _overflowTile(context, attachments, tileSize),
+        if (showOverflow) _overflowTile(context, attachments, tileSize),
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -120,7 +130,10 @@ class ChatMessageList extends StatelessWidget {
   }
 
   Widget _overflowTile(
-      BuildContext context, List<String> attachments, double size) {
+    BuildContext context,
+    List<String> attachments,
+    double size,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: InkWell(
@@ -137,14 +150,13 @@ class ChatMessageList extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: const Center(child: Icon(Icons.more_horiz)),
+          child: Center(child: Icon(Icons.more_horiz)),
         ),
       ),
     );
   }
 
-  Widget _squareAttachmentTile(
-      BuildContext context, String path, double size) {
+  Widget _squareAttachmentTile(BuildContext context, String path, double size) {
     final isImg = _isImagePath(path);
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -174,7 +186,11 @@ class ChatMessageList extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.insert_drive_file, size: 28, color: Theme.of(context).iconTheme.color),
+          Icon(
+            Icons.insert_drive_file,
+            size: 28,
+            color: Theme.of(context).iconTheme.color,
+          ),
           const SizedBox(height: 6),
           Text(
             name,
@@ -218,19 +234,15 @@ class ChatMessageList extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.volume_up),
-                      tooltip: 'message.read'.tr(),
-                      onPressed: () {
-                        // Placeholder button (chưa thêm chức năng)
-                      },
+                      tooltip: tl('Read'),
+                      onPressed: () => onRead?.call(message),
                     ),
                   ],
                 ),
                 if (message.content.trim().isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
-                    child: _AnimatedMarkdown(
-                      content: message.content,
-                    ),
+                    child: _AnimatedMarkdown(content: message.content),
                   ),
 
                 // Media generated by AI (ẩn nếu trống)
@@ -242,7 +254,10 @@ class ChatMessageList extends StatelessWidget {
                 // Reasoning dropdown (ẩn nếu trống)
                 if ((message.reasoningContent ?? '').trim().isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  _buildReasoningDropdown(context, message.reasoningContent!.trim()),
+                  _buildReasoningDropdown(
+                    context,
+                    message.reasoningContent!.trim(),
+                  ),
                 ],
 
                 // Bottom toolbar
@@ -254,19 +269,19 @@ class ChatMessageList extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            tooltip: 'message.copy'.tr(),
+                            tooltip: tl('Copy'),
                             icon: const Icon(Icons.copy),
                             onPressed: () => onCopy?.call(message),
                           ),
                           IconButton(
-                            tooltip: 'chat.regenerate'.tr(),
+                            tooltip: tl('Regenerate'),
                             icon: const Icon(Icons.refresh),
                             onPressed: onRegenerate,
                           ),
                         ],
                       ),
                       PopupMenuButton<String>(
-                        tooltip: 'common.more'.tr(),
+                        tooltip: tl('More'),
                         icon: const Icon(Icons.more_vert),
                         onSelected: (value) {
                           switch (value) {
@@ -279,8 +294,11 @@ class ChatMessageList extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
-                          PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+                          PopupMenuItem(value: 'edit', child: Text(tl('Edit'))),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Text(tl('Delete')),
+                          ),
                         ],
                       ),
                     ],
@@ -322,8 +340,10 @@ class ChatMessageList extends StatelessWidget {
 
   Widget _buildReasoningDropdown(BuildContext context, String reasoning) {
     final style = Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-        );
+      color: Theme.of(
+        context,
+      ).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+    );
     // ExpansionTile giúp thu gọn/mở rộng
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -334,18 +354,19 @@ class ChatMessageList extends StatelessWidget {
         iconColor: Theme.of(context).iconTheme.color,
         title: Row(
           children: [
-            Icon(Icons.keyboard_arrow_down, size: 18, color: Theme.of(context).iconTheme.color),
+            Icon(
+              Icons.keyboard_arrow_down,
+              size: 18,
+              color: Theme.of(context).iconTheme.color,
+            ),
             const SizedBox(width: 4),
-            Text('message.reasoning'.tr(), style: style),
+            Text(tl('Reasoning content'), style: style),
           ],
         ),
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: Text(
-              reasoning,
-              style: style,
-            ),
+            child: Text(reasoning, style: style),
           ),
         ],
       ),
@@ -373,7 +394,10 @@ class ChatMessageList extends StatelessWidget {
   }
 
   void _showUserContextMenu(
-      BuildContext context, Offset globalPos, ChatMessage m) async {
+    BuildContext context,
+    Offset globalPos,
+    ChatMessage m,
+  ) async {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final selected = await showMenu<String>(
       context: context,
@@ -384,9 +408,9 @@ class ChatMessageList extends StatelessWidget {
         overlay.size.height - globalPos.dy,
       ),
       items: [
-        PopupMenuItem(value: 'copy', child: Text('message.copy'.tr())),
-        PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
-        PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+        PopupMenuItem(value: 'copy', child: Text(tl('Copy'))),
+        PopupMenuItem(value: 'edit', child: Text(tl('Edit'))),
+        PopupMenuItem(value: 'delete', child: Text(tl('Delete'))),
       ],
     );
     switch (selected) {
@@ -403,7 +427,10 @@ class ChatMessageList extends StatelessWidget {
   }
 
   void _showAssistantContextMenu(
-      BuildContext context, Offset globalPos, ChatMessage m) async {
+    BuildContext context,
+    Offset globalPos,
+    ChatMessage m,
+  ) async {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final selected = await showMenu<String>(
       context: context,
@@ -414,8 +441,8 @@ class ChatMessageList extends StatelessWidget {
         overlay.size.height - globalPos.dy,
       ),
       items: [
-        PopupMenuItem(value: 'edit', child: Text('message.edit'.tr())),
-        PopupMenuItem(value: 'delete', child: Text('message.delete'.tr())),
+        PopupMenuItem(value: 'edit', child: Text(tl('Edit'))),
+        PopupMenuItem(value: 'delete', child: Text(tl('Delete'))),
       ],
     );
     switch (selected) {
@@ -468,13 +495,13 @@ class _AnimatedMarkdownState extends State<_AnimatedMarkdown>
       // If we just use the current fade-in on mount, it only fades in once.
       // To "shade in" new content, we can use a custom builder or just rely on the smooth scroll and natural text update.
       // However, the request specifically asked for "shade in" effect for chunks.
-      
+
       // Let's implement a simple key-based approach for the whole block or just ensure standard fade-in for the initial block.
       // For streaming updates (text gets longer), standard MarkdownBody repaint is usually fine.
       // If "shade in" implies a visual effect for EACH chunk, that requires diffing which is expensive.
       // The user also asked for "phần bên dưới của khung tin nhắn phải mở rộng xuống dần đều mượt mà chứ không phải giật phát một".
       // This suggests an implicit animation on height change.
-      
+
       _displayedContent = widget.content;
     }
   }
@@ -494,10 +521,7 @@ class _AnimatedMarkdownState extends State<_AnimatedMarkdown>
       alignment: Alignment.topLeft,
       child: FadeTransition(
         opacity: _opacity,
-        child: MarkdownBody(
-          data: _displayedContent ?? '',
-          selectable: true,
-        ),
+        child: MarkdownBody(data: _displayedContent ?? '', selectable: true),
       ),
     );
   }

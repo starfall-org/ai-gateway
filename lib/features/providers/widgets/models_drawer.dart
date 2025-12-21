@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/models/ai/ai_model.dart';
 import '../../../core/widgets/dropdown.dart';
 import '../../settings/widgets/settings_card.dart';
 import '../../../core/widgets/item_card.dart';
+
+import '../../../core/translate.dart';
 
 class ModelsDrawer extends StatefulWidget {
   final List<AIModel> availableModels;
@@ -56,12 +57,15 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.model_training,
-                      color: Theme.of(context).colorScheme.onPrimary, size: 28),
+                  Icon(
+                    Icons.model_training,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 28,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'settings.manage_models'.tr(),
+                      tl('settings.manage_models'),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 20,
@@ -70,8 +74,10 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close,
-                        color: Theme.of(context).colorScheme.onPrimary),
+                    icon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -98,7 +104,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'settings.fetch_models'.tr(),
+                                tl('settings.fetch_models'),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -115,16 +121,16 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                 Expanded(
                                   child: Text(
                                     widget.availableModels.isEmpty
-                                        ? 'settings.no_models_fetched'.tr()
-                                        : '${widget.availableModels.length} ${'settings.models_available'.tr()}',
+                                        ? 'settings.no_models_fetched'
+                                        : '${widget.availableModels.length} ${'settings.models_available'}',
                                     style: TextStyle(
                                       color: widget.availableModels.isEmpty
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -132,12 +138,14 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                 ElevatedButton.icon(
                                   onPressed: widget.onFetchModels,
                                   icon: const Icon(Icons.refresh, size: 16),
-                                  label: Text('settings.fetch'.tr()),
+                                  label: Text(tl('settings.fetch')),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    foregroundColor:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    foregroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 8,
@@ -155,7 +163,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                     // Available Models Section
                     if (widget.availableModels.isNotEmpty) ...[
                       Text(
-                        'settings.available_models'.tr(),
+                        tl('settings.available_models'),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -179,12 +187,14 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                         child: ElevatedButton.icon(
                           onPressed: widget.onAddModel,
                           icon: const Icon(Icons.add, size: 16),
-                          label: Text('settings.add_model'.tr()),
+                          label: Text(tl('settings.add_model')),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            foregroundColor:
-                                Theme.of(context).colorScheme.onSecondary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.secondary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onSecondary,
                           ),
                         ),
                       ),
@@ -194,7 +204,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
 
                     // Selected Models Section
                     Text(
-                      'settings.selected_models'.tr(),
+                      tl('settings.selected_models'),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -217,11 +227,11 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'settings.no_models_selected'.tr(),
+                                    tl('settings.no_models_selected'),
                                     style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -238,14 +248,14 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                   layout: ItemCardLayout.list,
                                   title: model.name,
                                   icon: CircleAvatar(
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
                                     child: Icon(
                                       Icons.smart_toy,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
                                       size: 20,
                                     ),
                                   ),
@@ -257,9 +267,9 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                         icon: Icon(
                                           Icons.info_outline,
                                           size: 18,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
                                         ),
                                         onPressed: () =>
                                             widget.onShowCapabilities(model),
@@ -268,9 +278,9 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
                                         icon: Icon(
                                           Icons.delete,
                                           size: 18,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
                                         ),
                                         onPressed: () =>
                                             widget.onRemoveModel(model.name),

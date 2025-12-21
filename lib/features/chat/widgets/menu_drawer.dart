@@ -3,6 +3,8 @@ import '../viewmodel/chat_viewmodel.dart';
 import '../../../core/models/ai/ai_profile.dart';
 import '../../../core/models/mcp/mcp_server.dart';
 
+import '../../../core/translate.dart';
+
 class MenuDrawer extends StatefulWidget {
   final ChatViewModel viewModel;
 
@@ -172,7 +174,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                'Tools Configuration',
+                tl('Tools Configuration'),
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -214,7 +216,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            'No MCP servers configured.',
+                            tl('No MCP servers configured.'),
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: Theme.of(

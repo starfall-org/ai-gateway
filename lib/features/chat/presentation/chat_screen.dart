@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 import '../../ai_profiles/presentation/ai_profiles_screen.dart';
 import '../widgets/chat_drawer.dart';
@@ -14,6 +13,8 @@ import '../../../core/widgets/sidebar_right.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/di/app_services.dart';
 import 'dart:io';
+
+import '../../../core/translate.dart';
 
 /// Màn hình chat chính cho ứng dụng
 class ChatScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   String getTranslatedString(String key, {Map<String, String>? namedArgs}) {
     if (!mounted) return key;
-    return key.tr(namedArgs: namedArgs);
+    return key;
   }
 
   // Dọn dẹp tài nguyên khi widget bị hủy
@@ -148,7 +149,7 @@ class _ChatScreenState extends State<ChatScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'chat.title'.tr(),
+                  tl('Chat & Support'),
                   style: TextStyle(
                     color: Theme.of(context).textTheme.titleLarge?.color,
                     fontSize: 16,
@@ -186,6 +187,8 @@ class _ChatScreenState extends State<ChatScreen>
             onAgentChanged: () {
               _viewModel.loadSelectedProfile();
             },
+            selectedProviderName: _viewModel.selectedProviderName,
+            selectedModelName: _viewModel.selectedModelName,
           ),
           // Drawer bên phải hiển thị tệp đính kèm
           endDrawer: _buildEndDrawer(context),
@@ -214,10 +217,11 @@ class _ChatScreenState extends State<ChatScreen>
                       _viewModel.handleSubmitted(text, context),
                   attachments: _viewModel.pendingAttachments,
                   onPickAttachments: () => _viewModel.pickAttachments(context),
+                  onPickFromGallery: () =>
+                      _viewModel.pickAttachmentsFromGallery(context),
                   onRemoveAttachment: _viewModel.removeAttachmentAt,
                   isGenerating: _viewModel.isGenerating,
                   onOpenModelPicker: () => _openModelPicker(context),
-                  onMicTap: _viewModel.speakLastModelMessage,
                   onOpenMenu: () => MenuDrawer.showDrawer(context, _viewModel),
                   selectedAIModel: _viewModel.selectedAIModel,
                 ),
@@ -285,9 +289,9 @@ class _ChatScreenState extends State<ChatScreen>
         }
       },
       itemBuilder: (context) => [
-        PopupMenuItem(value: 'regen', child: Text('chat.regenerate'.tr())),
-        PopupMenuItem(value: 'clear', child: Text('chat.clear'.tr())),
-        PopupMenuItem(value: 'copy', child: Text('chat.copy'.tr())),
+        PopupMenuItem(value: 'regen', child: Text(tl('Regenerate'))),
+        PopupMenuItem(value: 'clear', child: Text(tl('Clear chat'))),
+        PopupMenuItem(value: 'copy', child: Text(tl('Copy transcript'))),
       ],
     );
   }
@@ -298,7 +302,7 @@ class _ChatScreenState extends State<ChatScreen>
         Icons.extension_outlined,
         color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
       ),
-      tooltip: 'Tools',
+      tooltip: tl('Tools'),
       onPressed: () {
         MenuDrawer.showDrawer(context, _viewModel);
       },
@@ -327,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen>
     if (_viewModel.currentSession?.messages.isEmpty ?? true) {
       return EmptyState(
         icon: Icons.chat_bubble_outline,
-        message: 'chat.start'.tr(),
+        message: 'Start a conversation!',
       );
     }
 
@@ -340,6 +344,7 @@ class _ChatScreenState extends State<ChatScreen>
       onOpenAttachmentsSidebar: (files) =>
           _viewModel.openAttachmentsSidebar(files),
       onRegenerate: () => _viewModel.regenerateLast(context),
+      onRead: (m) => _viewModel.ttsService.speak(m.content),
     );
   }
 
@@ -356,11 +361,8 @@ class _ChatScreenState extends State<ChatScreen>
               child: Row(
                 children: [
                   Text(
-                    'attachments.title_count'.tr(
-                      namedArgs: {
-                        'count': _viewModel.inspectingAttachments.length
-                            .toString(),
-                      },
+                    tl(
+                      'Attachments (${_viewModel.inspectingAttachments.length})',
                     ),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -369,7 +371,7 @@ class _ChatScreenState extends State<ChatScreen>
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close),
-                    tooltip: 'common.close'.tr(),
+                    tooltip: tl('Close'),
                     onPressed: _viewModel.closeEndDrawer,
                   ),
                 ],
@@ -381,7 +383,7 @@ class _ChatScreenState extends State<ChatScreen>
               child: _viewModel.inspectingAttachments.isEmpty
                   ? EmptyState(
                       icon: Icons.attach_file,
-                      message: 'attachments.empty'.tr(),
+                      message: 'No attachments',
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.all(12),

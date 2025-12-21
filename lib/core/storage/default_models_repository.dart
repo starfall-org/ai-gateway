@@ -17,6 +17,15 @@ class DefaultModelsRepository
 
   DefaultModelsRepository(super.prefs) {
     _loadInitial();
+    // Auto-refresh notifier on any storage change (no restart needed)
+    changes.listen((_) {
+      final item = getItem(_itemId);
+      if (item != null) {
+        modelsNotifier.value = item;
+      } else {
+        modelsNotifier.value = DefaultModels();
+      }
+    });
   }
 
   static Future<DefaultModelsRepository> init() async {
@@ -57,6 +66,9 @@ class DefaultModelsRepository
       'embeddingModel': item.embeddingModel?.toJson(),
       'imageGenerationModel': item.imageGenerationModel?.toJson(),
       'chatModel': item.chatModel?.toJson(),
+      'audioGenerationModel': item.audioGenerationModel?.toJson(),
+      'videoGenerationModel': item.videoGenerationModel?.toJson(),
+      'rerankModel': item.rerankModel?.toJson(),
     };
   }
 

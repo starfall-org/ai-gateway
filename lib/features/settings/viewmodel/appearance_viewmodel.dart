@@ -18,8 +18,8 @@ class AppearanceViewModel extends ChangeNotifier {
   Appearances settings;
 
   AppearanceViewModel()
-      : _repository = AppearancesRepository.instance,
-        settings = AppearancesRepository.instance.currentTheme;
+    : _repository = AppearancesRepository.instance,
+      settings = AppearancesRepository.instance.currentTheme;
 
   Future<void> updateSelection(ThemeSelection selection) async {
     // Keep themeMode in sync for non-custom selections
@@ -76,7 +76,7 @@ class AppearanceViewModel extends ChangeNotifier {
     }
     await _updateSettings(newSettings);
   }
-  
+
   int getColor(ColorType type) {
     switch (type) {
       case ColorType.primary:

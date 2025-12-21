@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 import '../../../core/widgets/empty_state.dart';
 import '../../chat/presentation/chat_screen.dart';
@@ -7,6 +6,8 @@ import '../../ai_profiles/presentation/ai_profiles_screen.dart';
 import '../../providers/presentation/providers_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../../tts/presentation/tts_screen.dart';
+
+import '../../../core/translate.dart';
 
 /// Màn hình chủ hiển thị dashboard chính của ứng dụng
 class HomeScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'home.title'.tr(),
+              tl('Home'),
               style: TextStyle(
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontSize: 16,
@@ -43,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Text(
-              'home.subtitle'.tr(),
+              tl('Main Dashboard'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 12,
@@ -65,74 +66,79 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: _buildDrawer(),
-      body: _buildBody(),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _buildBody(),
+      ),
     );
   }
 
   /// Xây dựng drawer menu
   Widget _buildDrawer() {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'app_title'.tr(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tl('AI Gateway'),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'home.drawer.subtitle'.tr(),
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
+                  const SizedBox(height: 8),
+                  Text(
+                    tl('App Navigation'),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          _buildDrawerItem(
-            icon: Icons.chat_bubble_outline,
-            title: 'nav.chat'.tr(),
-            onTap: () => _navigateToChat(),
-          ),
-          _buildDrawerItem(
-            icon: Icons.person_outline,
-            title: 'nav.ai_profiles'.tr(),
-            onTap: () => _navigateToAIProfiles(),
-          ),
-          _buildDrawerItem(
-            icon: Icons.cloud_outlined,
-            title: 'nav.providers'.tr(),
-            onTap: () => _navigateToProviders(),
-          ),
-          _buildDrawerItem(
-            icon: Icons.extension_outlined,
-            title: 'nav.mcp'.tr(),
-            onTap: () => _navigateToMCP(),
-          ),
-          _buildDrawerItem(
-            icon: Icons.record_voice_over,
-            title: 'nav.tts'.tr(),
-            onTap: () => _navigateToTTS(),
-          ),
-          const Divider(),
-          _buildDrawerItem(
-            icon: Icons.settings_outlined,
-            title: 'nav.settings'.tr(),
-            onTap: () => _navigateToSettings(),
-          ),
-        ],
+            _buildDrawerItem(
+              icon: Icons.chat_bubble_outline,
+              title: 'Chat',
+              onTap: () => _navigateToChat(),
+            ),
+            _buildDrawerItem(
+              icon: Icons.person_outline,
+              title: 'AI Profiles',
+              onTap: () => _navigateToAIProfiles(),
+            ),
+            _buildDrawerItem(
+              icon: Icons.cloud_outlined,
+              title: 'Providers',
+              onTap: () => _navigateToProviders(),
+            ),
+            _buildDrawerItem(
+              icon: Icons.extension_outlined,
+              title: 'MCP Servers',
+              onTap: () => _navigateToMCP(),
+            ),
+            _buildDrawerItem(
+              icon: Icons.record_voice_over,
+              title: 'Speech Services',
+              onTap: () => _navigateToTTS(),
+            ),
+            const Divider(),
+            _buildDrawerItem(
+              icon: Icons.settings_outlined,
+              title: 'Settings',
+              onTap: () => _navigateToSettings(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -191,14 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'home.welcome.title'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        tl('Welcome to AI Gateway'),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'home.welcome.subtitle'.tr(),
+                        tl('Comprehensive AI chat platform'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
@@ -212,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton.icon(
               onPressed: () => _navigateToChat(),
               icon: const Icon(Icons.chat_bubble_outline),
-              label: Text('home.start_chat'.tr()),
+              label: Text(tl('Start Chatting')),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
               ),
@@ -229,10 +234,10 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'home.quick_actions'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Quick Actions'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         GridView.count(
@@ -245,22 +250,22 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildActionCard(
               icon: Icons.person_outline,
-              title: 'home.actions.ai_profiles'.tr(),
+              title: 'AI Profiles',
               onTap: () => _navigateToAIProfiles(),
             ),
             _buildActionCard(
               icon: Icons.cloud_outlined,
-              title: 'home.actions.providers'.tr(),
+              title: 'Providers',
               onTap: () => _navigateToProviders(),
             ),
             _buildActionCard(
               icon: Icons.extension_outlined,
-              title: 'home.actions.mcp'.tr(),
+              title: 'MCP Servers',
               onTap: () => _navigateToMCP(),
             ),
             _buildActionCard(
               icon: Icons.record_voice_over,
-              title: 'home.actions.tts'.tr(),
+              title: 'Speech Services',
               onTap: () => _navigateToTTS(),
             ),
           ],
@@ -293,9 +298,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -310,10 +315,10 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'home.recent_activity'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Recent Activity'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -321,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(20),
             child: EmptyState(
               icon: Icons.history,
-              message: 'home.no_recent_activity'.tr(),
+              message: 'No recent activity',
             ),
           ),
         ),
@@ -353,9 +358,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _navigateToMCP() {
     // TODO: Implement MCP navigation when MCPScreen is created
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('MCP feature coming soon'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('MCP feature coming soon'))));
   }
 
   void _navigateToTTS() {

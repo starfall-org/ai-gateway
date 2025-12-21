@@ -8,6 +8,8 @@ import '../../../core/models/speech_service.dart';
 import '../../../core/widgets/dropdown.dart';
 import '../../../core/widgets/custom_text_field.dart';
 
+import '../../../core/translate.dart';
+
 class AddTTSProfileScreen extends StatefulWidget {
   const AddTTSProfileScreen({super.key});
 
@@ -75,7 +77,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please enter a name')));
+      ).showSnackBar(SnackBar(content: Text(tl('Please enter a name'))));
       return;
     }
 
@@ -83,7 +85,7 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
         _selectedProviderId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please select a provider')));
+      ).showSnackBar(SnackBar(content: Text(tl('Please select a provider'))));
       return;
     }
 
@@ -116,101 +118,102 @@ class _AddTTSProfileScreenState extends State<AddTTSProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add TTS Profile'),
+        title: Text(tl('Add TTS Profile')),
         elevation: 0,
         actions: [
           IconButton(icon: const Icon(Icons.save), onPressed: _saveProfile),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          CustomTextField(
-            controller: _nameController,
-            label: 'Profile Name',
-          ),
-          const SizedBox(height: 16),
-          CommonDropdown<TTSServiceType>(
-            value: _selectedType,
-            labelText: 'Service Type',
-            options: TTSServiceType.values.map((type) {
-              return DropdownOption<TTSServiceType>(
-                value: type,
-                label: type.name.toUpperCase(),
-                icon: Icon(
-                  type == TTSServiceType.system ? Icons.settings : Icons.cloud,
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _selectedType = value;
-                  _selectedVoiceId = null;
-                  _availableVoices = [];
-                });
-              }
-            },
-          ),
-          const SizedBox(height: 16),
-          if (_selectedType == TTSServiceType.provider) ...[
-            CommonDropdown<String>(
-              value: _selectedProviderId,
-              labelText: 'Provider',
-              options: _availableProviders.map((p) {
-                final iconData = p.type == ProviderType.google
-                    ? Icons.cloud
-                    : p.type == ProviderType.openai
-                    ? Icons.api
-                    : p.type == ProviderType.anthropic
-                    ? Icons.psychology_alt
-                    : Icons.memory;
-                return DropdownOption<String>(
-                  value: p.name,
-                  label: p.name,
-                  icon: Icon(iconData),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            CustomTextField(controller: _nameController, label: tl('Profile Name')),
+            const SizedBox(height: 16),
+            CommonDropdown<TTSServiceType>(
+              value: _selectedType,
+              labelText: tl('Service Type'),
+              options: TTSServiceType.values.map((type) {
+                return DropdownOption<TTSServiceType>(
+                  value: type,
+                  label: type.name.toUpperCase(),
+                  icon: Icon(
+                    type == TTSServiceType.system ? Icons.settings : Icons.cloud,
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
-                setState(() {
-                  _selectedProviderId = value;
-                });
+                if (value != null) {
+                  setState(() {
+                    _selectedType = value;
+                    _selectedVoiceId = null;
+                    _availableVoices = [];
+                  });
+                }
               },
             ),
             const SizedBox(height: 16),
-          ],
-
-          Row(
-            children: [
-              Expanded(
-                child: _isLoadingVoices
-                    ? const LinearProgressIndicator()
-                    : CommonDropdown<String>(
-                        value: _selectedVoiceId,
-                        labelText: 'Voice',
-                        options: _availableVoices.map((voice) {
-                          return DropdownOption<String>(
-                            value: voice,
-                            label: voice,
-                            icon: const Icon(Icons.record_voice_over),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedVoiceId = value;
-                          });
-                        },
-                      ),
+            if (_selectedType == TTSServiceType.provider) ...[
+              CommonDropdown<String>(
+                value: _selectedProviderId,
+                labelText: tl('Provider'),
+                options: _availableProviders.map((p) {
+                  final iconData = p.type == ProviderType.google
+                      ? Icons.cloud
+                      : p.type == ProviderType.openai
+                      ? Icons.api
+                      : p.type == ProviderType.anthropic
+                      ? Icons.psychology_alt
+                      : Icons.memory;
+                  return DropdownOption<String>(
+                    value: p.name,
+                    label: p.name,
+                    icon: Icon(iconData),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedProviderId = value;
+                  });
+                },
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                tooltip: 'Fetch Voices',
-                onPressed: _fetchVoices,
-              ),
+              const SizedBox(height: 16),
             ],
-          ),
-        ],
+    
+            Row(
+              children: [
+                Expanded(
+                  child: _isLoadingVoices
+                      ? const LinearProgressIndicator()
+                      : CommonDropdown<String>(
+                          value: _selectedVoiceId,
+                          labelText: tl('Voice'),
+                          options: _availableVoices.map((voice) {
+                            return DropdownOption<String>(
+                              value: voice,
+                              label: voice,
+                              icon: const Icon(Icons.record_voice_over),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedVoiceId = value;
+                            });
+                          },
+                        ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: tl('Fetch Voices'),
+                  onPressed: _fetchVoices,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

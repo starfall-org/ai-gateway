@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'core/storage/appearances_repository.dart';
 import 'core/models/appearances.dart';
@@ -27,29 +26,29 @@ class AIGatewayApp extends StatelessWidget {
                 : ColorScheme.fromSeed(
                     seedColor: Color(settings.primaryColor),
                     brightness: Brightness.light,
-                  ).copyWith(
-                    secondary: Color(settings.secondaryColor),
-                  );
+                  ).copyWith(secondary: Color(settings.secondaryColor));
 
             final ColorScheme darkScheme = (useDynamic && darkDynamic != null)
                 ? darkDynamic.harmonized()
                 : ColorScheme.fromSeed(
                     seedColor: Color(settings.primaryColor),
                     brightness: Brightness.dark,
-                  ).copyWith(
-                    secondary: Color(settings.secondaryColor),
-                  );
+                  ).copyWith(secondary: Color(settings.secondaryColor));
 
             // Main background colors
             final Color lightMainBg = Colors.white;
-            final Color darkMainBg =
-                settings.superDarkMode ? Colors.black : const Color(0xFF121212);
+            final Color darkMainBg = settings.superDarkMode
+                ? Colors.black
+                : const Color(0xFF121212);
 
             // Utilities for secondary background calculation
             Color autoSecondary(Color base, Brightness br) {
               final hsl = HSLColor.fromColor(base);
               final double delta = br == Brightness.dark ? 0.06 : -0.04;
-              final double newLightness = (hsl.lightness + delta).clamp(0.0, 1.0);
+              final double newLightness = (hsl.lightness + delta).clamp(
+                0.0,
+                1.0,
+              );
               return hsl.withLightness(newLightness).toColor();
             }
 
@@ -75,23 +74,29 @@ class AIGatewayApp extends StatelessWidget {
                 (bg.computeLuminance() < 0.5) ? Colors.white : Colors.black;
 
             // Light palette surfaces
-            final Color lightSecondaryBg =
-                deriveSecondaryBg(Brightness.light, lightScheme, lightMainBg);
+            final Color lightSecondaryBg = deriveSecondaryBg(
+              Brightness.light,
+              lightScheme,
+              lightMainBg,
+            );
             final BorderSide? lightBorderSide =
                 settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                    ? BorderSide(color: borderFor(lightMainBg), width: 1)
-                    : null;
+                ? BorderSide(color: borderFor(lightMainBg), width: 1)
+                : null;
 
             // Dark palette surfaces
-            final Color darkSecondaryBg =
-                deriveSecondaryBg(Brightness.dark, darkScheme, darkMainBg);
+            final Color darkSecondaryBg = deriveSecondaryBg(
+              Brightness.dark,
+              darkScheme,
+              darkMainBg,
+            );
             final BorderSide? darkBorderSide =
                 settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                    ? BorderSide(color: borderFor(darkMainBg), width: 1)
-                    : null;
+                ? BorderSide(color: borderFor(darkMainBg), width: 1)
+                : null;
 
             return MaterialApp(
-              title: 'app_title'.tr(),
+              title: 'AI Gateway',
               debugShowCheckedModeBanner: false,
               themeMode: settings.themeMode,
               theme: ThemeData(
@@ -168,9 +173,6 @@ class AIGatewayApp extends StatelessWidget {
                   ),
                 ],
               ),
-              localizationsDelegates: context.localizationDelegates,
-              supportedLocales: context.supportedLocales,
-              locale: context.locale,
               onGenerateRoute: generateRoute,
               initialRoute: AppRoutes.home,
             );

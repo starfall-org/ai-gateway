@@ -132,7 +132,7 @@ extension ChatViewModelMessageActions on ChatViewModel {
         await for (final chunk in stream) {
           if (chunk.isEmpty) continue;
           acc += chunk;
-          
+
           final now = DateTime.now();
           if (now.difference(lastUpdate) < throttleDuration) {
             // Just accumulate the text, don't update UI yet unless it's a large chunk?
@@ -141,7 +141,7 @@ extension ChatViewModelMessageActions on ChatViewModel {
           }
 
           final wasAtBottom = isNearBottom();
-          
+
           final msgs = List<ChatMessage>.from(currentSession!.messages);
           final idx = msgs.indexWhere((m) => m.id == modelId);
           if (idx != -1) {
@@ -160,7 +160,7 @@ extension ChatViewModelMessageActions on ChatViewModel {
               updatedAt: DateTime.now(),
             );
             notify();
-            
+
             if (wasAtBottom) {
               scrollToBottom();
             }
@@ -175,7 +175,7 @@ extension ChatViewModelMessageActions on ChatViewModel {
           final old = msgs[idx];
           // Update one last time if acc has more content than currently shown
           if (old.content != acc) {
-             msgs[idx] = ChatMessage(
+            msgs[idx] = ChatMessage(
               id: old.id,
               role: old.role,
               content: acc,
@@ -190,7 +190,6 @@ extension ChatViewModelMessageActions on ChatViewModel {
             );
           }
         }
-
       } finally {
         isGenerating = false;
         notify();
@@ -250,9 +249,9 @@ extension ChatViewModelMessageActions on ChatViewModel {
     }
     if (lastUserIndex == -1) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('chat.no_user_to_regen'.tr())));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tl('No user message found to regenerate'))),
+        );
       }
       return;
     }
@@ -376,21 +375,21 @@ extension ChatViewModelMessageActions on ChatViewModel {
               updatedAt: DateTime.now(),
             );
             notify();
-            
+
             if (wasAtBottom) {
               scrollToBottom();
             }
             lastUpdate = now;
           }
         }
-        
+
         // Final update
         final msgs2 = List<ChatMessage>.from(currentSession!.messages);
         final idx = msgs2.indexWhere((m) => m.id == modelId);
         if (idx != -1) {
           final old = msgs2[idx];
           if (old.content != acc) {
-             msgs2[idx] = ChatMessage(
+            msgs2[idx] = ChatMessage(
               id: old.id,
               role: old.role,
               content: acc,
@@ -405,7 +404,6 @@ extension ChatViewModelMessageActions on ChatViewModel {
             );
           }
         }
-
       } finally {
         isGenerating = false;
         notify();

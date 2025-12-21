@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
-import 'core/services/custom_asset_loader.dart';
 import 'core/di/app_services.dart';
 import 'core/utils.dart';
 import 'app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -35,29 +32,5 @@ Future<void> main() async {
     ),
   );
 
-  final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
-  final selectedLocale = AppServices.instance.languageRepository
-      .getInitialLocale(deviceLocale);
-
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ja'),
-        Locale('vi'),
-        Locale('zh', 'CN'),
-        Locale('zh', 'TW'),
-        Locale('ko'),
-        Locale('fr'),
-        Locale('de'),
-        Locale('es'),
-      ],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('en'),
-      useOnlyLangCode: false,
-      assetLoader: CustomAssetLoader(),
-      startLocale: selectedLocale,
-      child: const AIGatewayApp(),
-    ),
-  );
+  runApp(const AIGatewayApp());
 }

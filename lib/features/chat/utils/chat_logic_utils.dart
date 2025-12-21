@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/chat/conversation.dart';
 import '../../../core/models/provider.dart';
 
@@ -8,10 +7,8 @@ class ChatLogicUtils {
     final base = text.isNotEmpty
         ? text
         : (attachments.isNotEmpty
-              ? 'attachments.title_count'.tr(
-                  namedArgs: {'count': attachments.length.toString()},
-                )
-              : 'drawer.new_chat'.tr());
+              ? 'Attachments (${attachments.length})'
+              : 'New Chat');
     return base.length > 30 ? '${base.substring(0, 30)}...' : base;
   }
 

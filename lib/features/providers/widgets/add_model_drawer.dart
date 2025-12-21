@@ -1,9 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../core/models/ai/ai_model.dart';
 import '../presentation/add_provider_viewmodel.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/dropdown.dart';
+
+import '../../../core/translate.dart';
 
 class AddModelDrawer extends StatefulWidget {
   final AddProviderViewModel viewModel;
@@ -99,9 +100,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
             child: Row(
               children: [
                 Text(
-                  widget.modelToEdit != null
-                      ? 'providers.add_model'.tr()
-                      : 'providers.edit_model'.tr(),
+                  widget.modelToEdit != null ? 'Add Model' : 'Edit Model',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const Spacer(),
@@ -125,29 +124,29 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                   children: [
                     CustomTextField(
                       controller: _nameController,
-                      label: 'providers.model.id'.tr(),
-                      hint: 'providers.model.id_hint'.tr(),
+                      label: 'ID',
+                      hint: 'eg: gemini-flash',
                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 
                     CustomTextField(
                       controller: _displayNameController,
-                      label: 'providers.model.display_name'.tr(),
-                      hint: 'providers.model.display_name_hint'.tr(),
+                      label: 'Display Name',
+                      hint: 'eg: Gemini Flash',
                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 
                     CustomTextField(
                       controller: _iconController,
-                      label: 'providers.model.icon'.tr(),
-                      hint: 'providers.model.icon_hint'.tr(),
+                      label: 'Icon',
+                      hint: 'Icon url or path',
                     ),
                     const SizedBox(height: 16),
 
                     CommonDropdown<ModelType>(
-                      labelText: 'Type',
+                      labelText: tl('Type'),
                       value: _selectedType,
                       options: ModelType.values
                           .map(
@@ -168,14 +167,14 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
 
                     CustomTextField(
                       controller: _contextWindowController,
-                      label: 'providers.model.context_window'.tr(),
+                      label: 'Context Window',
 
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
 
                     SwitchListTile(
-                      title: Text('providers.model.reasoning'.tr()),
+                      title: Text(tl('Reasoning')),
                       value: _reasoning,
                       onChanged: (v) => setState(() => _reasoning = v),
                       contentPadding: EdgeInsets.zero,
@@ -183,7 +182,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                     const SizedBox(height: 16),
 
                     Text(
-                      'providers.model.input_types'.tr(),
+                      tl('Input Types'),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -209,7 +208,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                     const SizedBox(height: 16),
 
                     Text(
-                      'providers.model.output_types'.tr(),
+                      tl('Output Types'),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -246,7 +245,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('common.cancel'.tr()),
+                    child: Text(tl('Cancel')),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -254,9 +253,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                   child: FilledButton(
                     onPressed: _save,
                     child: Text(
-                      widget.modelToEdit != null
-                          ? 'common.save'.tr()
-                          : 'common.add'.tr(),
+                      widget.modelToEdit != null ? 'Save' : 'common.add',
                     ),
                   ),
                 ),

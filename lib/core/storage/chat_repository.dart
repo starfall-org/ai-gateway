@@ -1,3 +1,4 @@
+import 'dart:async';
 import '../models/chat/conversation.dart';
 import '../models/chat/message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,6 +68,9 @@ class ChatRepository extends SharedPreferencesBaseRepository<Conversation> {
   }
 
   List<Conversation> getConversations() => getItems();
+
+  /// Reactive stream of conversations; emits immediately and on each change.
+  Stream<List<Conversation>> get conversationsStream => itemsStream;
 
   Future<Conversation> createConversation() async {
     final conversation = Conversation(

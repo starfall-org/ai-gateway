@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai/ai_model.dart';
 import '../../../core/models/provider.dart';
 import '../../../core/widgets/dropdown.dart';
@@ -9,6 +8,8 @@ import '../widgets/add_model_drawer.dart';
 import '../widgets/fetch_models_drawer.dart';
 import '../widgets/model_card.dart';
 import 'add_provider_viewmodel.dart';
+
+import '../../../core/translate.dart';
 
 class AddProviderScreen extends StatefulWidget {
   final Provider? provider;
@@ -62,11 +63,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             )
           : null,
       appBar: AppBar(
-        title: Text(
-          widget.provider != null
-              ? 'providers.edit_provider'.tr()
-              : 'providers.add_provider'.tr(),
-        ),
+        title: Text(widget.provider != null ? 'Edit Provider' : 'Add Provider'),
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
@@ -86,9 +83,13 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           ),
         ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [_buildEditTab(), _buildModelsTab(), _buildABCBTab()],
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: TabBarView(
+          controller: _tabController,
+          children: [_buildEditTab(), _buildModelsTab(), _buildABCBTab()],
+        ),
       ),
     );
   }
@@ -102,7 +103,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           children: [
             CommonDropdown<ProviderType>(
               value: _viewModel.selectedType,
-              labelText: 'providers.provider_type'.tr(),
+              labelText: tl('Compatibility'),
               options: ProviderType.values.map((type) {
                 return DropdownOption<ProviderType>(
                   value: type,
@@ -130,7 +131,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             ),
             if (_viewModel.selectedType == ProviderType.openai)
               CheckboxListTile(
-                title: Text('providers.azure_ai'.tr()),
+                title: Text(tl('Azure AI')),
                 value: _viewModel.azureAI,
                 onChanged: (value) {
                   if (value != null) {
@@ -141,7 +142,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               ),
             if (_viewModel.selectedType == ProviderType.google)
               CheckboxListTile(
-                title: Text('providers.vertex_ai'.tr()),
+                title: Text(tl('Vertex AI')),
                 value: _viewModel.vertexAI,
                 onChanged: (value) {
                   if (value != null) {
@@ -153,24 +154,24 @@ class _AddProviderScreenState extends State<AddProviderScreen>
             const SizedBox(height: 16),
             CustomTextField(
               controller: _viewModel.nameController,
-              label: 'providers.name'.tr(),
+              label: 'Name',
             ),
             const SizedBox(height: 16),
             CustomTextField(
               controller: _viewModel.apiKeyController,
-              label: 'providers.api_key'.tr(),
+              label: 'API Key',
               obscureText: true,
             ),
             const SizedBox(height: 16),
             CustomTextField(
               controller: _viewModel.baseUrlController,
-              label: 'providers.base_url'.tr(),
+              label: 'Base URL',
             ),
 
             const SizedBox(height: 8),
             if (_viewModel.selectedType == ProviderType.openai)
               CheckboxListTile(
-                title: Text('providers.responses_api'.tr()),
+                title: Text(tl('Responses API')),
                 value: _viewModel.responsesApi,
                 onChanged: (value) {
                   if (value != null) {
@@ -184,7 +185,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                 _viewModel.responsesApi == false)
               ExpansionTile(
                 tilePadding: EdgeInsets.zero,
-                title: Text('providers.custom_routes'.tr()),
+                title: Text(tl('Custom Routes')),
                 subtitle: Text(_viewModel.selectedType.name),
                 children: [
                   Padding(
@@ -198,7 +199,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'providers.custom_headers.title'.tr(),
+                  tl('Headers'),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -220,14 +221,14 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                     Expanded(
                       child: CustomTextField(
                         controller: header.key,
-                        label: 'providers.custom_headers.header_key'.tr(),
+                        label: 'Key',
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: CustomTextField(
                         controller: header.value,
-                        label: 'providers.custom_headers.header_value'.tr(),
+                        label: 'Value',
                       ),
                     ),
                     IconButton(
@@ -254,12 +255,12 @@ class _AddProviderScreenState extends State<AddProviderScreen>
           children: [
             _routeField(
               _viewModel.openAIChatCompletionsRouteController,
-              'providers.chat_completions_route'.tr(),
+              'Chat Completions Path',
             ),
             const SizedBox(height: 8),
             _routeField(
               _viewModel.openAIModelsRouteOrUrlController,
-              'providers.models_route_or_url'.tr(),
+              'List Models Path or URL',
             ),
           ],
         );
@@ -299,7 +300,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'providers.no_models_added'.tr(),
+                              tl('No models added yet'),
                               style: TextStyle(
                                 color: Theme.of(context).disabledColor,
                                 fontSize: 16,
@@ -394,7 +395,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${'settings.capabilities'.tr()}: ${model.name}'),
+        title: Text('${'settings.capabilities'}: ${model.name}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,7 +409,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.text_fields),
                               Text(
-                                'common.text'.tr(),
+                                tl('Text'),
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.tertiary,
                                 ),
@@ -421,7 +422,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.image_outlined),
                               Text(
-                                'common.image'.tr(),
+                                tl('Image'),
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -436,7 +437,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.headset_outlined),
                               Text(
-                                'common.audio'.tr(),
+                                tl('Audio'),
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -458,7 +459,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.text_fields),
                               Text(
-                                'common.text'.tr(),
+                                tl('Text'),
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -473,7 +474,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.image),
                               Text(
-                                'common.image'.tr(),
+                                tl('Image'),
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -488,7 +489,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
                             children: [
                               Icon(Icons.music_note),
                               Text(
-                                'common.audio'.tr(),
+                                tl('Audio'),
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
@@ -506,7 +507,7 @@ class _AddProviderScreenState extends State<AddProviderScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('common.close'.tr()),
+            child: Text(tl('Close')),
           ),
         ],
       ),

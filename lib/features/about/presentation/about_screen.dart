@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
+import '../../../core/translate.dart';
 
 /// Màn hình thông tin về ứng dụng
 class AboutScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _AboutScreenState extends State<AboutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'about.title'.tr(),
+              tl('About App'),
               style: TextStyle(
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontSize: 16,
@@ -37,7 +37,7 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             Text(
-              'about.subtitle'.tr(),
+              tl('Information and details'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 12,
@@ -49,7 +49,11 @@ class _AboutScreenState extends State<AboutScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.5,
       ),
-      body: _buildBody(),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _buildBody(),
+      ),
     );
   }
 
@@ -89,37 +93,27 @@ class _AboutScreenState extends State<AboutScreen> {
                 color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(
-                Icons.smart_toy,
-                size: 40,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.smart_toy, size: 40, color: Colors.white),
             ),
             const SizedBox(height: 16),
             Text(
-              'app_title'.tr(),
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              tl('AI Gateway'),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'about.app_description'.tr(),
+              tl('Comprehensive AI chat platform with multi-provider support'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).textTheme.bodySmall?.color,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            _buildInfoRow(
-              'about.version'.tr(),
-              '1.0.0 (1)',
-            ),
+            _buildInfoRow('Version', '1.0.0 (1)'),
             const SizedBox(height: 8),
-            _buildInfoRow(
-              'about.build_date'.tr(),
-              _getBuildDate(),
-            ),
+            _buildInfoRow('Build Date', _getBuildDate()),
           ],
         ),
       ),
@@ -133,9 +127,9 @@ class _AboutScreenState extends State<AboutScreen> {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
         Text(
           value,
@@ -153,10 +147,10 @@ class _AboutScreenState extends State<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'about.features.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Key Features'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -164,26 +158,26 @@ class _AboutScreenState extends State<AboutScreen> {
             children: [
               _buildFeatureItem(
                 icon: Icons.chat_bubble_outline,
-                title: 'about.features.chat'.tr(),
-                description: 'about.features.chat_desc'.tr(),
+                title: 'AI Chat',
+                description: 'Smart conversations with AI models',
               ),
               const Divider(height: 1),
               _buildFeatureItem(
                 icon: Icons.person_outline,
-                title: 'about.features.ai_profiles'.tr(),
-                description: 'about.features.ai_profiles_desc'.tr(),
+                title: 'AI Profiles',
+                description: 'Customize and manage AI profiles',
               ),
               const Divider(height: 1),
               _buildFeatureItem(
                 icon: Icons.cloud_outlined,
-                title: 'about.features.providers'.tr(),
-                description: 'about.features.providers_desc'.tr(),
+                title: 'Providers',
+                description: 'Multi-provider AI support',
               ),
               const Divider(height: 1),
               _buildFeatureItem(
                 icon: Icons.extension_outlined,
-                title: 'about.features.mcp'.tr(),
-                description: 'about.features.mcp_desc'.tr(),
+                title: 'MCP Servers',
+                description: 'Model Context Protocol integration',
               ),
             ],
           ),
@@ -199,10 +193,7 @@ class _AboutScreenState extends State<AboutScreen> {
     required String description,
   }) {
     return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(title),
       subtitle: Text(description),
     );
@@ -214,10 +205,10 @@ class _AboutScreenState extends State<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'about.developers.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Developers'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -227,8 +218,9 @@ class _AboutScreenState extends State<AboutScreen> {
               children: [
                 _buildDeveloperItem(
                   name: 'Starfall Team',
-                  role: 'about.developers.team_role'.tr(),
-                  description: 'about.developers.team_desc'.tr(),
+                  role: 'Development Team',
+                  description:
+                      'Professional team with passion for AI technology',
                 ),
               ],
             ),
@@ -282,10 +274,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        Text(
-          description,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(description, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
@@ -296,10 +285,10 @@ class _AboutScreenState extends State<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'about.legal.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Legal'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -307,22 +296,22 @@ class _AboutScreenState extends State<AboutScreen> {
             children: [
               _buildControlTile(
                 icon: Icons.description,
-                title: 'about.legal.privacy_policy'.tr(),
-                subtitle: 'about.legal.privacy_policy_desc'.tr(),
+                title: 'Privacy Policy',
+                subtitle: 'View data privacy policy',
                 onTap: () => _openPrivacyPolicy(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.rule,
-                title: 'about.legal.terms_of_service'.tr(),
-                subtitle: 'about.legal.terms_of_service_desc'.tr(),
+                title: 'Terms of Service',
+                subtitle: 'View terms and conditions',
                 onTap: () => _openTermsOfService(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.info_outline,
-                title: 'about.legal.open_source'.tr(),
-                subtitle: 'about.legal.open_source_desc'.tr(),
+                title: 'Open Source',
+                subtitle: 'Open source license information',
                 onTap: () => _openOpenSource(),
               ),
             ],
@@ -338,10 +327,10 @@ class _AboutScreenState extends State<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'about.support.title'.tr(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          tl('Support'),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Card(
@@ -349,22 +338,22 @@ class _AboutScreenState extends State<AboutScreen> {
             children: [
               _buildControlTile(
                 icon: Icons.bug_report,
-                title: 'about.support.report_bug'.tr(),
-                subtitle: 'about.support.report_bug_desc'.tr(),
+                title: 'Report Bug',
+                subtitle: 'Send bug reports to us',
                 onTap: () => _reportBug(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.lightbulb_outline,
-                title: 'about.support.feature_request'.tr(),
-                subtitle: 'about.support.feature_request_desc'.tr(),
+                title: 'Feature Request',
+                subtitle: 'Propose new features',
                 onTap: () => _requestFeature(),
               ),
               const Divider(height: 1),
               _buildControlTile(
                 icon: Icons.help_outline,
-                title: 'about.support.help_center'.tr(),
-                subtitle: 'about.support.help_center_desc'.tr(),
+                title: 'Help Center',
+                subtitle: 'Learn how to use the app',
                 onTap: () => _openHelpCenter(),
               ),
             ],
@@ -382,10 +371,7 @@ class _AboutScreenState extends State<AboutScreen> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(title),
       subtitle: Text(subtitle),
       onTap: onTap,
@@ -399,38 +385,38 @@ class _AboutScreenState extends State<AboutScreen> {
 
   /// Handlers cho các hành động
   void _openPrivacyPolicy() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.privacy_policy_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Privacy policy opened'))));
   }
 
   void _openTermsOfService() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.terms_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Terms of service opened'))));
   }
 
   void _openOpenSource() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.open_source_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Open source info opened'))));
   }
 
   void _reportBug() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.bug_report_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Bug report opened'))));
   }
 
   void _requestFeature() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.feature_request_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Feature request opened'))));
   }
 
   void _openHelpCenter() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('about.actions.help_center_opened'.tr())),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tl('Help center opened'))));
   }
 }

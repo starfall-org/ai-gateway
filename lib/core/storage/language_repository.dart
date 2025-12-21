@@ -14,6 +14,15 @@ class LanguageRepository
 
   LanguageRepository(super.prefs) {
     _loadInitialPreferences();
+    // Auto-refresh notifier on any storage change (no restart needed)
+    changes.listen((_) {
+      final items = getItems();
+      if (items.isNotEmpty) {
+        languageNotifier.value = items.first;
+      } else {
+        languageNotifier.value = LanguagePreferences.defaults();
+      }
+    });
   }
 
   void _loadInitialPreferences() {

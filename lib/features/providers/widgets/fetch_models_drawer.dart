@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../core/models/ai/ai_model.dart';
 import '../presentation/add_provider_viewmodel.dart';
 import '../../settings/widgets/settings_card.dart';
 import 'model_card.dart';
+
+import '../../../core/translate.dart';
 
 class FetchModelsDrawer extends StatelessWidget {
   final AddProviderViewModel viewModel;
@@ -55,7 +56,7 @@ class FetchModelsDrawer extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'providers.fetch_models'.tr(),
+                        tl('Fetch Models'),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 20,
@@ -89,8 +90,8 @@ class FetchModelsDrawer extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 availableModels.isEmpty
-                                    ? 'providers.no_models_fetched'.tr()
-                                    : '${availableModels.length} ${'providers.models_available'.tr()}',
+                                    ? 'No models fetched'
+                                    : '${availableModels.length} ${'models available'}',
                                 style: TextStyle(
                                   color: availableModels.isEmpty
                                       ? Theme.of(
@@ -104,7 +105,7 @@ class FetchModelsDrawer extends StatelessWidget {
                             ElevatedButton.icon(
                               onPressed: () => viewModel.fetchModels(context),
                               icon: const Icon(Icons.refresh, size: 16),
-                              label: Text('providers.fetch'.tr()),
+                              label: Text(tl('Fetch')),
                             ),
                           ],
                         ),
@@ -129,7 +130,7 @@ class FetchModelsDrawer extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'providers.tap_to_fetch_models'.tr(),
+                              tl('Tap to fetch models'),
                               style: TextStyle(
                                 color: Theme.of(context).disabledColor,
                                 fontSize: 16,

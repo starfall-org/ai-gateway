@@ -34,12 +34,12 @@ class AppServices {
   static Future<void> init() async {
     // Initialize repositories sequentially or in parallel as needed
     // Some might depend on Hive being initialized first (handled in main)
-    
+
     // Core settings first
     _instance.appearancesRepository = await AppearancesRepository.init();
     _instance.languageRepository = await LanguageRepository.init();
     _instance.appPreferencesRepository = await AppPreferencesRepository.init();
-    
+
     // Feature repositories
     _instance.providerRepository = await ProviderRepository.init();
     _instance.defaultModelsRepository = await DefaultModelsRepository.init();
@@ -47,7 +47,7 @@ class AppServices {
     _instance.aiProfileRepository = await AIProfileRepository.init();
     _instance.mcpRepository = await MCPRepository.init();
     _instance.ttsRepository = await TTSRepository.init();
-    
+
     // Services
     _instance.ttsService = TTSService();
   }

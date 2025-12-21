@@ -16,19 +16,19 @@ class SettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      color: backgroundColor ?? Theme.of(context).colorScheme.surfaceContainerLow,
+      color:
+          backgroundColor ?? Theme.of(context).colorScheme.surfaceContainerLow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
           width: 0.5,
         ),
       ),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: child,
-      ),
+      child: InkWell(onTap: onTap, child: child),
     );
   }
 }

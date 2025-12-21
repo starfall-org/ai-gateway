@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
 import '../../../core/models/appearances.dart';
@@ -8,6 +7,8 @@ import '../widgets/settings_section_header.dart';
 import '../widgets/settings_card.dart';
 import '../widgets/color_picker_dialog.dart';
 import '../widgets/super_dark_mode_card.dart';
+
+import '../../../core/translate.dart';
 
 class AppearanceScreen extends StatefulWidget {
   const AppearanceScreen({super.key});
@@ -44,7 +45,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('settings.appearance.title'.tr()),
+        title: Text(tl('Appearance')),
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         iconTheme: IconThemeData(
@@ -55,11 +56,14 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           fontSize: 20,
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
         children: [
           // Theme selection: system, light, dark, custom
-          SettingsSectionHeader('settings.appearance.theme_mode'.tr()),
+          SettingsSectionHeader('Theme Mode'),
           const SizedBox(height: 12),
           _buildThemeSegmented(),
 
@@ -73,16 +77,16 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           const SizedBox(height: 24),
 
           // Material You toggle
-          SettingsSectionHeader('settings.appearance.material_you'.tr()),
+          SettingsSectionHeader('settings.appearance.material_you'),
           DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
               final bool supported =
                   (lightDynamic != null || darkDynamic != null);
               return SettingsCard(
                 child: SwitchListTile(
-                  title: Text('settings.appearance.dynamic_colors'.tr()),
+                  title: Text(tl('Dynamic Colors')),
                   subtitle: supported
-                      ? Text('settings.appearance.dynamic_colors_desc'.tr())
+                      ? Text(tl('Use system dynamic colors'))
                       : null,
                   value: settings.dynamicColor,
                   onChanged: supported
@@ -95,58 +99,56 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
 
           // Secondary Background Mode
           const SizedBox(height: 12),
-          SettingsSectionHeader(
-            'settings.appearance.secondary_background'.tr(),
-          ),
+          SettingsSectionHeader('Secondary Background Color'),
           const SizedBox(height: 12),
           _buildSecondaryBgSegmented(),
 
           const SizedBox(height: 24),
 
           // Color customization is only visible in Custom mode and disabled when Material You is enabled
-          SettingsSectionHeader('settings.appearance.colors'.tr()),
+          SettingsSectionHeader('settings.appearance.colors'),
           const SizedBox(height: 12),
 
           SettingsCard(
             child: Column(
               children: [
                 _buildColorTile(
-                  label: 'settings.appearance.primary_color'.tr(),
+                  label: 'Primary Color',
                   colorType: ColorType.primary,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.secondary_color'.tr(),
+                  label: 'Secondary Color',
                   colorType: ColorType.secondary,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.background_color'.tr(),
+                  label: 'settings.appearance.background_color',
                   colorType: ColorType.background,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.surface_color'.tr(),
+                  label: 'settings.appearance.surface_color',
                   colorType: ColorType.surface,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.text_color'.tr(),
+                  label: 'settings.appearance.text_color',
                   colorType: ColorType.text,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.darkmode_text_color'.tr(),
+                  label: 'settings.appearance.darkmode_text_color',
                   colorType: ColorType.darkmodeText,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.text_hint_color'.tr(),
+                  label: 'settings.appearance.text_hint_color',
                   colorType: ColorType.textHint,
                 ),
                 const Divider(height: 1),
                 _buildColorTile(
-                  label: 'settings.appearance.darkmode_text_hint_color'.tr(),
+                  label: 'settings.appearance.darkmode_text_hint_color',
                   colorType: ColorType.darkmodeTextHint,
                 ),
               ],
@@ -155,9 +157,10 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           const SizedBox(height: 24),
 
           _buildPreview(isDark: isDark, settings: settings),
-        ],
-      ),
-    );
+       ],
+     ),
+     ),
+   );
   }
 
   Widget _buildThemeSegmented() {
@@ -168,22 +171,22 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           ButtonSegment(
             value: ThemeSelection.system,
             label: const Icon(Icons.brightness_auto_outlined),
-            tooltip: 'settings.appearance.system_default'.tr(),
+            tooltip: tl('System Default'),
           ),
           ButtonSegment(
             value: ThemeSelection.light,
             label: const Icon(Icons.light_mode_outlined),
-            tooltip: 'settings.appearance.light'.tr(),
+            tooltip: tl('Light'),
           ),
           ButtonSegment(
             value: ThemeSelection.dark,
             label: const Icon(Icons.dark_mode_outlined),
-            tooltip: 'settings.appearance.dark'.tr(),
+            tooltip: tl('Dark'),
           ),
           ButtonSegment(
             value: ThemeSelection.custom,
             label: const Icon(Icons.palette_outlined),
-            tooltip: 'settings.appearance.custom'.tr(),
+            tooltip: tl('Custom'),
           ),
         ],
         selected: {_viewModel.settings.selection},
@@ -203,17 +206,17 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
           ButtonSegment(
             value: SecondaryBackgroundMode.on,
             label: const Icon(Icons.layers_outlined),
-            tooltip: 'settings.appearance.secondary_bg_on'.tr(),
+            tooltip: tl('Dual'),
           ),
           ButtonSegment(
             value: SecondaryBackgroundMode.auto,
             label: const Icon(Icons.auto_awesome_outlined),
-            tooltip: 'settings.appearance.secondary_bg_auto'.tr(),
+            tooltip: tl('Auto'),
           ),
           ButtonSegment(
             value: SecondaryBackgroundMode.off,
             label: const Icon(Icons.layers_clear_outlined),
-            tooltip: 'settings.appearance.secondary_bg_off'.tr(),
+            tooltip: tl('Single'),
           ),
         ],
         selected: {_viewModel.settings.secondaryBackgroundMode},
@@ -238,7 +241,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
         decoration: BoxDecoration(
           color: currentColor,
           shape: BoxShape.circle,
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+          ),
         ),
       ),
       onTap: () {
@@ -263,10 +268,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     );
   }
 
-  Widget _buildPreview({
-    required bool isDark,
-    required Appearances settings,
-  }) {
+  Widget _buildPreview({required bool isDark, required Appearances settings}) {
     final primary = Color(settings.primaryColor);
     final onSurface = isDark ? Colors.white : Colors.black;
     final surface = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F7);
@@ -303,7 +305,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       ],
                     ),
                     child: Text(
-                      'settings.appearance.preview_subtitle'.tr(),
+                      tl('Subtitle goes here'),
                       style: TextStyle(color: onSurface, fontSize: 13),
                     ),
                   ),
@@ -323,7 +325,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       ),
                     ),
                     child: Text(
-                      'settings.appearance.preview_button'.tr(),
+                      tl('Primary Button'),
                       style: TextStyle(
                         color: primary.computeLuminance() < 0.5
                             ? Colors.white

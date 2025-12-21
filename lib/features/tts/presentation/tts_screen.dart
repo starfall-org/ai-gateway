@@ -3,6 +3,8 @@ import '../../../core/storage/tts_repository.dart';
 import '../../../core/models/speech_service.dart';
 import 'add_tts_profile_screen.dart';
 
+import '../../../core/translate.dart';
+
 class TTSScreen extends StatefulWidget {
   const TTSScreen({super.key});
 
@@ -38,7 +40,7 @@ class _TTSScreenState extends State<TTSScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TTS Profiles'),
+        title: Text(tl('TTS Profiles')),
         elevation: 0,
         actions: [
           IconButton(
@@ -57,16 +59,21 @@ class _TTSScreenState extends State<TTSScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _profiles.isEmpty
-          ? const Center(child: Text('No TTS profiles configured'))
-          : ListView.separated(
-              itemCount: _profiles.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) =>
-                  _buildProfileTile(_profiles[index]),
-            ),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _profiles.isEmpty
+                ? Center(child: Text(tl('No TTS profiles configured')))
+                : ListView.separated(
+                    itemCount: _profiles.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1),
+                    itemBuilder: (context, index) =>
+                        _buildProfileTile(_profiles[index]),
+                  ),
+      ),
     );
   }
 
@@ -84,7 +91,7 @@ class _TTSScreenState extends State<TTSScreen> {
         _deleteProfile(profile.id);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('${profile.name} deleted')));
+        ).showSnackBar(SnackBar(content: Text(tl('${profile.name} deleted'))));
       },
       child: ListTile(
         leading: CircleAvatar(

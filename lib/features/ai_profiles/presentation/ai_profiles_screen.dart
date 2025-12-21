@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../core/storage/ai_profile_repository.dart';
 import '../../../core/models/ai/ai_profile.dart';
@@ -7,6 +6,8 @@ import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/item_card.dart';
 import 'add_profile_screen.dart';
 import 'view_profile_screen.dart';
+
+import '../../../core/translate.dart';
 
 class AIProfilesScreen extends StatefulWidget {
   const AIProfilesScreen({super.key});
@@ -44,7 +45,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('agents.title'.tr()),
+        title: Text(tl('AI Profiles')),
         actions: [
           AddAction(
             onPressed: () async {
@@ -61,60 +62,64 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _profiles.isEmpty
-          ? EmptyState(
-              message: 'agents.no_agents'.tr(),
-              actionLabel: 'agents.add_new_agent'.tr(),
-              onAction: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddProfileScreen(),
-                  ),
-                );
-                if (result == true) {
-                  _loadProfiles();
-                }
-              },
-            )
-          : GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.85,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: _profiles.length,
-              itemBuilder: (context, index) {
-                final profile = _profiles[index];
-                return ItemCard(
-                  title: profile.name,
-                  subtitle: profile.config.systemPrompt,
-                  icon: CircleAvatar(
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer,
-                    child: Text(
-                      profile.name.isNotEmpty
-                          ? profile.name[0].toUpperCase()
-                          : 'A',
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _profiles.isEmpty
+                ? EmptyState(
+                    message: 'No AI Profiles found',
+                    actionLabel: 'Add AI Profile',
+                    onAction: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddProfileScreen(),
+                        ),
+                      );
+                      if (result == true) {
+                        _loadProfiles();
+                      }
+                    },
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.85,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
                     ),
+                    itemCount: _profiles.length,
+                    itemBuilder: (context, index) {
+                      final profile = _profiles[index];
+                      return ItemCard(
+                        title: profile.name,
+                        subtitle: profile.config.systemPrompt,
+                        icon: CircleAvatar(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                          child: Text(
+                            profile.name.isNotEmpty
+                                ? profile.name[0].toUpperCase()
+                                : 'A',
+                          ),
+                        ),
+                        onTap: () async {
+                          // In "Agent list" selection mode: set as selected and pop
+                          await _repository.setSelectedProfileId(profile.id);
+                          if (!context.mounted) return;
+                          Navigator.pop(context, true);
+                        },
+                        onView: () => _viewProfile(profile),
+                        onEdit: () => _editProfile(profile),
+                        onDelete: () => _confirmDelete(profile),
+                      );
+                    },
                   ),
-                  onTap: () async {
-                    // In "Agent list" selection mode: set as selected and pop
-                    await _repository.setSelectedProfileId(profile.id);
-                    if (!context.mounted) return;
-                    Navigator.pop(context, true);
-                  },
-                  onView: () => _viewProfile(profile),
-                  onEdit: () => _editProfile(profile),
-                  onDelete: () => _confirmDelete(profile),
-                );
-              },
-            ),
+      ),
     );
   }
 
@@ -145,9 +150,9 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
   Future<void> _confirmDelete(AIProfile profile) async {
     final confirm = await ConfirmDialog.show(
       context,
-      title: 'common.delete'.tr(),
-      content: 'agents.delete_confirm'.tr(args: [profile.name]),
-      confirmLabel: 'common.delete'.tr(),
+      title: 'Delete',
+      content: 'Are you sure you want to delete ${profile.name}?',
+      confirmLabel: 'Delete',
       isDestructive: true,
     );
     if (confirm == true) {
@@ -155,7 +160,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('agents.agent_deleted'.tr(args: [profile.name])),
+          content: Text(tl('AI Profile ${profile.name} has been deleted')),
         ),
       );
     }

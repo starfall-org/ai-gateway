@@ -5,7 +5,12 @@ class AppBottomSheet extends StatelessWidget {
   final List<Widget> items;
   final Widget? footer;
 
-  const AppBottomSheet({super.key, this.header, required this.items, this.footer});
+  const AppBottomSheet({
+    super.key,
+    this.header,
+    required this.items,
+    this.footer,
+  });
 
   @override
   Widget build(BuildContext context) {

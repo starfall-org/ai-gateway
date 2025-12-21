@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+
+import '../translate.dart';
 
 enum ItemCardLayout { grid, list }
 
@@ -190,7 +191,7 @@ class _ActionMenu extends StatelessWidget {
                 children: [
                   const Icon(Icons.visibility_outlined, size: 20),
                   const SizedBox(width: 12),
-                  Text('agents.view'.tr()),
+                  Text(tl('agents.view')),
                 ],
               ),
             ),
@@ -204,7 +205,7 @@ class _ActionMenu extends StatelessWidget {
                 children: [
                   const Icon(Icons.edit_outlined, size: 20),
                   const SizedBox(width: 12),
-                  Text('agents.edit'.tr()),
+                  Text(tl('agents.edit')),
                 ],
               ),
             ),
@@ -222,7 +223,7 @@ class _ActionMenu extends StatelessWidget {
                     color: Theme.of(context).colorScheme.error,
                   ),
                   const SizedBox(width: 12),
-                  Text('agents.delete'.tr()),
+                  Text(tl('agents.delete')),
                 ],
               ),
             ),

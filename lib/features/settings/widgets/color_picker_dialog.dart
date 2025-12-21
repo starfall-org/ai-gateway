@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+
+import '../../../core/translate.dart';
 
 class ColorPickerDialog extends StatelessWidget {
   final Color currentColor;
@@ -32,13 +33,13 @@ class ColorPickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('settings.appearance.colors'.tr()),
+      title: Text(tl('settings.appearance.colors')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'settings.appearance.color_presets'.tr(),
+            tl('Color Presets'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
@@ -94,7 +95,7 @@ class ColorPickerDialog extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.color_lens_outlined),
-              label: Text('settings.appearance.custom_color'.tr()),
+              label: Text(tl('Custom Color')),
               onPressed: () async {
                 final picked = await _pickColor(context, initial: currentColor);
                 if (picked != null) {
@@ -112,7 +113,7 @@ class ColorPickerDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('common.close'.tr()),
+          child: Text(tl('Close')),
         ),
       ],
     );
@@ -131,7 +132,7 @@ class ColorPickerDialog extends StatelessWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text('settings.appearance.custom_color'.tr()),
+          title: Text(tl('Custom Color')),
           content: StatefulBuilder(
             builder: (context, setState) {
               temp = Color.fromARGB(255, r, g, b);
@@ -158,12 +159,12 @@ class ColorPickerDialog extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: Text('common.close'.tr()),
+              child: Text(tl('Close')),
             ),
             ElevatedButton(
               onPressed: () =>
                   Navigator.of(ctx).pop(Color.fromARGB(255, r, g, b)),
-              child: Text('settings.update.title'.tr()),
+              child: Text(tl('Update')),
             ),
           ],
         );

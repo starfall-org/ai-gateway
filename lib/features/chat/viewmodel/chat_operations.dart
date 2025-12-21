@@ -6,10 +6,10 @@ extension ChatViewModelOperations on ChatViewModel {
     return currentSession!.messages
         .map((m) {
           final who = m.role == ChatRole.user
-              ? 'role.you'.tr(context: scaffoldKey.currentContext!)
+              ? 'You'
               : (m.role == ChatRole.model
                     ? (selectedProfile?.name ?? 'AI')
-                    : 'role.system'.tr(context: scaffoldKey.currentContext!));
+                    : 'System');
           return '$who: ${m.content}';
         })
         .join('\n\n');
@@ -23,7 +23,7 @@ extension ChatViewModelOperations on ChatViewModel {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('chat.copied'.tr())));
+      ).showSnackBar(SnackBar(content: Text(tl('Transcript copied'))));
     }
   }
 

@@ -7,7 +7,7 @@ extension ChatViewModelEditActions on ChatViewModel {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('chat.copied'.tr())));
+      ).showSnackBar(SnackBar(content: Text(tl('Transcript copied'))));
     }
   }
 

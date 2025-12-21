@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -245,20 +246,50 @@ abstract class SharedPreferencesBaseRepository<T> {
   }
 
   /// Stream of changes (emits when data changes)
-  Stream<void> get changes => changeNotifier.toStream();
+  /// Emits only when ValueNotifier changes; starts with current value.
+  Stream<void> get changes =>
+      changeNotifier.toStream().map((_) => null).cast<void>();
+
+  /// Stream of all items, emits immediately and on each change.
+  Stream<List<T>> get itemsStream {
+    final controller = StreamController<List<T>>.broadcast();
+    StreamSubscription<void>? sub;
+    controller.onListen = () {
+      // Emit current items immediately
+      controller.add(getItems());
+      // Re-emit items on every change
+      sub = changes.listen((_) {
+        controller.add(getItems());
+      });
+    };
+    controller.onCancel = () async {
+      await sub?.cancel();
+      sub = null;
+    };
+    return controller.stream;
+  }
 
   /// Alias methods for compatibility
   Future<void> addItem(T item) => saveItem(item);
   Future<void> updateItem(T item) => saveItem(item);
 }
 
-/// Extension to convert ValueNotifier to Stream
+//// Extension to convert ValueNotifier to a broadcast Stream that only
+/// emits on actual changes and starts with the current value.
 extension ValueNotifierStream<T> on ValueNotifier<T> {
-  Stream<T> toStream() async* {
-    yield value;
-    while (true) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      yield value;
-    }
+  Stream<T> toStream() {
+    late VoidCallback listener;
+    final controller = StreamController<T>.broadcast();
+    controller.onListen = () {
+      // Emit current value immediately for new subscribers
+      controller.add(value);
+      // Emit on each change
+      listener = () => controller.add(value);
+      addListener(listener);
+    };
+    controller.onCancel = () {
+      removeListener(listener);
+    };
+    return controller.stream;
   }
 }

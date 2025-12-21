@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -6,6 +5,8 @@ import '../../../core/storage/ai_profile_repository.dart';
 import '../../../core/storage/mcp_repository.dart';
 import '../../../core/models/ai/ai_profile.dart';
 import '../../../core/models/mcp/mcp_server.dart';
+
+import '../../../core/translate.dart';
 
 /// Options for chat persistence: On, Off, and Disable
 /// - On: Enable chat persistence
@@ -93,7 +94,7 @@ class AddAgentViewModel extends ChangeNotifier {
     if (nameController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('agents.name'.tr())));
+      ).showSnackBar(SnackBar(content: Text(tl('AI Profile Name'))));
       return;
     }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/provider.dart';
@@ -30,6 +31,9 @@ class ProviderRepository extends SharedPreferencesBaseRepository<Provider> {
   }
 
   List<Provider> getProviders() => getItems();
+
+  /// Reactive stream of providers; emits immediately and on each change.
+  Stream<List<Provider>> get providersStream => itemsStream;
 
   Future<void> addProvider(Provider provider) => saveItem(provider);
 

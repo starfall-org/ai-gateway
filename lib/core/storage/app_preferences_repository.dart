@@ -14,6 +14,15 @@ class AppPreferencesRepository
 
   AppPreferencesRepository(super.prefs) {
     _loadInitial();
+    // Auto-refresh notifier on any storage change (no restart needed)
+    changes.listen((_) {
+      final items = getItems();
+      if (items.isNotEmpty) {
+        preferencesNotifier.value = items.first;
+      } else {
+        preferencesNotifier.value = AppPreferences.defaults();
+      }
+    });
   }
 
   void _loadInitial() {
