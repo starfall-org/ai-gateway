@@ -25,8 +25,6 @@ class ModelCard extends StatelessWidget {
           spacing: 4,
           runSpacing: 4,
           children: [
-            _buildTag(context, _getModelTypeLabel(),
-                Theme.of(context).colorScheme.primary),
             ..._buildIOTags(context),
             if (model.parameters != null)
               _buildTextTag(
@@ -36,6 +34,11 @@ class ModelCard extends StatelessWidget {
               ),
           ],
         ),
+      ),
+      leading: _buildTag(
+        context,
+        _getModelTypeLabel(),
+        Theme.of(context).colorScheme.primary,
       ),
       trailing: trailing,
       onTap: onTap,
@@ -50,17 +53,20 @@ class ModelCard extends StatelessWidget {
   Widget _getModelTypeLabel() {
     switch (model.type) {
       case ModelType.textGeneration:
-        return Row(children: [Icon(Icons.text_snippet), Text('Text')]);
+        if (model.reasoning == true) {
+          return Icon(Icons.chat);
+        }
+        return Icon(Icons.chat_bubble);
       case ModelType.imageGeneration:
-        return Row(children: [Icon(Icons.image_search), Text('Image')]);
+        return Icon(Icons.image_search);
       case ModelType.audioGeneration:
-        return Row(children: [Icon(Icons.music_video), Text('Audio')]);
+        return Icon(Icons.music_video);
       case ModelType.videoGeneration:
-        return Row(children: [Icon(Icons.local_movies), Text('Video')]);
+        return Icon(Icons.local_movies);
       case ModelType.embedding:
-        return Row(children: [Icon(Icons.compress_rounded), Text('Embedding')]);
+        return Icon(Icons.compress_rounded);
       case ModelType.rerank:
-        return Row(children: [Icon(Icons.leaderboard), Text('Rerank')]);
+        return Icon(Icons.leaderboard);
     }
   }
 
@@ -121,7 +127,7 @@ class ModelCard extends StatelessWidget {
   Widget _buildTag(BuildContext context, Widget label, Color color) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Sử dụng color scheme để tạo boxColor thay vì hardcode white/black
     final boxColor = isDark
         ? Color.lerp(color, theme.colorScheme.surface, 0.7)!

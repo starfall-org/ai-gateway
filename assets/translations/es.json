@@ -1,0 +1,241 @@
+{
+  "app_title": "Puerta de enlace de IA",
+  "chat": {
+    "title": "Chat y soporte",
+    "start": "¡Inicia una conversación!",
+    "regenerate": "Regenerado",
+    "clear": "Borrar chat",
+    "copy": "Copiar transcripción",
+    "copied": "Transcripción copiada",
+    "no_user_to_regen": "No se encontró ningún mensaje de usuario para regenerar",
+    "unable_pick": "No se pueden seleccionar archivos: {error}"
+  },
+  "drawer": {
+    "recent": "Reciente",
+    "new_chat": "Nuevo chat",
+    "help_activity": "Ayuda y actividad",
+    "settings": "Ajustes",
+    "change_agent": "Cambiar perfil de IA",
+    "no_history": "Sin historia"
+  },
+  "input": {
+    "ask": "Preguntar {}",
+    "attach_files": "Adjuntar archivos",
+    "pick_images": "Elija imágenes/archivos",
+    "placeholder": "Escribe un mensaje...",
+    "mic_tts": "Micrófono/TTS",
+    "send": "Enviar",
+    "menu": "Menú"
+  },
+  "menu": {
+    "title": "Menú",
+    "settings": "Ajustes",
+    "settings_desc": "Administrar la configuración de la aplicación",
+    "about": "Acerca de",
+    "about_desc": "Información sobre la aplicación",
+    "help": "Ayuda",
+    "help_desc": "Obtenga ayuda y orientación"
+  },
+  "attachment_options": {
+    "title": "Opciones de archivos adjuntos",
+    "gallery": "Galería",
+    "gallery_desc": "Elige entre tu galería de fotos",
+    "camera": "Cámara",
+    "camera_desc": "Toma una nueva foto con la cámara.",
+    "document": "Documento",
+    "document_desc": "Elija archivos de documentos (PDF, DOC, TXT)",
+    "audio": "Audio",
+    "audio_desc": "Elija archivos de audio o grabe audio nuevo",
+    "video": "Video",
+    "video_desc": "Elija archivos de video o grabe un video nuevo",
+    "voice_record": "Grabación de voz",
+    "voice_record_desc": "Graba tu voz"
+  },
+  "model_picker": {
+    "title": "Seleccionar modelo",
+    "select_model": "Seleccionar modelo",
+    "no_providers": "No hay proveedores configurados"
+  },
+  "attachments": {
+    "title_count": "Archivos adjuntos ({count})",
+    "empty": "Sin archivos adjuntos"
+  },
+  "role": {
+    "you": "Tú",
+    "system": "Sistema"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "general_section": "General",
+    "features_section": "Funciones en línea",
+    "about_section": "Acerca de",
+    "notifications": {
+      "title": "Notificaciones"
+    },
+    "info": {
+      "title": "Información"
+    },
+    "update": {
+      "title": "Actualizar"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "theme_mode": "Modo temático",
+      "brand_color": "Color de la marca",
+      "system_default": "Valor predeterminado del sistema",
+      "light": "Luz",
+      "dark": "Oscuro",
+      "custom": "Costumbre",
+      "primary_color": "Color primario",
+      "secondary_color": "Color secundario",
+      "color_presets": "Ajustes preestablecidos de color",
+      "custom_color": "Color personalizado",
+      "dynamic_colors": "Colores dinámicos",
+      "dynamic_colors_desc": "Usar colores dinámicos del sistema",
+      "primary_background": "Color de fondo primario",
+      "secondary_background": "Color de fondo secundario",
+      "secondary_bg_mode": "Modo de color de fondo",
+      "secondary_bg_on": "Dual",
+      "secondary_bg_off": "Soltero",
+      "secondary_bg_auto": "Auto",
+      "super_dark_mode": "Modo súper oscuro",
+      "super_dark_mode_desc": "Utilice negro intenso para pantallas AMOLED",
+      "preview_title": "Título de vista previa",
+      "preview_subtitle": "El subtítulo va aquí.",
+      "preview_button": "Botón principal"
+    },
+    "preferences": {
+      "auto_detect": "Auto",
+      "select_language": "Idiomas",
+      "about": "Acerca de",
+      "current_language": "Idioma actual",
+      "language_changed": "El idioma ha sido cambiado.",
+      "language_change_error": "No se pudo cambiar el idioma",
+      "auto_detect_enabled": "Auto ha sido habilitado",
+      "auto_detect_error": "No se pudo alternar automáticamente",
+      "chat_settings": "Configuración de chat",
+      "persist_chat_selection": "Persistir selecciones",
+      "prefer_agent_settings": "Prefiere la configuración del perfil AI"
+    }
+  },
+  "providers": {
+    "title": "Proveedores",
+    "no_providers": "No se encontraron proveedores",
+    "custom_routes": "Rutas personalizadas",
+    "provider_deleted": "Proveedor {} eliminado",
+    "add_provider": "Agregar proveedor",
+    "edit_provider": "Editar proveedor",
+    "provider_type": "Compatibilidad",
+    "name": "Nombre",
+    "api_key": "Clave API",
+    "base_url": "URL base",
+    "custom_headers": {
+      "title": "Encabezados",
+      "header_key": "Llave",
+      "header_value": "Valor"
+    },
+    "chat_completions_route": "Ruta de finalización del chat",
+    "models_route_or_url": "Listar modelos Ruta o URL",
+    "available_models": "Modelos",
+    "capabilities": "Capacidades",
+    "responses_api": "API de respuestas",
+    "inputs": "Tipos de entrada",
+    "outputs": "Tipos de salida",
+    "connection_error": "Error de conexión",
+    "timeout_error": "Solicitud agotada",
+    "invalid_format": "Formato de respuesta no válido de API",
+    "no_models_added": "Aún no se han agregado modelos",
+    "add_all": "Todo",
+    "no_models_found": "No se encontraron modelos",
+    "fetch_error": "No se pudieron recuperar los modelos",
+    "auth_error": "Error de autenticación",
+    "azure_ai": "IA azul",
+    "vertex_ai": "IA de vértice",
+    "models_count": "{} modelos",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar {}?",
+    "fetch_models": "Obtener modelos",
+    "no_models_fetched": "No se han encontrado modelos",
+    "models_available": "modelos disponibles",
+    "fetch": "Buscar",
+    "tap_to_fetch_models": "Toca para buscar modelos",
+    "model": {}
+  },
+  "agents": {
+    "title": "Perfiles de IA",
+    "no_agents": "No se encontraron perfiles de IA",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar {}?",
+    "agent_deleted": "Perfil AI {} eliminado",
+    "add_new_agent": "Agregar perfil de IA",
+    "edit_agent": "Editar perfil de IA",
+    "agent_details": "Detalles del perfil de IA",
+    "name": "Nombre del perfil de IA",
+    "system_prompt": "Aviso del sistema",
+    "parameters": "Parámetros",
+    "stream": "Arroyo",
+    "stream_desc": "Habilitar la transmisión de respuestas",
+    "top_p": "P superior",
+    "top_k": "K superior",
+    "temperature": "Temperatura",
+    "context_window": "Ventana de contexto",
+    "conversation_length": "Duración de la conversación",
+    "max_tokens": "Fichas máximas",
+    "mcp_servers": "Servidores MCP",
+    "no_mcp_servers": "No hay servidores MCP disponibles",
+    "persist_selection": "Persistir en la selección",
+    "persist_disable": "Seguir Global",
+    "persist_on": "Siempre encendido",
+    "persist_off": "Siempre apagado"
+  },
+  "tts": {
+    "title": "Servicios de voz",
+    "add_tts": "Agregar servicio de voz",
+    "edit_tts": "Editar servicio de voz",
+    "name": "Nombre",
+    "provider": "Proveedor",
+    "language": "Idioma",
+    "voice": "Voz",
+    "speed": "Velocidad",
+    "pitch": "Paso",
+    "volume": "Volumen",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar {}?",
+    "tts_deleted": "Servicio {} eliminado"
+  },
+  "mcp": {
+    "title": "Servidores MCP",
+    "add_mcp": "Agregar servidor MCP",
+    "edit_mcp": "Editar servidor MCP",
+    "name": "Nombre",
+    "url": "URL",
+    "protocol": "Protocolo",
+    "streamable": "Arroyo",
+    "sse": "ESS",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar {}?",
+    "mcp_deleted": "Servidor {} eliminado"
+  },
+  "message": {
+    "copy": "Copiar",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "read": "Leer",
+    "reasoning": "Contenido de razonamiento"
+  },
+  "dialog": {
+    "edit_message": "Editar mensaje",
+    "message": "Mensaje",
+    "attachments": "Adjuntos",
+    "add": "Agregar",
+    "resend": "Reenviar"
+  },
+  "common": {
+    "more": "Más",
+    "close": "Cerca",
+    "save": "Ahorrar",
+    "cancel": "Cancelar",
+    "view": "Vista",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "text": "Texto",
+    "image": "Imagen",
+    "audio": "Audio"
+  }
+}

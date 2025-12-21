@@ -1,28 +1,28 @@
 {
-  "app_title": "AI Gateway",
+  "app_title": "AIゲートウェイ",
   "chat": {
     "title": "チャットとサポート",
     "start": "会話を始めましょう！",
-    "regenerate": "再生成",
-    "clear": "チャットをクリア",
-    "copy": "トランスクリプトをコピー",
-    "copied": "トランスクリプトがコピーされました",
-    "no_user_to_regen": "再生成するユーザーメッセージが見つかりません",
-    "unable_pick": "ファイルを選択できません：{error}"
+    "regenerate": "再生する",
+    "clear": "クリアチャット",
+    "copy": "トランスクリプトをコピーする",
+    "copied": "トランスクリプトをコピーしました",
+    "no_user_to_regen": "再生成するユーザー メッセージが見つかりません",
+    "unable_pick": "ファイルを選択できません: {エラー}"
   },
   "drawer": {
-    "recent": "最近",
+    "recent": "最近の",
     "new_chat": "新しいチャット",
     "help_activity": "ヘルプとアクティビティ",
     "settings": "設定",
-    "change_agent": "エージェントを変更",
-    "no_history": "履歴がありません"
+    "change_agent": "AI プロファイルの変更",
+    "no_history": "履歴なし"
   },
   "input": {
-    "ask": "質問 {}",
-    "attach_files": "ファイルを添付",
-    "pick_images": "画像/ファイルを選択",
-    "placeholder": "メッセージを入力...",
+    "ask": "聞く {}",
+    "attach_files": "ファイルを添付する",
+    "pick_images": "画像/ファイルを選択してください",
+    "placeholder": "メッセージを入力してください...",
     "mic_tts": "マイク/TTS",
     "send": "送信",
     "menu": "メニュー"
@@ -30,31 +30,31 @@
   "menu": {
     "title": "メニュー",
     "settings": "設定",
-    "settings_desc": "アプリ設定を管理",
+    "settings_desc": "アプリの設定を管理する",
     "about": "について",
-    "about_desc": "アプリの情報",
+    "about_desc": "アプリに関する情報",
     "help": "ヘルプ",
-    "help_desc": "ヘルプとガイダンスを得る"
+    "help_desc": "助けと指導を受ける"
   },
   "attachment_options": {
-    "title": "添付ファイルオプション",
+    "title": "添付ファイルのオプション",
     "gallery": "ギャラリー",
-    "gallery_desc": "フォトギャラリーから選択",
+    "gallery_desc": "フォトギャラリーから選択してください",
     "camera": "カメラ",
-    "camera_desc": "カメラで新しい写真を撮影",
-    "document": "ドキュメント",
-    "document_desc": "ドキュメントファイルを選択（PDF、DOC、TXT）",
+    "camera_desc": "カメラで新しい写真を撮ります",
+    "document": "書類",
+    "document_desc": "ドキュメント ファイルを選択します (PDF、DOC、TXT)",
     "audio": "オーディオ",
-    "audio_desc": "オーディオファイルを選択または新しいオーディオを録音",
+    "audio_desc": "音声ファイルを選択するか、新しい音声を録音します",
     "video": "ビデオ",
-    "video_desc": "ビデオファイルを選択または新しいビデオを録画",
+    "video_desc": "ビデオ ファイルを選択するか、新しいビデオを録画します",
     "voice_record": "音声録音",
-    "voice_record_desc": "あなたの声を録音"
+    "voice_record_desc": "自分の声を録音する"
   },
   "model_picker": {
-    "title": "モデルを選択",
-    "select_model": "モデルを選択",
-    "no_providers": "プロバイダーが設定されていません"
+    "title": "モデルの選択",
+    "select_model": "モデルを選択してください",
+    "no_providers": "プロバイダーが構成されていません"
   },
   "attachments": {
     "title_count": "添付ファイル ({count})",
@@ -66,7 +66,7 @@
   },
   "settings": {
     "title": "設定",
-    "general_section": "一般",
+    "general_section": "一般的な",
     "features_section": "オンライン機能",
     "about_section": "について",
     "notifications": {
@@ -76,33 +76,33 @@
       "title": "情報"
     },
     "update": {
-      "title": "更新"
+      "title": "アップデート"
     },
     "appearance": {
       "title": "外観",
       "theme_mode": "テーマモード",
       "brand_color": "ブランドカラー",
-      "system_default": "システムデフォルト",
+      "system_default": "システムのデフォルト",
       "light": "ライト",
-      "dark": "ダーク",
+      "dark": "暗い",
       "custom": "カスタム",
-      "primary_color": "プライマリカラー",
-      "secondary_color": "セカンダリカラー",
+      "primary_color": "原色",
+      "secondary_color": "二次色",
       "color_presets": "カラープリセット",
       "custom_color": "カスタムカラー",
-      "pure_dark": "SuperDarkモード",
-      "pure_dark_desc": "AMOLEDディスプレイに深い黒を使用",
-      "material_you": "ダイナミックカラー",
-      "material_you_desc": "システムの動的色を使用",
-      "primary_background": "プライマリ背景色",
-      "secondary_background": "セカンダリ背景色",
-      "secondary_bg_mode": "セカンダリ背景モード",
-      "secondary_bg_on": "ダブル",
+      "dynamic_colors": "ダイナミックカラー",
+      "dynamic_colors_desc": "システムの動的カラーを使用する",
+      "primary_background": "主な背景色",
+      "secondary_background": "二次背景色",
+      "secondary_bg_mode": "背景色モード",
+      "secondary_bg_on": "デュアル",
       "secondary_bg_off": "シングル",
       "secondary_bg_auto": "自動",
-      "preview_title": "プレビュータイトル",
-      "preview_subtitle": "サブタイトルはここにあります",
-      "preview_button": "プライマリボタン"
+      "super_dark_mode": "スーパーダークモード",
+      "super_dark_mode_desc": "AMOLED ディスプレイにはディープブラックを使用する",
+      "preview_title": "プレビューのタイトル",
+      "preview_subtitle": "ここに字幕が入ります",
+      "preview_button": "主ボタン"
     },
     "preferences": {
       "auto_detect": "自動",
@@ -114,90 +114,128 @@
       "auto_detect_enabled": "自動が有効になりました",
       "auto_detect_error": "自動の切り替えに失敗しました",
       "chat_settings": "チャット設定",
-      "persist_chat_selection": "選択を保持",
-      "prefer_agent_settings": "エージェント設定を優先"
+      "persist_chat_selection": "選択内容を保持する",
+      "prefer_agent_settings": "AI プロファイル設定を優先する"
     }
   },
   "providers": {
     "title": "プロバイダー",
-    "no_providers": "プロバイダーが見つかりません",
+    "no_providers": "プロバイダーが見つかりませんでした",
     "custom_routes": "カスタムルート",
     "provider_deleted": "プロバイダー {} が削除されました",
-    "add_provider": "プロバイダーを追加",
-    "edit_provider": "プロバイダーを編集",
+    "add_provider": "プロバイダーの追加",
+    "edit_provider": "プロバイダーの編集",
     "provider_type": "互換性",
     "name": "名前",
     "api_key": "APIキー",
-    "base_url": "ベースURL",
+    "base_url": "ベース URL",
     "custom_headers": {
       "title": "ヘッダー",
-      "header_key": "キー",
-      "header_value": "値"
+      "header_key": "鍵",
+      "header_value": "価値"
     },
-    "chat_completions_route": "Chat Completions パス",
-    "models_route_or_url": "Models パスまたはURL",
+    "chat_completions_route": "チャット完了パス",
+    "models_route_or_url": "リストモデルのパスまたは URL",
     "available_models": "モデル",
-    "capabilities": "機能",
-    "responses_api": "Responses API",
+    "capabilities": "能力",
+    "responses_api": "レスポンスAPI",
     "inputs": "入力タイプ",
     "outputs": "出力タイプ",
     "connection_error": "接続エラー",
     "timeout_error": "リクエストがタイムアウトしました",
     "invalid_format": "APIからの応答形式が無効です",
-    "no_models_added": "まだモデルが追加されていません",
-    "add_all": "すべて",
+    "no_models_added": "まだモデルは追加されていません",
+    "add_all": "全て",
     "no_models_found": "モデルが見つかりません",
     "fetch_error": "モデルの取得に失敗しました",
-    "auth_error": "認証に失敗しました"
+    "auth_error": "認証に失敗しました",
+    "azure_ai": "アズールAI",
+    "vertex_ai": "頂点AI",
+    "models_count": "{} モデル",
+    "delete_confirm": "{} を削除してもよろしいですか?",
+    "fetch_models": "モデルのフェッチ",
+    "no_models_fetched": "モデルがフェッチされませんでした",
+    "models_available": "利用可能なモデル",
+    "fetch": "フェッチ",
+    "tap_to_fetch_models": "タップしてモデルを取得します",
+    "model": {}
   },
   "agents": {
-    "title": "エージェント",
-    "add_new_agent": "エージェントを追加",
-    "name": "エージェント名",
+    "title": "AI プロファイル",
+    "no_agents": "AI プロファイルが見つかりませんでした",
+    "delete_confirm": "{} を削除してもよろしいですか?",
+    "agent_deleted": "AI プロファイル {} が削除されました",
+    "add_new_agent": "AIプロファイルの追加",
+    "edit_agent": "AI プロファイルの編集",
+    "agent_details": "AI プロファイルの詳細",
+    "name": "AI プロファイル名",
     "system_prompt": "システムプロンプト",
     "parameters": "パラメータ",
-    "top_p": "P",
-    "top_k": "K",
+    "stream": "ストリーム",
+    "stream_desc": "ストリーミング応答を有効にする",
+    "top_p": "トップP",
+    "top_k": "トップK",
     "temperature": "温度",
     "context_window": "コンテキストウィンドウ",
     "conversation_length": "会話の長さ",
     "max_tokens": "最大トークン数",
     "mcp_servers": "MCPサーバー",
-    "persist_selection": "選択を保持",
-    "persist_on": "オン",
-    "persist_off": "オフ",
-    "persist_disable": "無効",
-    "edit_agent": "エージェントを編集",
-    "agent_details": "エージェントの詳細",
-    "agent_deleted": "エージェント {} が削除されました"
+    "no_mcp_servers": "使用可能な MCP サーバーがありません",
+    "persist_selection": "選択を保持する",
+    "persist_disable": "グローバルをフォローする",
+    "persist_on": "常時オン",
+    "persist_off": "常にオフ"
   },
   "tts": {
-    "title": "TTS プロファイル"
+    "title": "音声サービス",
+    "add_tts": "音声サービスの追加",
+    "edit_tts": "音声編集サービス",
+    "name": "名前",
+    "provider": "プロバイダー",
+    "language": "言語",
+    "voice": "声",
+    "speed": "スピード",
+    "pitch": "ピッチ",
+    "volume": "音量",
+    "delete_confirm": "{} を削除してもよろしいですか?",
+    "tts_deleted": "サービス {} が削除されました"
   },
   "mcp": {
-    "title": "MCPサーバー"
+    "title": "MCPサーバー",
+    "add_mcp": "MCPサーバーの追加",
+    "edit_mcp": "MCPサーバーの編集",
+    "name": "名前",
+    "url": "URL",
+    "protocol": "プロトコル",
+    "streamable": "ストリーム",
+    "sse": "SSE",
+    "delete_confirm": "{} を削除してもよろしいですか?",
+    "mcp_deleted": "サーバー {} が削除されました"
   },
   "message": {
     "copy": "コピー",
     "edit": "編集",
-    "delete": "削除",
+    "delete": "消去",
     "read": "読む",
-    "reasoning": "推論コンテンツ"
+    "reasoning": "推理内容"
   },
   "dialog": {
-    "edit_message": "メッセージを編集",
+    "edit_message": "メッセージの編集",
     "message": "メッセージ",
     "attachments": "添付ファイル",
     "add": "追加",
     "resend": "再送信"
   },
   "common": {
-    "more": "もっと見る",
-    "close": "閉じる",
+    "more": "もっと",
+    "close": "近い",
     "save": "保存",
     "cancel": "キャンセル",
-    "view": "表示",
+    "view": "ビュー",
     "edit": "編集",
-    "delete": "削除"
+    "delete": "消去",
+    "text": "文章",
+    "image": "画像",
+    "audio": "オーディオ"
   }
 }

@@ -1,0 +1,241 @@
+{
+  "app_title": "AI 게이트웨이",
+  "chat": {
+    "title": "채팅 및 지원",
+    "start": "대화를 시작해 보세요!",
+    "regenerate": "재생성",
+    "clear": "채팅 지우기",
+    "copy": "성적표 복사",
+    "copied": "성적 증명서가 복사되었습니다.",
+    "no_user_to_regen": "재생성할 사용자 메시지가 없습니다.",
+    "unable_pick": "파일을 선택할 수 없습니다: {오류}"
+  },
+  "drawer": {
+    "recent": "최근의",
+    "new_chat": "새 채팅",
+    "help_activity": "도움말 및 활동",
+    "settings": "설정",
+    "change_agent": "AI 프로필 변경",
+    "no_history": "기록 없음"
+  },
+  "input": {
+    "ask": "묻다 {}",
+    "attach_files": "파일 첨부",
+    "pick_images": "이미지/파일 선택",
+    "placeholder": "메시지를 입력하세요...",
+    "mic_tts": "마이크/TTS",
+    "send": "보내다",
+    "menu": "메뉴"
+  },
+  "menu": {
+    "title": "메뉴",
+    "settings": "설정",
+    "settings_desc": "앱 설정 관리",
+    "about": "에 대한",
+    "about_desc": "앱에 대한 정보",
+    "help": "돕다",
+    "help_desc": "도움과 안내 받기"
+  },
+  "attachment_options": {
+    "title": "첨부 옵션",
+    "gallery": "갱도",
+    "gallery_desc": "사진 갤러리에서 선택하세요",
+    "camera": "카메라",
+    "camera_desc": "카메라로 새 사진 찍기",
+    "document": "문서",
+    "document_desc": "문서 파일 선택(PDF, DOC, TXT)",
+    "audio": "오디오",
+    "audio_desc": "오디오 파일을 선택하거나 새 오디오를 녹음하세요.",
+    "video": "동영상",
+    "video_desc": "비디오 파일을 선택하거나 새 비디오를 녹화하세요",
+    "voice_record": "음성 녹음",
+    "voice_record_desc": "당신의 목소리를 녹음하세요"
+  },
+  "model_picker": {
+    "title": "모델 선택",
+    "select_model": "모델 선택",
+    "no_providers": "구성된 제공업체가 없습니다."
+  },
+  "attachments": {
+    "title_count": "첨부파일({count})",
+    "empty": "첨부파일 없음"
+  },
+  "role": {
+    "you": "너",
+    "system": "체계"
+  },
+  "settings": {
+    "title": "설정",
+    "general_section": "일반적인",
+    "features_section": "온라인 기능",
+    "about_section": "에 대한",
+    "notifications": {
+      "title": "알림"
+    },
+    "info": {
+      "title": "정보"
+    },
+    "update": {
+      "title": "업데이트"
+    },
+    "appearance": {
+      "title": "모습",
+      "theme_mode": "테마 모드",
+      "brand_color": "브랜드 색상",
+      "system_default": "시스템 기본값",
+      "light": "빛",
+      "dark": "어두운",
+      "custom": "관습",
+      "primary_color": "원색",
+      "secondary_color": "보조 색상",
+      "color_presets": "색상 사전 설정",
+      "custom_color": "사용자 정의 색상",
+      "dynamic_colors": "동적 색상",
+      "dynamic_colors_desc": "시스템 동적 색상 사용",
+      "primary_background": "기본 배경색",
+      "secondary_background": "보조 배경색",
+      "secondary_bg_mode": "배경색 모드",
+      "secondary_bg_on": "듀얼",
+      "secondary_bg_off": "하나의",
+      "secondary_bg_auto": "자동",
+      "super_dark_mode": "슈퍼 다크 모드",
+      "super_dark_mode_desc": "AMOLED 디스플레이에는 딥 블랙을 사용하세요",
+      "preview_title": "미리보기 제목",
+      "preview_subtitle": "자막은 여기에 표시됩니다",
+      "preview_button": "기본 버튼"
+    },
+    "preferences": {
+      "auto_detect": "자동",
+      "select_language": "언어",
+      "about": "에 대한",
+      "current_language": "현재 언어",
+      "language_changed": "언어가 변경되었습니다",
+      "language_change_error": "언어를 변경하지 못했습니다.",
+      "auto_detect_enabled": "자동이 활성화되었습니다.",
+      "auto_detect_error": "자동으로 전환하지 못했습니다.",
+      "chat_settings": "채팅 설정",
+      "persist_chat_selection": "선택 유지",
+      "prefer_agent_settings": "AI 프로필 설정 선호"
+    }
+  },
+  "providers": {
+    "title": "공급자",
+    "no_providers": "제공업체를 찾을 수 없습니다.",
+    "custom_routes": "사용자 정의 경로",
+    "provider_deleted": "공급자 {}이(가) 삭제되었습니다.",
+    "add_provider": "공급자 추가",
+    "edit_provider": "공급자 편집",
+    "provider_type": "호환성",
+    "name": "이름",
+    "api_key": "API 키",
+    "base_url": "기본 URL",
+    "custom_headers": {
+      "title": "헤더",
+      "header_key": "열쇠",
+      "header_value": "값"
+    },
+    "chat_completions_route": "채팅 완료 경로",
+    "models_route_or_url": "모델 경로 또는 URL 나열",
+    "available_models": "모델",
+    "capabilities": "기능",
+    "responses_api": "응답 API",
+    "inputs": "입력 유형",
+    "outputs": "출력 유형",
+    "connection_error": "연결 오류",
+    "timeout_error": "요청 시간이 초과되었습니다.",
+    "invalid_format": "API의 잘못된 응답 형식",
+    "no_models_added": "아직 추가된 모델이 없습니다.",
+    "add_all": "모두",
+    "no_models_found": "모델을 찾을 수 없습니다.",
+    "fetch_error": "모델을 가져오지 못했습니다.",
+    "auth_error": "인증 실패",
+    "azure_ai": "Azure AI",
+    "vertex_ai": "버텍스 AI",
+    "models_count": "{} 모델",
+    "delete_confirm": "정말로 {}을(를) 삭제하시겠습니까?",
+    "fetch_models": "모델 가져오기",
+    "no_models_fetched": "가져온 모델이 없습니다.",
+    "models_available": "사용 가능한 모델",
+    "fetch": "술책",
+    "tap_to_fetch_models": "모델을 가져오려면 탭하세요.",
+    "model": {}
+  },
+  "agents": {
+    "title": "AI 프로필",
+    "no_agents": "AI 프로필을 찾을 수 없습니다.",
+    "delete_confirm": "정말로 {}을(를) 삭제하시겠습니까?",
+    "agent_deleted": "AI 프로필 {}이(가) 삭제되었습니다.",
+    "add_new_agent": "AI 프로필 추가",
+    "edit_agent": "AI 프로필 편집",
+    "agent_details": "AI 프로필 세부정보",
+    "name": "AI 프로필 이름",
+    "system_prompt": "시스템 프롬프트",
+    "parameters": "매개변수",
+    "stream": "개울",
+    "stream_desc": "스트리밍 응답 활성화",
+    "top_p": "탑 P",
+    "top_k": "탑K",
+    "temperature": "온도",
+    "context_window": "컨텍스트 창",
+    "conversation_length": "대화 길이",
+    "max_tokens": "최대 토큰",
+    "mcp_servers": "MCP 서버",
+    "no_mcp_servers": "사용 가능한 MCP 서버가 없습니다.",
+    "persist_selection": "선택 유지",
+    "persist_disable": "글로벌 팔로우",
+    "persist_on": "항상 켜짐",
+    "persist_off": "항상 꺼짐"
+  },
+  "tts": {
+    "title": "음성 서비스",
+    "add_tts": "음성 서비스 추가",
+    "edit_tts": "음성 서비스 편집",
+    "name": "이름",
+    "provider": "공급자",
+    "language": "언어",
+    "voice": "목소리",
+    "speed": "속도",
+    "pitch": "정점",
+    "volume": "용량",
+    "delete_confirm": "정말로 {}을(를) 삭제하시겠습니까?",
+    "tts_deleted": "서비스 {}가 삭제되었습니다."
+  },
+  "mcp": {
+    "title": "MCP 서버",
+    "add_mcp": "MCP 서버 추가",
+    "edit_mcp": "MCP 서버 편집",
+    "name": "이름",
+    "url": "URL",
+    "protocol": "규약",
+    "streamable": "개울",
+    "sse": "SSE",
+    "delete_confirm": "정말로 {}을(를) 삭제하시겠습니까?",
+    "mcp_deleted": "서버 {}가 삭제되었습니다."
+  },
+  "message": {
+    "copy": "복사",
+    "edit": "편집하다",
+    "delete": "삭제",
+    "read": "읽다",
+    "reasoning": "추론 콘텐츠"
+  },
+  "dialog": {
+    "edit_message": "메시지 편집",
+    "message": "메시지",
+    "attachments": "첨부파일",
+    "add": "추가하다",
+    "resend": "재전송"
+  },
+  "common": {
+    "more": "더",
+    "close": "닫다",
+    "save": "구하다",
+    "cancel": "취소",
+    "view": "보다",
+    "edit": "편집하다",
+    "delete": "삭제",
+    "text": "텍스트",
+    "image": "영상",
+    "audio": "오디오"
+  }
+}

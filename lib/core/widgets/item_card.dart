@@ -15,6 +15,7 @@ class ItemCard extends StatelessWidget {
   final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final Widget? leading;
   final Widget? trailing;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
@@ -31,6 +32,7 @@ class ItemCard extends StatelessWidget {
     this.onView,
     this.onEdit,
     this.onDelete,
+    this.leading,
     this.trailing,
     this.iconColor,
     this.padding = const EdgeInsets.all(12),
@@ -84,17 +86,20 @@ class ItemCard extends StatelessWidget {
       );
 
       // Nếu có trailing widget hoặc menu hành động
-      if (trailing != null ||
+      if (leading != null ||
+          trailing != null ||
           onView != null ||
           onEdit != null ||
           onDelete != null) {
         content = Stack(
           children: [
+            if (leading != null) Positioned(top: 0, left: 0, child: leading!),
             Positioned.fill(child: content),
             Positioned(
               top: 0,
               right: 0,
-              child: trailing ??
+              child:
+                  trailing ??
                   _ActionMenu(
                     onView: onView,
                     onEdit: onEdit,
@@ -121,7 +126,8 @@ class ItemCard extends StatelessWidget {
         subtitle: (subtitle != null || subtitleWidget != null)
             ? buildSubtitle()
             : null,
-        trailing: trailing ??
+        trailing:
+            trailing ??
             (onView != null || onEdit != null || onDelete != null
                 ? _ActionMenu(
                     onView: onView,

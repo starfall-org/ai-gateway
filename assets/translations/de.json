@@ -1,58 +1,58 @@
 {
-  "app_title": "AI Gateway",
+  "app_title": "KI-Gateway",
   "chat": {
-    "title": "Chat & Support",
-    "start": "Starte eine Unterhaltung!",
+    "title": "Chat und Support",
+    "start": "Starten Sie ein Gespräch!",
     "regenerate": "Regenerieren",
-    "clear": "Chat löschen",
+    "clear": "Klarer Chat",
     "copy": "Transkript kopieren",
     "copied": "Transkript kopiert",
-    "no_user_to_regen": "Keine Benutzernachricht zum Regenerieren gefunden",
+    "no_user_to_regen": "Es wurde keine Benutzernachricht zum erneuten Generieren gefunden",
     "unable_pick": "Dateien können nicht ausgewählt werden: {error}"
   },
   "drawer": {
-    "recent": "Kürzlich",
+    "recent": "Jüngste",
     "new_chat": "Neuer Chat",
-    "help_activity": "Hilfe & Aktivität",
+    "help_activity": "Hilfe und Aktivität",
     "settings": "Einstellungen",
-    "change_agent": "Agent ändern",
-    "no_history": "Kein Verlauf"
+    "change_agent": "AI-Profil ändern",
+    "no_history": "Keine Geschichte"
   },
   "input": {
-    "ask": "Fragen Sie {}",
+    "ask": "Fragen {}",
     "attach_files": "Dateien anhängen",
-    "pick_images": "Bilder/Dateien auswählen",
-    "placeholder": "Nachricht eingeben...",
+    "pick_images": "Wählen Sie Bilder/Dateien aus",
+    "placeholder": "Geben Sie eine Nachricht ein...",
     "mic_tts": "Mikrofon/TTS",
-    "send": "Senden",
-    "menu": "Menü"
+    "send": "Schicken",
+    "menu": "Speisekarte"
   },
   "menu": {
-    "title": "Menü",
+    "title": "Speisekarte",
     "settings": "Einstellungen",
     "settings_desc": "App-Einstellungen verwalten",
-    "about": "Über",
-    "about_desc": "Informationen über die App",
-    "help": "Hilfe",
-    "help_desc": "Hilfe und Anleitung erhalten"
+    "about": "Um",
+    "about_desc": "Informationen zur App",
+    "help": "Helfen",
+    "help_desc": "Holen Sie sich Hilfe und Anleitung"
   },
   "attachment_options": {
     "title": "Anhangsoptionen",
     "gallery": "Galerie",
-    "gallery_desc": "Aus Ihrer Fotogalerie auswählen",
+    "gallery_desc": "Wählen Sie aus Ihrer Fotogalerie",
     "camera": "Kamera",
-    "camera_desc": "Neues Foto mit der Kamera aufnehmen",
-    "document": "Dokument",
-    "document_desc": "Dokumentdateien auswählen (PDF, DOC, TXT)",
+    "camera_desc": "Machen Sie ein neues Foto mit der Kamera",
+    "document": "Dokumentieren",
+    "document_desc": "Wählen Sie Dokumentdateien (PDF, DOC, TXT)",
     "audio": "Audio",
-    "audio_desc": "Audiodateien auswählen oder neues Audio aufnehmen",
+    "audio_desc": "Wählen Sie Audiodateien aus oder nehmen Sie neues Audio auf",
     "video": "Video",
-    "video_desc": "Videodateien auswählen oder neues Video aufnehmen",
-    "voice_record": "Sprachaufnahme",
-    "voice_record_desc": "Ihre Stimme aufnehmen"
+    "video_desc": "Wählen Sie Videodateien aus oder nehmen Sie ein neues Video auf",
+    "voice_record": "Sprachaufzeichnung",
+    "voice_record_desc": "Nehmen Sie Ihre Stimme auf"
   },
   "model_picker": {
-    "title": "Modell auswählen",
+    "title": "Wählen Sie Modell aus",
     "select_model": "Modell auswählen",
     "no_providers": "Keine Anbieter konfiguriert"
   },
@@ -61,14 +61,14 @@
     "empty": "Keine Anhänge"
   },
   "role": {
-    "you": "Sie",
+    "you": "Du",
     "system": "System"
   },
   "settings": {
     "title": "Einstellungen",
     "general_section": "Allgemein",
     "features_section": "Online-Funktionen",
-    "about_section": "Über",
+    "about_section": "Um",
     "notifications": {
       "title": "Benachrichtigungen"
     },
@@ -76,46 +76,46 @@
       "title": "Info"
     },
     "update": {
-      "title": "Update"
+      "title": "Aktualisieren"
     },
     "appearance": {
-      "title": "Erscheinungsbild",
-      "theme_mode": "Themen-Modus",
+      "title": "Aussehen",
+      "theme_mode": "Themenmodus",
       "brand_color": "Markenfarbe",
       "system_default": "Systemstandard",
-      "light": "Hell",
+      "light": "Licht",
       "dark": "Dunkel",
-      "custom": "Benutzerdefiniert",
-      "primary_color": "Primärfarbe",
+      "custom": "Brauch",
+      "primary_color": "Grundfarbe",
       "secondary_color": "Sekundärfarbe",
       "color_presets": "Farbvoreinstellungen",
       "custom_color": "Benutzerdefinierte Farbe",
-      "pure_dark": "SuperDark Modus",
-      "pure_dark_desc": "Tiefschwarz für AMOLED-Displays verwenden",
-      "material_you": "Dynamische Farben",
-      "material_you_desc": "Verwenden Sie dynamische Systemfarben",
+      "dynamic_colors": "Dynamische Farben",
+      "dynamic_colors_desc": "Verwenden Sie dynamische Systemfarben",
       "primary_background": "Primäre Hintergrundfarbe",
       "secondary_background": "Sekundäre Hintergrundfarbe",
       "secondary_bg_mode": "Hintergrundfarbmodus",
       "secondary_bg_on": "Dual",
-      "secondary_bg_off": "Single",
-      "secondary_bg_auto": "Automatisch",
-      "preview_title": "Vorschau-Titel",
-      "preview_subtitle": "Untertitel kommt hierhin",
-      "preview_button": "Haupt-Schaltfläche"
+      "secondary_bg_off": "Einzel",
+      "secondary_bg_auto": "Auto",
+      "super_dark_mode": "Super Dark-Modus",
+      "super_dark_mode_desc": "Verwenden Sie tiefes Schwarz für AMOLED-Displays",
+      "preview_title": "Titelvorschau",
+      "preview_subtitle": "Der Untertitel kommt hierher",
+      "preview_button": "Primärtaste"
     },
     "preferences": {
-      "auto_detect": "Automatisch",
+      "auto_detect": "Auto",
       "select_language": "Sprachen",
-      "about": "Über",
+      "about": "Um",
       "current_language": "Aktuelle Sprache",
-      "language_changed": "Sprache wurde geändert",
-      "language_change_error": "Sprache konnte nicht geändert werden",
-      "auto_detect_enabled": "Automatisch wurde aktiviert",
-      "auto_detect_error": "Automatisch konnte nicht umgeschaltet werden",
+      "language_changed": "Die Sprache wurde geändert",
+      "language_change_error": "Die Sprache konnte nicht geändert werden",
+      "auto_detect_enabled": "Auto wurde aktiviert",
+      "auto_detect_error": "Die automatische Umschaltung ist fehlgeschlagen",
       "chat_settings": "Chat-Einstellungen",
-      "persist_chat_selection": "Auswahlen beibehalten",
-      "prefer_agent_settings": "Agent-Einstellungen bevorzugen"
+      "persist_chat_selection": "Auswahl beibehalten",
+      "prefer_agent_settings": "AI-Profileinstellungen bevorzugen"
     }
   },
   "providers": {
@@ -130,59 +130,94 @@
     "api_key": "API-Schlüssel",
     "base_url": "Basis-URL",
     "custom_headers": {
-      "title": "Header",
+      "title": "Überschriften",
       "header_key": "Schlüssel",
       "header_value": "Wert"
     },
-    "chat_completions_route": "Chat Completions Pfad",
-    "models_route_or_url": "Models Pfad oder URL",
+    "chat_completions_route": "Chat-Abschlusspfad",
+    "models_route_or_url": "Pfad oder URL der Modelle auflisten",
     "available_models": "Modelle",
     "capabilities": "Fähigkeiten",
-    "responses_api": "Responses API",
+    "responses_api": "Antwort-API",
     "inputs": "Eingabetypen",
     "outputs": "Ausgabetypen",
     "connection_error": "Verbindungsfehler",
-    "timeout_error": "Anfrage zeitüberschritten",
+    "timeout_error": "Zeitüberschreitung bei der Anfrage",
     "invalid_format": "Ungültiges Antwortformat von der API",
     "no_models_added": "Noch keine Modelle hinzugefügt",
     "add_all": "Alle",
     "no_models_found": "Keine Modelle gefunden",
     "fetch_error": "Modelle konnten nicht abgerufen werden",
-    "auth_error": "Authentifizierung fehlgeschlagen"
+    "auth_error": "Die Authentifizierung ist fehlgeschlagen",
+    "azure_ai": "Azure-KI",
+    "vertex_ai": "Vertex-KI",
+    "models_count": "{} Modelle",
+    "delete_confirm": "Sind Sie sicher, dass Sie {} löschen möchten?",
+    "fetch_models": "Modelle abrufen",
+    "no_models_fetched": "Keine Modelle abgerufen",
+    "models_available": "Modelle verfügbar",
+    "fetch": "Bringen",
+    "tap_to_fetch_models": "Tippen Sie, um Modelle abzurufen",
+    "model": {}
   },
   "agents": {
-    "title": "Agenten",
-    "add_new_agent": "Agent hinzufügen",
-    "name": "Agent-Name",
-    "system_prompt": "System-Prompt",
+    "title": "KI-Profile",
+    "no_agents": "Keine AI-Profile gefunden",
+    "delete_confirm": "Sind Sie sicher, dass Sie {} löschen möchten?",
+    "agent_deleted": "AI-Profil {} gelöscht",
+    "add_new_agent": "AI-Profil hinzufügen",
+    "edit_agent": "AI-Profil bearbeiten",
+    "agent_details": "AI-Profildetails",
+    "name": "AI-Profilname",
+    "system_prompt": "Systemaufforderung",
     "parameters": "Parameter",
-    "top_p": "P",
-    "top_k": "K",
+    "stream": "Strom",
+    "stream_desc": "Aktivieren Sie Streaming-Antworten",
+    "top_p": "Top P",
+    "top_k": "Top K",
     "temperature": "Temperatur",
     "context_window": "Kontextfenster",
-    "conversation_length": "Gesprächslänge",
-    "max_tokens": "Max Tokens",
+    "conversation_length": "Gesprächsdauer",
+    "max_tokens": "Maximale Token",
     "mcp_servers": "MCP-Server",
+    "no_mcp_servers": "Keine MCP-Server verfügbar",
     "persist_selection": "Auswahl beibehalten",
-    "persist_on": "EIN",
-    "persist_off": "AUS",
-    "persist_disable": "Deaktivieren",
-    "edit_agent": "Agent bearbeiten",
-    "agent_details": "Agent-Details",
-    "agent_deleted": "Agent {} gelöscht"
+    "persist_disable": "Folgen Sie Global",
+    "persist_on": "Immer an",
+    "persist_off": "Immer aus"
   },
   "tts": {
-    "title": "TTS-Profile"
+    "title": "Sprachdienste",
+    "add_tts": "Sprachdienst hinzufügen",
+    "edit_tts": "Sprachdienst bearbeiten",
+    "name": "Name",
+    "provider": "Anbieter",
+    "language": "Sprache",
+    "voice": "Stimme",
+    "speed": "Geschwindigkeit",
+    "pitch": "Tonhöhe",
+    "volume": "Volumen",
+    "delete_confirm": "Sind Sie sicher, dass Sie {} löschen möchten?",
+    "tts_deleted": "Dienst {} gelöscht"
   },
   "mcp": {
-    "title": "MCP-Server"
+    "title": "MCP-Server",
+    "add_mcp": "MCP-Server hinzufügen",
+    "edit_mcp": "Bearbeiten Sie den MCP-Server",
+    "name": "Name",
+    "url": "URL",
+    "protocol": "Protokoll",
+    "streamable": "Strom",
+    "sse": "SSE",
+    "delete_confirm": "Sind Sie sicher, dass Sie {} löschen möchten?",
+    "mcp_deleted": "Server {} gelöscht"
   },
   "message": {
-    "copy": "Kopieren",
+    "copy": "Kopie",
     "edit": "Bearbeiten",
     "delete": "Löschen",
     "read": "Lesen",
-    "reasoning": "Begründungsinhalt"
+    "reasoning": "Argumentationsinhalte"
   },
   "dialog": {
     "edit_message": "Nachricht bearbeiten",
@@ -195,9 +230,12 @@
     "more": "Mehr",
     "close": "Schließen",
     "save": "Speichern",
-    "cancel": "Abbrechen",
-    "view": "Ansehen",
+    "cancel": "Stornieren",
+    "view": "Sicht",
     "edit": "Bearbeiten",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "text": "Text",
+    "image": "Bild",
+    "audio": "Audio"
   }
 }

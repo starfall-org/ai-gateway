@@ -99,7 +99,9 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
             child: Row(
               children: [
                 Text(
-                  widget.modelToEdit != null ? 'Edit Model' : 'Add Model',
+                  widget.modelToEdit != null
+                      ? 'providers.add_model'.tr()
+                      : 'providers.edit_model'.tr(),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const Spacer(),
@@ -123,23 +125,24 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                   children: [
                     CustomTextField(
                       controller: _nameController,
-                      label: 'Model ID',
-                      hint: 'e.g. gpt-4-turbo',
+                      label: 'providers.model.id'.tr(),
+                      hint: 'providers.model.id_hint'.tr(),
                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 
                     CustomTextField(
                       controller: _displayNameController,
-                      label: 'Display Name',
-                      hint: 'e.g. GPT-4 Turbo',
+                      label: 'providers.model.display_name'.tr(),
+                      hint: 'providers.model.display_name_hint'.tr(),
                       validator: (v) => v?.isEmpty == true ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
 
                     CustomTextField(
                       controller: _iconController,
-                      label: 'Icon URL/Path (Optional)',
+                      label: 'providers.model.icon'.tr(),
+                      hint: 'providers.model.icon_hint'.tr(),
                     ),
                     const SizedBox(height: 16),
 
@@ -165,14 +168,14 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
 
                     CustomTextField(
                       controller: _contextWindowController,
-                      label: 'Context Window',
-                      hint: 'e.g. 128000',
+                      label: 'providers.model.context_window'.tr(),
+
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
 
                     SwitchListTile(
-                      title: const Text('Reasoning Capability'),
+                      title: Text('providers.model.reasoning'.tr()),
                       value: _reasoning,
                       onChanged: (v) => setState(() => _reasoning = v),
                       contentPadding: EdgeInsets.zero,
@@ -180,7 +183,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                     const SizedBox(height: 16),
 
                     Text(
-                      'Input Types',
+                      'providers.model.input_types'.tr(),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -206,7 +209,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                     const SizedBox(height: 16),
 
                     Text(
-                      'Output Types',
+                      'providers.model.output_types'.tr(),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -243,7 +246,7 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    child: Text('common.cancel'.tr()),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -251,7 +254,9 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
                   child: FilledButton(
                     onPressed: _save,
                     child: Text(
-                      widget.modelToEdit != null ? 'Save Changes' : 'Add Model',
+                      widget.modelToEdit != null
+                          ? 'common.save'.tr()
+                          : 'common.add'.tr(),
                     ),
                   ),
                 ),
@@ -266,17 +271,17 @@ class _AddModelDrawerState extends State<AddModelDrawer> {
   Widget _getModelTypeIcon(ModelType type) {
     switch (type) {
       case ModelType.textGeneration:
-        return const Icon(Icons.chat_bubble_outline);
+        return Icon(Icons.text_snippet);
       case ModelType.imageGeneration:
-        return const Icon(Icons.image_outlined);
+        return Icon(Icons.image_search);
       case ModelType.audioGeneration:
-        return const Icon(Icons.mic_none);
+        return Icon(Icons.music_video);
       case ModelType.videoGeneration:
-        return const Icon(Icons.videocam_outlined);
+        return Icon(Icons.local_movies);
       case ModelType.embedding:
-        return const Icon(Icons.dataset_linked_outlined);
+        return Icon(Icons.compress_rounded);
       case ModelType.rerank:
-        return const Icon(Icons.sort);
+        return Icon(Icons.leaderboard);
     }
   }
 }

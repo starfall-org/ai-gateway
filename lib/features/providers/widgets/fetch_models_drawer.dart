@@ -81,33 +81,35 @@ class FetchModelsDrawer extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                        if (isFetchingModels)
-                          const LinearProgressIndicator()
-                        else
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  availableModels.isEmpty
-                                      ? 'providers.no_models_fetched'.tr()
-                                      : '${availableModels.length} ${'providers.models_available'.tr()}',
-                                  style: TextStyle(
-                                    color: availableModels.isEmpty
-                                        ? Theme.of(context).colorScheme.onSurfaceVariant
-                                        : Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                      if (isFetchingModels)
+                        const LinearProgressIndicator()
+                      else
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                availableModels.isEmpty
+                                    ? 'providers.no_models_fetched'.tr()
+                                    : '${availableModels.length} ${'providers.models_available'.tr()}',
+                                style: TextStyle(
+                                  color: availableModels.isEmpty
+                                      ? Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant
+                                      : Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              ElevatedButton.icon(
-                                onPressed: () => viewModel.fetchModels(context),
-                                icon: const Icon(Icons.refresh, size: 16),
-                                label: Text('providers.fetch'.tr()),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => viewModel.fetchModels(context),
+                              icon: const Icon(Icons.refresh, size: 16),
+                              label: Text('providers.fetch'.tr()),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ),
 

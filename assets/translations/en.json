@@ -157,7 +157,21 @@
     "no_models_fetched": "No models fetched",
     "models_available": "models available",
     "fetch": "Fetch",
-    "tap_to_fetch_models": "Tap to fetch models"
+    "tap_to_fetch_models": "Tap to fetch models",
+    "add_model": "Add Model",
+    "edit_model": "Edit Model",
+    "model": {
+      "id": "ID",
+      "id_hint": "eg: gemini-flash",
+      "display_name": "Display Name",
+      "display_name_hint": "eg: Gemini Flash",
+      "icon": "Icon",
+      "icon_hint": "Icon url or path",
+      "context_window": "Context Window",
+      "reasoning": "Reasoning",
+      "output_types": "Output Types",
+      "input_types": "Input Types"
+    }
   },
   "agents": {
     "title": "AI Profiles",
