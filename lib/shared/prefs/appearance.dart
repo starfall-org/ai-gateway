@@ -9,7 +9,7 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
 
   // Expose a notifier for valid reactive UI updates
   final ValueNotifier<AppearanceSetting> themeNotifier = ValueNotifier(
-    AppearanceSetting.defaults(),
+    AppearanceSetting.defaults(themeMode: ThemeMode.system),
   );
 
   AppearanceSp(super.prefs) {
@@ -20,7 +20,7 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
       if (items.isNotEmpty) {
         themeNotifier.value = items.first;
       } else {
-        themeNotifier.value = AppearanceSetting.defaults();
+        themeNotifier.value = AppearanceSetting.defaults(themeMode: ThemeMode.system);
       }
     });
   }
@@ -67,16 +67,14 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
       'backgroundColor': item.backgroundColor,
       'surfaceColor': item.surfaceColor,
       'textColor': item.textColor,
-      'darkmodeTextColor': item.darkmodeTextColor,
       'textHintColor': item.textHintColor,
-      'darkmodeTextHintColor': item.darkmodeTextHintColor,
       'superDarkMode': item.superDarkMode,
       'dynamicColor': item.dynamicColor,
       'fontFamily': item.fontFamily,
       'chatFontSize': item.chatFontSize,
       'appFontSize': item.appFontSize,
       'enableAnimation': item.enableAnimation,
-      'secondaryBackgroundMode': item.secondaryBackgroundMode.index,
+      'secondaryBackgroundMode': null,
     };
   }
 
@@ -87,7 +85,6 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
   ) {
     final int? themeModeIndex = fields['themeMode'] as int?;
     final int? selectionIndex = fields['selection'] as int?;
-    final int? secondaryBgIndex = fields['secondaryBackgroundMode'] as int?;
 
     final ThemeMode mode =
         (themeModeIndex != null &&
@@ -103,12 +100,8 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
         ? ThemeSelection.values[selectionIndex]
         : ThemeSelection.system;
 
-    final SecondaryBackgroundMode secBg =
-        (secondaryBgIndex != null &&
-            secondaryBgIndex >= 0 &&
-            secondaryBgIndex < SecondaryBackgroundMode.values.length)
-        ? SecondaryBackgroundMode.values[secondaryBgIndex]
-        : SecondaryBackgroundMode.off;
+    // Xác định màu mặc định dựa trên theme mode
+    final bool isDark = mode == ThemeMode.dark;
 
     return AppearanceSetting(
       themeMode: mode,
@@ -116,22 +109,20 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
       primaryColor: fields['primaryColor'] as int? ?? Colors.blue.toARGB32(),
       secondaryColor:
           fields['secondaryColor'] as int? ?? Colors.purple.toARGB32(),
-      backgroundColor:
-          fields['backgroundColor'] as int? ?? Colors.white.toARGB32(),
-      surfaceColor: fields['surfaceColor'] as int? ?? Colors.white.toARGB32(),
-      textColor: fields['textColor'] as int? ?? Colors.black.toARGB32(),
-      darkmodeTextColor:
-          fields['darkmodeTextColor'] as int? ?? Colors.white.toARGB32(),
-      textHintColor: fields['textHintColor'] as int? ?? Colors.black.toARGB32(),
-      darkmodeTextHintColor:
-          fields['darkmodeTextHintColor'] as int? ?? Colors.white.toARGB32(),
+      backgroundColor: fields['backgroundColor'] as int? ??
+          (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
+      surfaceColor: fields['surfaceColor'] as int? ??
+          (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
+      textColor: fields['textColor'] as int? ??
+          (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
+      textHintColor: fields['textHintColor'] as int? ??
+          (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
       superDarkMode: fields['superDarkMode'] as bool? ?? false,
       dynamicColor: fields['dynamicColor'] as bool? ?? false,
       fontFamily: fields['fontFamily'] as String? ?? 'Roboto',
       chatFontSize: fields['chatFontSize'] as int? ?? 16,
       appFontSize: fields['appFontSize'] as int? ?? 16,
       enableAnimation: fields['enableAnimation'] as bool? ?? true,
-      secondaryBackgroundMode: secBg,
     );
   }
 

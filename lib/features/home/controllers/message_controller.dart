@@ -5,8 +5,8 @@ import 'package:uuid/uuid.dart';
 import '../../../core/models/chat/message.dart';
 import '../../../core/models/chat/conversation.dart';
 import '../../../core/models/ai/profile.dart';
-import '../../../core/models/ai/provider.dart';
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 import '../services/chat_service.dart';
 import '../utils/chat_logic_utils.dart';
 import '../ui/widgets/edit_message_sheet.dart';
@@ -237,8 +237,7 @@ class MessageController extends ChangeNotifier {
     onScrollToBottom();
   }
 
-  Future<void> regenerateLast({
-    required BuildContext context,
+  Future<String?> regenerateLast({
     required Conversation currentSession,
     required AIProfile profile,
     required String providerName,
@@ -249,7 +248,7 @@ class MessageController extends ChangeNotifier {
     required Function() isNearBottom,
     List<String>? allowedToolNames,
   }) async {
-    if (currentSession.messages.isEmpty) return;
+    if (currentSession.messages.isEmpty) return null;
 
     final msgs = currentSession.messages;
     int lastUserIndex = -1;
@@ -261,12 +260,7 @@ class MessageController extends ChangeNotifier {
     }
 
     if (lastUserIndex == -1) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tl('No user message found to regenerate'))),
-        );
-      }
-      return;
+      return tl('No user message found to regenerate');
     }
 
     final userText = msgs[lastUserIndex].content;
@@ -307,15 +301,15 @@ class MessageController extends ChangeNotifier {
         allowedToolNames: allowedToolNames,
       );
     }
+
+    return null;
   }
 
   Future<void> copyMessage(BuildContext context, ChatMessage message) async {
     if (message.content.trim().isEmpty) return;
     await Clipboard.setData(ClipboardData(text: message.content));
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tl('Transcript copied'))),
-      );
+      context.showSuccessSnackBar(tl('Transcript copied'));
     }
   }
 

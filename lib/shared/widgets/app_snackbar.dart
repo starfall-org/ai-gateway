@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// Kiểu hiển thị của snackbar
@@ -120,23 +121,41 @@ class AppSnackBar extends StatelessWidget {
     );
   }
 
-  /// Phương thức nội bộ để hiển thị snackbar
-  static void _showSnackBar(BuildContext context, AppSnackBar snackBar) {
-    // Ẩn snackbar hiện tại nếu có
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  /// Entry hiện tại của overlay để có thể xóa
+  static OverlayEntry? _currentOverlayEntry;
 
-    // Hiển thị snackbar mới
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: snackBar,
-        duration: snackBar.duration ?? const Duration(seconds: 4),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        padding: EdgeInsets.zero,
+  /// Phương thức nội bộ để hiển thị snackbar dùng Overlay
+  static void _showSnackBar(BuildContext context, AppSnackBar snackBar) {
+    // Xóa snackbar hiện tại nếu có
+    _currentOverlayEntry?.remove();
+    _currentOverlayEntry = null;
+
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => _OverlaySnackBar(
+        snackBar: snackBar,
+        onDismiss: () {
+          overlayEntry.remove();
+          if (_currentOverlayEntry == overlayEntry) {
+            _currentOverlayEntry = null;
+          }
+        },
       ),
     );
+
+    _currentOverlayEntry = overlayEntry;
+    overlay.insert(overlayEntry);
+
+    // Tự động xóa sau duration
+    final duration = snackBar.duration ?? const Duration(seconds: 4);
+    Timer(duration, () {
+      if (_currentOverlayEntry == overlayEntry) {
+        overlayEntry.remove();
+        _currentOverlayEntry = null;
+      }
+    });
   }
 
   /// Lấy màu sắc theo kiểu snackbar
@@ -238,6 +257,12 @@ class AppSnackBar extends StatelessWidget {
                 ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                side: BorderSide(
+                  color:
+                      Theme.of(context).inputDecorationTheme.hintStyle?.color ??
+                      Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Text(
                 actionLabel!,
@@ -256,6 +281,12 @@ class AppSnackBar extends StatelessWidget {
                 ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                side: BorderSide(
+                  color:
+                      Theme.of(context).inputDecorationTheme.hintStyle?.color ??
+                      Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
               child: Text(
                 undoLabel ?? 'Hoàn tác',
@@ -344,6 +375,67 @@ extension AppSnackBarExtension on BuildContext {
       undoLabel: undoLabel,
       onAction: onAction,
       actionLabel: actionLabel,
+    );
+  }
+}
+
+/// Widget overlay để hiển thị snackbar trên mọi widget
+class _OverlaySnackBar extends StatefulWidget {
+  final AppSnackBar snackBar;
+  final VoidCallback onDismiss;
+
+  const _OverlaySnackBar({required this.snackBar, required this.onDismiss});
+
+  @override
+  State<_OverlaySnackBar> createState() => _OverlaySnackBarState();
+}
+
+class _OverlaySnackBarState extends State<_OverlaySnackBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _dismiss() {
+    _animationController.reverse().then((_) {
+      widget.onDismiss();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 16,
+      left: 16,
+      right: 16,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(onTap: _dismiss, child: widget.snackBar),
+        ),
+      ),
     );
   }
 }

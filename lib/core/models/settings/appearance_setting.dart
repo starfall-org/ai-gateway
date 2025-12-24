@@ -20,16 +20,13 @@ class AppearanceSetting {
   final int backgroundColor; // ARGB int value
   final int surfaceColor; // ARGB int value
   final int textColor; // ARGB int value
-  final int darkmodeTextColor; // ARGB int value
   final int textHintColor; // ARGB int value
-  final int darkmodeTextHintColor; // ARGB int value
   final bool superDarkMode; // true => use pure black background for dark theme
   final bool dynamicColor; // true => use dynamic color  if supported
   final String fontFamily;
   final int chatFontSize;
   final int appFontSize;
   final bool enableAnimation;
-  final SecondaryBackgroundMode secondaryBackgroundMode;
 
   AppearanceSetting({
     this.themeMode = ThemeMode.system,
@@ -39,37 +36,34 @@ class AppearanceSetting {
     required this.backgroundColor,
     required this.surfaceColor,
     required this.textColor,
-    required this.darkmodeTextColor,
     required this.textHintColor,
-    required this.darkmodeTextHintColor,
     required this.superDarkMode,
     required this.dynamicColor,
     required this.fontFamily,
     required this.chatFontSize,
     required this.appFontSize,
     required this.enableAnimation,
-    required this.secondaryBackgroundMode,
   });
 
-  factory AppearanceSetting.defaults() {
+  factory AppearanceSetting.defaults({ThemeMode? themeMode}) {
+    // Xác định màu mặc định dựa trên theme mode
+    final bool isDark = themeMode == ThemeMode.dark;
+    
     return AppearanceSetting(
-      themeMode: ThemeMode.system,
+      themeMode: themeMode ?? ThemeMode.system,
       selection: ThemeSelection.system,
       primaryColor: Colors.blue.toARGB32(),
       secondaryColor: Colors.purple.toARGB32(),
-      backgroundColor: Colors.white.toARGB32(),
-      surfaceColor: Colors.white70.toARGB32(),
-      textColor: Colors.black.toARGB32(),
-      darkmodeTextColor: Colors.white.toARGB32(),
-      textHintColor: Colors.black.toARGB32(),
-      darkmodeTextHintColor: Colors.white.toARGB32(),
+      backgroundColor: isDark ? Colors.black.toARGB32() : Colors.white.toARGB32(),
+      surfaceColor: isDark ? Colors.black.toARGB32() : Colors.white.toARGB32(),
+      textColor: isDark ? Colors.white.toARGB32() : Colors.black.toARGB32(),
+      textHintColor: isDark ? Colors.white.toARGB32() : Colors.black.toARGB32(),
       superDarkMode: false,
       dynamicColor: false,
       fontFamily: 'Roboto',
       chatFontSize: 16,
       appFontSize: 16,
       enableAnimation: true,
-      secondaryBackgroundMode: SecondaryBackgroundMode.off,
     );
   }
 
@@ -81,9 +75,7 @@ class AppearanceSetting {
     int? backgroundColor,
     int? surfaceColor,
     int? textColor,
-    int? darkmodeTextColor,
     int? textHintColor,
-    int? darkmodeTextHintColor,
     bool? superDarkMode,
     bool? dynamicColor,
     String? fontFamily,
@@ -100,18 +92,13 @@ class AppearanceSetting {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       surfaceColor: surfaceColor ?? this.surfaceColor,
       textColor: textColor ?? this.textColor,
-      darkmodeTextColor: darkmodeTextColor ?? this.darkmodeTextColor,
       textHintColor: textHintColor ?? this.textHintColor,
-      darkmodeTextHintColor:
-          darkmodeTextHintColor ?? this.darkmodeTextHintColor,
       superDarkMode: superDarkMode ?? this.superDarkMode,
       dynamicColor: dynamicColor ?? this.dynamicColor,
       fontFamily: fontFamily ?? this.fontFamily,
       chatFontSize: chatFontSize ?? this.chatFontSize,
       appFontSize: appFontSize ?? this.appFontSize,
       enableAnimation: enableAnimation ?? this.enableAnimation,
-      secondaryBackgroundMode:
-          secondaryBackgroundMode ?? this.secondaryBackgroundMode,
     );
   }
 
@@ -124,16 +111,13 @@ class AppearanceSetting {
       'backgroundColor': backgroundColor,
       'surfaceColor': surfaceColor,
       'textColor': textColor,
-      'darkmodeTextColor': darkmodeTextColor,
       'textHintColor': textHintColor,
-      'darkmodeTextHintColor': darkmodeTextHintColor,
       'superDarkMode': superDarkMode,
       'dynamicColor': dynamicColor,
       'fontFamily': fontFamily,
       'chatFontSize': chatFontSize,
       'appFontSize': appFontSize,
       'enableAnimation': enableAnimation,
-      'secondaryBackgroundMode': secondaryBackgroundMode.index,
     };
   }
 
@@ -146,9 +130,7 @@ class AppearanceSetting {
       final int? backgroundColor = json['backgroundColor'] as int?;
       final int? surfaceColor = json['surfaceColor'] as int?;
       final int? textColor = json['textColor'] as int?;
-      final int? darkmodeTextColor = json['darkmodeTextColor'] as int?;
       final int? textHintColor = json['textHintColor'] as int?;
-      final int? darkmodeTextHintColor = json['darkmodeTextHintColor'] as int?;
       final bool superDarkMode = (json['superDarkMode'] as bool?) ?? false;
       final bool dynamicColor = (json['dynamicColor'] as bool?) ?? false;
       final String? fontFamily = json['fontFamily'] as String?;
@@ -156,7 +138,6 @@ class AppearanceSetting {
       final int? appFontSize = json['appFontSize'] as int?;
       final int? oldFontSize = json['fontSize'] as int?;
       final bool enableAnimation = (json['enableAnimation'] as bool?) ?? false;
-      final int? secondaryBgIndex = json['secondaryBackgroundMode'] as int?;
 
       // Backward compatibility with older schema using 'colorValue'
       final int? oldColor = json['colorValue'] as int?;
@@ -175,34 +156,27 @@ class AppearanceSetting {
           ? ThemeSelection.values[selectionIndex]
           : ThemeSelection.system;
 
-      final SecondaryBackgroundMode secBg =
-          (secondaryBgIndex != null &&
-              secondaryBgIndex >= 0 &&
-              secondaryBgIndex < SecondaryBackgroundMode.values.length)
-          ? SecondaryBackgroundMode.values[secondaryBgIndex]
-          : SecondaryBackgroundMode.off;
+      // Xác định màu mặc định dựa trên theme mode
+      final bool isDark = mode == ThemeMode.dark;
 
       return AppearanceSetting(
         themeMode: mode,
         selection: sel,
         primaryColor: primary ?? oldColor ?? Colors.blue.toARGB32(),
         secondaryColor: secondary ?? Colors.purple.toARGB32(),
-        backgroundColor: backgroundColor ?? Colors.white.toARGB32(),
-        surfaceColor: surfaceColor ?? Colors.white.toARGB32(),
-        textColor: textColor ?? Colors.black.toARGB32(),
-        darkmodeTextColor: darkmodeTextColor ?? Colors.white.toARGB32(),
-        textHintColor: textHintColor ?? Colors.black.toARGB32(),
-        darkmodeTextHintColor: darkmodeTextHintColor ?? Colors.white.toARGB32(),
+        backgroundColor: backgroundColor ?? (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
+        surfaceColor: surfaceColor ?? (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
+        textColor: textColor ?? (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
+        textHintColor: textHintColor ?? (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
         superDarkMode: superDarkMode,
         dynamicColor: dynamicColor,
         fontFamily: fontFamily ?? 'Roboto',
         chatFontSize: chatFontSize ?? oldFontSize ?? 16,
         appFontSize: appFontSize ?? oldFontSize ?? 16,
         enableAnimation: enableAnimation,
-        secondaryBackgroundMode: secBg,
       );
     } catch (_) {
-      return AppearanceSetting.defaults();
+      return AppearanceSetting.defaults(themeMode: ThemeMode.system);
     }
   }
 
@@ -210,14 +184,14 @@ class AppearanceSetting {
 
   factory AppearanceSetting.fromJsonString(String jsonString) {
     try {
-      if (jsonString.trim().isEmpty) return AppearanceSetting.defaults();
+      if (jsonString.trim().isEmpty) return AppearanceSetting.defaults(themeMode: ThemeMode.system);
       final dynamic data = json.decode(jsonString);
       if (data is Map<String, dynamic>) {
         return AppearanceSetting.fromJson(data);
       }
-      return AppearanceSetting.defaults();
+      return AppearanceSetting.defaults(themeMode: ThemeMode.system);
     } catch (_) {
-      return AppearanceSetting.defaults();
+      return AppearanceSetting.defaults(themeMode: ThemeMode.system);
     }
   }
 }

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/models/settings/preferences_setting.dart';
-import '../../../shared/prefs/language.dart';
-import '../../../shared/prefs/preferences.dart';
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
+import '../controllers/preferences_controller.dart';
 import 'widgets/settings_card.dart';
 import 'widgets/settings_section_header.dart';
 import 'widgets/settings_tile.dart';
 
-// TODO: move logic to controller
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
 
@@ -17,150 +15,42 @@ class PreferencesPage extends StatefulWidget {
 }
 
 class _PreferencesPageState extends State<PreferencesPage> {
-  late LanguageSp _languageSp;
-  bool _autoDetectLanguage = true;
-  String _selectedLanguage = 'auto';
-
-  // App preferences
-  bool _persistChatSelection = false;
-  VibrationSettings _vibrationSettings = VibrationSettings.defaults();
-  bool _hideStatusBar = false;
-  bool _hideNavigationBar = false;
-  bool _debugMode = false;
-
-  final List<Map<String, dynamic>> _supportedLanguages = [
-    {'code': 'auto', 'name': 'System Language', 'flag': '🌐'},
-    {'code': 'en', 'name': 'English', 'flag': '🇺🇸'},
-    {'code': 'fr', 'name': 'French', 'flag': '🇫🇷'},
-    {'code': 'de', 'name': 'German', 'flag': '🇩🇪'},
-    {'code': 'ja', 'name': 'Japanese', 'flag': '🇯🇵'},
-    {'code': 'zh_CN', 'name': 'Chinese (Simplified)', 'flag': '🇨🇳'},
-    {'code': 'zh_TW', 'name': 'Chinese (Traditional)', 'flag': '🇹🇼'},
-    {'code': 'ko', 'name': 'Korean', 'flag': '🇰🇷'},
-    {'code': 'vi', 'name': 'Vietnamese', 'flag': '🇻🇳'},
-    {'code': 'es', 'name': 'Spanish', 'flag': '🇪🇸'},
-  ];
+  late PreferencesController _controller;
 
   @override
   void initState() {
     super.initState();
-    _languageSp = LanguageSp.instance;
-    _loadPreferences();
-    _loadPreferencesSetting();
+    _controller = PreferencesController();
+    _controller.addListener(_onControllerChanged);
   }
 
-  void _loadPreferences() {
-    final preferences = _languageSp.currentPreferences;
-    setState(() {
-      _autoDetectLanguage = preferences.autoDetectLanguage;
-      _selectedLanguage = preferences.languageCode;
-    });
+  @override
+  void dispose() {
+    _controller.removeListener(_onControllerChanged);
+    _controller.dispose();
+    super.dispose();
   }
 
-  void _loadPreferencesSetting() {
-    final appPrefs = PreferencesSp.instance.currentPreferences;
-    setState(() {
-      _persistChatSelection = appPrefs.persistChatSelection;
-      _vibrationSettings = appPrefs.vibrationSettings;
-      _hideStatusBar = appPrefs.hideStatusBar;
-      _hideNavigationBar = appPrefs.hideNavigationBar;
-      _debugMode = appPrefs.debugMode;
-    });
-  }
-
-  Future<void> _updatePreferencesSetting({
-    bool? persistChatSelection,
-    VibrationSettings? vibrationSettings,
-    bool? hideStatusBar,
-    bool? hideNavigationBar,
-    bool? debugMode,
-  }) async {
-    final newPrefs = PreferencesSp.instance.currentPreferences.copyWith(
-      persistChatSelection: persistChatSelection,
-      vibrationSettings: vibrationSettings,
-      hideStatusBar: hideStatusBar,
-      hideNavigationBar: hideNavigationBar,
-      debugMode: debugMode,
-    );
-
-    setState(() {
-      if (persistChatSelection != null) {
-        _persistChatSelection = persistChatSelection;
-      }
-      if (vibrationSettings != null) _vibrationSettings = vibrationSettings;
-      if (hideStatusBar != null) _hideStatusBar = hideStatusBar;
-      if (hideNavigationBar != null) _hideNavigationBar = hideNavigationBar;
-      if (debugMode != null) _debugMode = debugMode;
-    });
-
-    try {
-      await PreferencesSp.instance.updatePreferences(newPrefs);
-    } catch (_) {
-      // Revert changes on error
-      _loadPreferencesSetting();
-    }
+  void _onControllerChanged() {
+    setState(() {});
   }
 
   Future<void> _selectLanguage(String languageCode) async {
     try {
-      setState(() {
-        _selectedLanguage = languageCode;
-        _autoDetectLanguage = languageCode == 'auto';
-      });
-
-      if (languageCode == 'auto') {
-        await _languageSp.setAutoDetect(true);
-      } else {
-        String? countryCode;
-        if (languageCode.contains('_')) {
-          final parts = languageCode.split('_');
-          countryCode = parts[1];
-          languageCode = parts[0];
-        }
-
-        await _languageSp.setLanguage(languageCode, countryCode: countryCode);
-      }
+      await _controller.selectLanguage(languageCode);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(tl('Language has been changed')),
-            duration: const Duration(seconds: 1),
-          ),
+        context.showSuccessSnackBar(
+          tl('Language has been changed'),
+          duration: const Duration(seconds: 1),
         );
       }
-      _restartApp();
+      _controller.getNewLocale();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(tl('Failed to change language')),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-        _loadPreferences();
+        context.showErrorSnackBar(tl('Failed to change language'));
       }
     }
-  }
-
-  void _restartApp() {
-    final preferences = _languageSp.currentPreferences;
-    Locale newLocale;
-
-    if (preferences.autoDetectLanguage || preferences.languageCode == 'auto') {
-      newLocale = WidgetsBinding.instance.platformDispatcher.locale;
-      if (newLocale.languageCode == 'zh') {
-        newLocale = const Locale('zh', 'CN');
-      }
-    } else {
-      if (preferences.countryCode != null) {
-        newLocale = Locale(preferences.languageCode, preferences.countryCode);
-      } else {
-        newLocale = Locale(preferences.languageCode);
-      }
-    }
-
-    // Note: Locale setting is handled by the language repository
   }
 
   @override
@@ -168,7 +58,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          tl('settings.preferences.title'),
+          tl('Preferences'),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -183,30 +73,30 @@ class _PreferencesPageState extends State<PreferencesPage> {
         child: ListView(
           children: [
             // General settings
-            SettingsSectionHeader('General'),
+            SettingsSectionHeader(tl('General')),
             const SizedBox(height: 12),
             SettingsCard(
               child: Column(
                 children: [
                   SettingsTile(
                     icon: Icons.save_outlined,
-                    title: 'Persist selections',
+                    title: tl('Persist selections'),
                     trailing: Switch(
-                      value: _persistChatSelection,
-                      onChanged: (val) =>
-                          _updatePreferencesSetting(persistChatSelection: val),
+                      value: _controller.persistChatSelection,
+                      onChanged: (val) => _controller.updatePreferencesSetting(
+                        persistChatSelection: val,
+                      ),
                     ),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.vibration_outlined,
-                    title: 'Vibration',
+                    title: tl('Vibration'),
                     trailing: Switch(
-                      value: _vibrationSettings.enable,
-                      onChanged: (val) => _updatePreferencesSetting(
-                        vibrationSettings: _vibrationSettings.copyWith(
-                          enable: val,
-                        ),
+                      value: _controller.vibrationSettings.enable,
+                      onChanged: (val) => _controller.updatePreferencesSetting(
+                        vibrationSettings: _controller.vibrationSettings
+                            .copyWith(enable: val),
                       ),
                     ),
                   ),
@@ -216,28 +106,30 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
             // Display settings
             const SizedBox(height: 24),
-            SettingsSectionHeader('Display'),
+            SettingsSectionHeader(tl('Display')),
             const SizedBox(height: 12),
             SettingsCard(
               child: Column(
                 children: [
                   SettingsTile(
                     icon: Icons.fullscreen_outlined,
-                    title: 'Hide Status Bar',
+                    title: tl('Hide Status Bar'),
                     trailing: Switch(
-                      value: _hideStatusBar,
-                      onChanged: (val) =>
-                          _updatePreferencesSetting(hideStatusBar: val),
+                      value: _controller.hideStatusBar,
+                      onChanged: (val) => _controller.updatePreferencesSetting(
+                        hideStatusBar: val,
+                      ),
                     ),
                   ),
                   const Divider(height: 1, indent: 56, endIndent: 16),
                   SettingsTile(
                     icon: Icons.keyboard_hide_outlined,
-                    title: 'Hide Navigation Bar',
+                    title: tl('Hide Navigation Bar'),
                     trailing: Switch(
-                      value: _hideNavigationBar,
-                      onChanged: (val) =>
-                          _updatePreferencesSetting(hideNavigationBar: val),
+                      value: _controller.hideNavigationBar,
+                      onChanged: (val) => _controller.updatePreferencesSetting(
+                        hideNavigationBar: val,
+                      ),
                     ),
                   ),
                 ],
@@ -246,28 +138,29 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
             // Developer settings
             const SizedBox(height: 24),
-            SettingsSectionHeader('Developer'),
+            SettingsSectionHeader(tl('Developer')),
             const SizedBox(height: 12),
             SettingsCard(
               child: SettingsTile(
                 icon: Icons.bug_report_outlined,
-                title: 'Debug Mode',
+                title: tl('Debug Mode'),
                 trailing: Switch(
-                  value: _debugMode,
-                  onChanged: (val) => _updatePreferencesSetting(debugMode: val),
+                  value: _controller.debugMode,
+                  onChanged: (val) =>
+                      _controller.updatePreferencesSetting(debugMode: val),
                 ),
               ),
             ),
 
             // Language section
             const SizedBox(height: 24),
-            SettingsSectionHeader('Languages'),
+            SettingsSectionHeader(tl('Languages')),
             const SizedBox(height: 12),
             SettingsCard(
               child: SettingsTile(
                 icon: Icons.language_outlined,
-                title: 'Current Language',
-                subtitle: _getCurrentLanguageName(),
+                title: tl('Current Language'),
+                subtitle: _controller.getCurrentLanguageName(),
                 onTap: () => _showLanguagePicker(),
               ),
             ),
@@ -282,6 +175,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        side: BorderSide(
+          color: Theme.of(context).inputDecorationTheme.hintStyle?.color ?? 
+                 Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
+      ),
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -311,8 +212,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
             Flexible(
               child: ListView(
                 shrinkWrap: true,
-                children: _supportedLanguages.map((language) {
-                  final isSelected = _selectedLanguage == language['code'];
+                children: _controller.supportedLanguages.map((language) {
+                  final isSelected =
+                      _controller.selectedLanguage == language['code'];
                   return ListTile(
                     leading: Text(
                       language['flag'],
@@ -337,18 +239,5 @@ class _PreferencesPageState extends State<PreferencesPage> {
         ),
       ),
     );
-  }
-
-  String _getCurrentLanguageName() {
-    if (_autoDetectLanguage) {
-      return 'Auto';
-    }
-
-    final selected = _supportedLanguages.firstWhere(
-      (lang) => lang['code'] == _selectedLanguage,
-      orElse: () => _supportedLanguages.first,
-    );
-
-    return selected['name'] as String;
   }
 }

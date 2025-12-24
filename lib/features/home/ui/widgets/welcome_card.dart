@@ -59,6 +59,11 @@ class WelcomeCard extends StatelessWidget {
               label: Text(tl('Start Chatting')),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
+                side: BorderSide(
+                  color: Theme.of(context).inputDecorationTheme.hintStyle?.color ?? 
+                         Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
               ),
             ),
           ],
@@ -67,5 +72,3 @@ class WelcomeCard extends StatelessWidget {
     );
   }
 }
-
-

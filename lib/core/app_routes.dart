@@ -56,7 +56,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
                 ElevatedButton(
                   onPressed: () => Navigator.pushNamedAndRemoveUntil(
                     context,
-                    AppRoutes.home,
+                    AppRoutes.chat,
                     (route) => false,
                   ),
                   child: Text(tl('Go to Home')),

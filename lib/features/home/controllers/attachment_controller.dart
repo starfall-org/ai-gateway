@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 
 /// Controller responsible for attachment management
 class AttachmentController extends ChangeNotifier {
@@ -26,8 +27,8 @@ class AttachmentController extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tl('Unable to pick files: ${e.toString()}'))),
+        context.showErrorSnackBar(
+          tl('Unable to pick files: ${e.toString()}'),
         );
       }
     }
@@ -47,8 +48,8 @@ class AttachmentController extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tl('Unable to pick files: ${e.toString()}'))),
+        context.showErrorSnackBar(
+          tl('Unable to pick files: ${e.toString()}'),
         );
       }
     }

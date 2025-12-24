@@ -7,9 +7,13 @@ import '../../../core/data/chat_store.dart';
 import '../../../core/data/mcpserver_store.dart';
 import '../../../core/data/ai_provider_store.dart';
 import '../../../core/models/ai/profile.dart';
+import '../../../core/models/ai/provider.dart';
 import '../../../core/models/chat/conversation.dart';
+import '../../../core/models/chat/message.dart';
+import '../../../core/models/mcp/mcp_server.dart';
 import '../../../shared/prefs/preferences.dart';
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 import '../services/tts_service.dart';
 import '../utils/chat_logic_utils.dart';
 import 'chat_controller_parts/chat_navigation_interface.dart';
@@ -74,8 +78,8 @@ class ChatController extends ChangeNotifier {
   bool get isGenerating => messageController.isGenerating;
   List<String> get pendingAttachments => attachmentController.pendingAttachments;
   List<String> get inspectingAttachments => attachmentController.inspectingAttachments;
-  List<dynamic> get providers => modelSelectionController.providers;
-  List<dynamic> get mcpServers => profileController.mcpServers;
+  List<Provider> get providers => modelSelectionController.providers;
+  List<MCPServer> get mcpServers => profileController.mcpServers;
   Map<String, bool> get providerCollapsed => modelSelectionController.providerCollapsed;
   String? get selectedProviderName => modelSelectionController.selectedProviderName;
   String? get selectedModelName => modelSelectionController.selectedModelName;
@@ -275,8 +279,7 @@ class ChatController extends ChangeNotifier {
           config: AiConfig(systemPrompt: '', enableStream: true),
         );
 
-    await messageController.regenerateLast(
-      context: context,
+    final errorMessage = await messageController.regenerateLast(
       currentSession: currentSession!,
       profile: profile,
       providerName: providerName,
@@ -291,6 +294,10 @@ class ChatController extends ChangeNotifier {
       isNearBottom: isNearBottom,
       allowedToolNames: allowedToolNames,
     );
+
+    if (errorMessage != null && context.mounted) {
+      context.showErrorSnackBar(errorMessage);
+    }
   }
 
   String getTranscript() {
@@ -303,9 +310,7 @@ class ChatController extends ChangeNotifier {
     await Clipboard.setData(ClipboardData(text: txt));
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tl('Transcript copied'))),
-      );
+      context.showSuccessSnackBar(tl('Transcript copied'));
     }
   }
 
@@ -380,15 +385,15 @@ class ChatController extends ChangeNotifier {
   }
 
   void openDrawer() {
-    scaffoldKey.currentState?.openDrawer();
+    navigator.openDrawer();
   }
 
   void openEndDrawer() {
-    scaffoldKey.currentState?.openEndDrawer();
+    navigator.openEndDrawer();
   }
 
   void closeEndDrawer() {
-    scaffoldKey.currentState?.closeEndDrawer();
+    navigator.closeEndDrawer();
   }
 
   @override

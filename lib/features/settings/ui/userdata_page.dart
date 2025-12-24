@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 
 /// Màn hình điều khiển dữ liệu cho phép quản lý và kiểm soát dữ liệu ứng dụng
 class DataControlsScreen extends StatefulWidget {
@@ -49,11 +50,7 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.5,
       ),
-      body: SafeArea(
-        top: false,
-        bottom: true,
-        child: _buildBody(),
-      ),
+      body: SafeArea(top: false, bottom: true, child: _buildBody()),
     );
   }
 
@@ -304,27 +301,19 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
 
   /// Handlers cho các hành động
   void _handleBackup() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Data backup started'))));
+    context.showInfoSnackBar(tl('Data backup started'));
   }
 
   void _handleRestore() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Data restore started'))));
+    context.showInfoSnackBar(tl('Data restore started'));
   }
 
   void _handleExport() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Data export started'))));
+    context.showInfoSnackBar(tl('Data export started'));
   }
 
   void _handleAnonymize() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Data anonymization started'))));
+    context.showInfoSnackBar(tl('Data anonymization started'));
   }
 
   void _handleDeleteAll() {
@@ -345,12 +334,16 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(tl('All data deleted'))));
+              context.showSuccessSnackBar(tl('All data deleted'));
             },
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
+              side: BorderSide(
+                color:
+                    Theme.of(context).inputDecorationTheme.hintStyle?.color ??
+                    Theme.of(context).colorScheme.outline,
+                width: 1,
+              ),
             ),
             child: Text(tl('Delete')),
           ),
@@ -360,14 +353,10 @@ class _DataControlsScreenState extends State<DataControlsScreen> {
   }
 
   void _handleCleanCache() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Cache cleaned'))));
+    context.showSuccessSnackBar(tl('Cache cleaned'));
   }
 
   void _handleManageFiles() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('File manager opened'))));
+    context.showInfoSnackBar(tl('File manager opened'));
   }
 }

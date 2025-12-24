@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../shared/utils/app_version.dart';
 import '../../../shared/translate/tl.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 
 /// Màn hình cập nhật ứng dụng
 class UpdatePage extends StatefulWidget {
@@ -219,6 +220,16 @@ class _UpdatePageState extends State<UpdatePage> {
                 label: Text(
                   _isCheckingForUpdates ? 'Checking...' : 'Check Now',
                 ),
+                style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    color:
+                        Theme.of(
+                          context,
+                        ).inputDecorationTheme.hintStyle?.color ??
+                        Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
+                ),
               ),
             ),
           ],
@@ -272,6 +283,16 @@ class _UpdatePageState extends State<UpdatePage> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => _skipUpdate(),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color:
+                            Theme.of(
+                              context,
+                            ).inputDecorationTheme.hintStyle?.color ??
+                            Theme.of(context).colorScheme.outline,
+                        width: 1,
+                      ),
+                    ),
                     child: Text(tl('Skip this version')),
                   ),
                 ),
@@ -279,6 +300,16 @@ class _UpdatePageState extends State<UpdatePage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => _downloadUpdate(),
+                    style: ElevatedButton.styleFrom(
+                      side: BorderSide(
+                        color:
+                            Theme.of(
+                              context,
+                            ).inputDecorationTheme.hintStyle?.color ??
+                            Theme.of(context).colorScheme.outline,
+                        width: 1,
+                      ),
+                    ),
                     child: Text(tl('Download Update')),
                   ),
                 ),
@@ -413,23 +444,17 @@ class _UpdatePageState extends State<UpdatePage> {
     });
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tl('update.update_check_completed'))),
-      );
+      context.showInfoSnackBar(tl('Check update completed'));
     }
   }
 
   /// Bỏ qua cập nhật
   void _skipUpdate() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('update.update_skipped'))));
+    context.showInfoSnackBar(tl('Skip update'));
   }
 
   /// Tải xuống cập nhật
   void _downloadUpdate() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('update.download_started'))));
+    context.showInfoSnackBar(tl('Download update started'));
   }
 }

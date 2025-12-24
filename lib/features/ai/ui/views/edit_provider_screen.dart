@@ -349,6 +349,14 @@ class _AddProviderScreenState extends State<AddProviderScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        side: BorderSide(
+          color: Theme.of(context).inputDecorationTheme.hintStyle?.color ?? 
+                 Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
+      ),
       builder: (context) => FetchModelsSheet(
         viewModel: _viewModel,
         onShowCapabilities: _showModelCapabilities,
@@ -361,6 +369,14 @@ class _AddProviderScreenState extends State<AddProviderScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        side: BorderSide(
+          color: Theme.of(context).inputDecorationTheme.hintStyle?.color ?? 
+                 Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
+      ),
       builder: (context) => EditModelSheet(
         viewModel: _viewModel,
         onShowCapabilities: _showModelCapabilities,

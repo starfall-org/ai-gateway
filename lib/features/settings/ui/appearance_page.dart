@@ -75,12 +75,6 @@ class _AppearancePageState extends State<AppearancePage> {
 
             const SizedBox(height: 24),
 
-            // Secondary Background Mode
-            const SizedBox(height: 12),
-            SettingsSectionHeader('Borders'),
-            const SizedBox(height: 12),
-            _buildSecondaryBgSegmented(),
-
             // Material You toggle
             SettingsSectionHeader(tl('Colors')),
             DynamicColorBuilder(
@@ -143,18 +137,8 @@ class _AppearancePageState extends State<AppearancePage> {
                   ),
                   const Divider(height: 1),
                   _buildColorTile(
-                    label: tl('Darkmode Text Color'),
-                    colorType: ColorType.darkmodeText,
-                  ),
-                  const Divider(height: 1),
-                  _buildColorTile(
                     label: tl('Text Hint Color'),
                     colorType: ColorType.textHint,
-                  ),
-                  const Divider(height: 1),
-                  _buildColorTile(
-                    label: tl('Darkmode Text Hint Color'),
-                    colorType: ColorType.darkmodeTextHint,
                   ),
                 ],
               ),
@@ -197,36 +181,6 @@ class _AppearancePageState extends State<AppearancePage> {
         selected: {_viewModel.settings.selection},
         onSelectionChanged: (Set<ThemeSelection> newSelection) {
           _viewModel.updateSelection(newSelection.first);
-        },
-        showSelectedIcon: false,
-      ),
-    );
-  }
-
-  Widget _buildSecondaryBgSegmented() {
-    return SizedBox(
-      width: double.infinity,
-      child: SegmentedButton<SecondaryBackgroundMode>(
-        segments: [
-          ButtonSegment(
-            value: SecondaryBackgroundMode.on,
-            label: const Icon(Icons.border_outer_outlined),
-            tooltip: tl('Dual'),
-          ),
-          ButtonSegment(
-            value: SecondaryBackgroundMode.auto,
-            label: const Icon(Icons.auto_awesome_outlined),
-            tooltip: tl('Auto'),
-          ),
-          ButtonSegment(
-            value: SecondaryBackgroundMode.off,
-            label: const Icon(Icons.border_clear_outlined),
-            tooltip: tl('Single'),
-          ),
-        ],
-        selected: {_viewModel.settings.secondaryBackgroundMode},
-        onSelectionChanged: (Set<SecondaryBackgroundMode> newSelection) {
-          _viewModel.updateSecondaryBackgroundMode(newSelection.first);
         },
         showSelectedIcon: false,
       ),

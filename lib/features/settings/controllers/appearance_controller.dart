@@ -8,9 +8,7 @@ enum ColorType {
   background,
   surface,
   text,
-  darkmodeText,
   textHint,
-  darkmodeTextHint,
 }
 
 class AppearanceViewModel extends ChangeNotifier {
@@ -24,25 +22,46 @@ class AppearanceViewModel extends ChangeNotifier {
   Future<void> updateSelection(ThemeSelection selection) async {
     // Keep themeMode in sync for non-custom selections
     ThemeMode mode = settings.themeMode;
+    bool shouldResetColors = false;
+    
     switch (selection) {
       case ThemeSelection.system:
         mode = ThemeMode.system;
+        shouldResetColors = settings.selection != ThemeSelection.system && settings.selection != ThemeSelection.custom;
         break;
       case ThemeSelection.light:
         mode = ThemeMode.light;
+        shouldResetColors = settings.selection != ThemeSelection.light && settings.selection != ThemeSelection.custom;
         break;
       case ThemeSelection.dark:
         mode = ThemeMode.dark;
+        shouldResetColors = settings.selection != ThemeSelection.dark && settings.selection != ThemeSelection.custom;
         break;
       case ThemeSelection.custom:
         // keep current themeMode; custom only affects colors
         mode = settings.themeMode;
         break;
     }
-    final newSettings = settings.copyWith(
-      selection: selection,
-      themeMode: mode,
-    );
+    
+    AppearanceSetting newSettings;
+    if (shouldResetColors) {
+      // Reset màu sắc về mặc định cho theme mode mới
+      final defaultSettings = AppearanceSetting.defaults(themeMode: mode);
+      newSettings = settings.copyWith(
+        selection: selection,
+        themeMode: mode,
+        backgroundColor: defaultSettings.backgroundColor,
+        surfaceColor: defaultSettings.surfaceColor,
+        textColor: defaultSettings.textColor,
+        textHintColor: defaultSettings.textHintColor,
+      );
+    } else {
+      newSettings = settings.copyWith(
+        selection: selection,
+        themeMode: mode,
+      );
+    }
+    
     await _updateSettings(newSettings);
   }
 
@@ -64,14 +83,8 @@ class AppearanceViewModel extends ChangeNotifier {
       case ColorType.text:
         newSettings = settings.copyWith(textColor: colorValue);
         break;
-      case ColorType.darkmodeText:
-        newSettings = settings.copyWith(darkmodeTextColor: colorValue);
-        break;
       case ColorType.textHint:
         newSettings = settings.copyWith(textHintColor: colorValue);
-        break;
-      case ColorType.darkmodeTextHint:
-        newSettings = settings.copyWith(darkmodeTextHintColor: colorValue);
         break;
     }
     await _updateSettings(newSettings);
@@ -89,12 +102,8 @@ class AppearanceViewModel extends ChangeNotifier {
         return settings.surfaceColor;
       case ColorType.text:
         return settings.textColor;
-      case ColorType.darkmodeText:
-        return settings.darkmodeTextColor;
       case ColorType.textHint:
         return settings.textHintColor;
-      case ColorType.darkmodeTextHint:
-        return settings.darkmodeTextHintColor;
     }
   }
 

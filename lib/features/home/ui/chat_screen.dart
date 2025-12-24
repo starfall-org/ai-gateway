@@ -142,7 +142,9 @@ class _ChatPageState extends State<ChatPage>
                   context,
                 ).iconTheme.color?.withValues(alpha: 0.7),
               ),
-              onPressed: _viewModel.openDrawer,
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
             ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +234,7 @@ class _ChatPageState extends State<ChatPage>
   Widget _buildAgentAvatar(BuildContext context) {
     return InkWell(
       onTap: () {
-        Scaffold.of(context).openEndDrawer();
+        _scaffoldKey.currentState?.openEndDrawer();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -322,7 +324,9 @@ class _ChatPageState extends State<ChatPage>
                   IconButton(
                     icon: const Icon(Icons.close),
                     tooltip: tl('Close'),
-                    onPressed: _viewModel.closeEndDrawer,
+                    onPressed: () {
+                      _scaffoldKey.currentState?.closeEndDrawer();
+                    },
                   ),
                 ],
               ),

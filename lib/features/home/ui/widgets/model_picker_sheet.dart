@@ -164,8 +164,13 @@ class ModelPickerSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        side: BorderSide(
+          color: Theme.of(context).inputDecorationTheme.hintStyle?.color ?? 
+                 Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       builder: (ctx) => SizedBox(
         height: MediaQuery.of(context).size.height * 0.6,

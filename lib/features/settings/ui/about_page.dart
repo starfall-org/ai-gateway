@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../shared/translate/tl.dart';
 import '../../../shared/utils/app_version.dart';
+import '../../../shared/widgets/app_snackbar.dart';
 
 /// Màn hình thông tin về ứng dụng
 class AboutPage extends StatefulWidget {
@@ -324,38 +325,26 @@ class _AboutPageState extends State<AboutPage> {
 
   /// Handlers cho các hành động
   void _openPrivacyPolicy() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Privacy policy opened'))));
+    context.showInfoSnackBar(tl('Privacy policy opened'));
   }
 
   void _openTermsOfService() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Terms of service opened'))));
+    context.showInfoSnackBar(tl('Terms of service opened'));
   }
 
   void _openOpenSource() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Open source info opened'))));
+    context.showInfoSnackBar(tl('Open source info opened'));
   }
 
   void _reportBug() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Bug report opened'))));
+    context.showInfoSnackBar(tl('Bug report opened'));
   }
 
   void _requestFeature() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Feature request opened'))));
+    context.showInfoSnackBar(tl('Feature request opened'));
   }
 
   void _openHelpCenter() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(tl('Help center opened'))));
+    context.showInfoSnackBar(tl('Help center opened'));
   }
 }

@@ -5,7 +5,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'core/app_routes.dart';
 import 'core/config/routes.dart';
 import 'core/config/theme.dart';
-import 'core/models/settings/appearance_setting.dart';
 import 'shared/prefs/appearance.dart';
 
 class AIGatewayApp extends StatelessWidget {
@@ -27,14 +26,71 @@ class AIGatewayApp extends StatelessWidget {
                 : ColorScheme.fromSeed(
                     seedColor: Color(settings.primaryColor),
                     brightness: Brightness.light,
-                  ).copyWith(secondary: Color(settings.secondaryColor));
+                  ).copyWith(
+                    secondary: Color(settings.secondaryColor),
+                    surface: Color(settings.surfaceColor),
+                  );
 
             final ColorScheme darkScheme = (useDynamic && darkDynamic != null)
                 ? darkDynamic.harmonized()
                 : ColorScheme.fromSeed(
                     seedColor: Color(settings.primaryColor),
                     brightness: Brightness.dark,
-                  ).copyWith(secondary: Color(settings.secondaryColor));
+                  ).copyWith(
+                    secondary: Color(settings.secondaryColor),
+                    surface: Color(settings.surfaceColor),
+                  );
+
+            // Apply custom text colors if they are set (not default values)
+            final Color customTextColor = Color(settings.textColor);
+            final Color customTextHintColor = Color(settings.textHintColor);
+
+            final TextTheme customLightTextTheme = TextTheme(
+              bodyLarge: TextStyle(color: customTextColor),
+              bodyMedium: TextStyle(color: customTextColor),
+              bodySmall: TextStyle(color: customTextColor),
+              labelLarge: TextStyle(color: customTextColor),
+              labelMedium: TextStyle(color: customTextColor),
+              labelSmall: TextStyle(color: customTextColor),
+              titleLarge: TextStyle(color: customTextColor),
+              titleMedium: TextStyle(color: customTextColor),
+              titleSmall: TextStyle(color: customTextColor),
+              headlineLarge: TextStyle(color: customTextColor),
+              headlineMedium: TextStyle(color: customTextColor),
+              headlineSmall: TextStyle(color: customTextColor),
+              displayLarge: TextStyle(color: customTextColor),
+              displayMedium: TextStyle(color: customTextColor),
+              displaySmall: TextStyle(color: customTextColor),
+            ).apply(bodyColor: customTextColor, displayColor: customTextColor);
+
+            final TextTheme customDarkTextTheme = TextTheme(
+              bodyLarge: TextStyle(color: customTextColor),
+              bodyMedium: TextStyle(color: customTextColor),
+              bodySmall: TextStyle(color: customTextColor),
+              labelLarge: TextStyle(color: customTextColor),
+              labelMedium: TextStyle(color: customTextColor),
+              labelSmall: TextStyle(color: customTextColor),
+              titleLarge: TextStyle(color: customTextColor),
+              titleMedium: TextStyle(color: customTextColor),
+              titleSmall: TextStyle(color: customTextColor),
+              headlineLarge: TextStyle(color: customTextColor),
+              headlineMedium: TextStyle(color: customTextColor),
+              headlineSmall: TextStyle(color: customTextColor),
+              displayLarge: TextStyle(color: customTextColor),
+              displayMedium: TextStyle(color: customTextColor),
+              displaySmall: TextStyle(color: customTextColor),
+            ).apply(bodyColor: customTextColor, displayColor: customTextColor);
+
+            // Update hint colors in the theme
+            final InputDecorationTheme lightInputDecorationTheme =
+                InputDecorationTheme(
+                  hintStyle: TextStyle(color: customTextHintColor),
+                );
+
+            final InputDecorationTheme darkInputDecorationTheme =
+                InputDecorationTheme(
+                  hintStyle: TextStyle(color: customTextHintColor),
+                );
 
             // Main background colors
             final Color lightMainBg = Colors.white;
@@ -43,36 +99,14 @@ class AIGatewayApp extends StatelessWidget {
                 : const Color(0xFF121212);
 
             // Utilities for secondary background calculation
-            Color autoSecondary(Color base, Brightness br) {
-              final hsl = HSLColor.fromColor(base);
-              final double delta = br == Brightness.dark ? 0.06 : -0.04;
-              final double newLightness = (hsl.lightness + delta).clamp(
-                0.0,
-                1.0,
-              );
-              return hsl.withLightness(newLightness).toColor();
-            }
 
             Color deriveSecondaryBg(
               Brightness br,
               ColorScheme scheme,
               Color mainBg,
             ) {
-              switch (settings.secondaryBackgroundMode) {
-                case SecondaryBackgroundMode.on:
-                  // Stronger separation using container tone
-                  return scheme.secondaryContainer;
-                case SecondaryBackgroundMode.auto:
-                  // Subtle delta from main background
-                  return autoSecondary(mainBg, br);
-                case SecondaryBackgroundMode.off:
-                  // Same as main background
-                  return mainBg;
-              }
+              return scheme.secondaryContainer;
             }
-
-            Color borderFor(Color bg) =>
-                (bg.computeLuminance() < 0.5) ? Colors.white : Colors.black;
 
             // Light palette surfaces
             final Color lightSecondaryBg = deriveSecondaryBg(
@@ -80,10 +114,10 @@ class AIGatewayApp extends StatelessWidget {
               lightScheme,
               lightMainBg,
             );
-            final BorderSide? lightBorderSide =
-                settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                ? BorderSide(color: borderFor(lightMainBg), width: 1)
-                : null;
+            final BorderSide lightBorderSide = BorderSide(
+              color: customTextHintColor,
+              width: 1,
+            );
 
             // Dark palette surfaces
             final Color darkSecondaryBg = deriveSecondaryBg(
@@ -91,10 +125,10 @@ class AIGatewayApp extends StatelessWidget {
               darkScheme,
               darkMainBg,
             );
-            final BorderSide? darkBorderSide =
-                settings.secondaryBackgroundMode == SecondaryBackgroundMode.off
-                ? BorderSide(color: borderFor(darkMainBg), width: 1)
-                : null;
+            final BorderSide darkBorderSide = BorderSide(
+              color: customTextHintColor,
+              width: 1,
+            );
 
             return MaterialApp(
               title: 'AI Gateway',
@@ -103,6 +137,8 @@ class AIGatewayApp extends StatelessWidget {
               theme: ThemeData(
                 colorScheme: lightScheme,
                 useMaterial3: true,
+                textTheme: customLightTextTheme,
+                inputDecorationTheme: lightInputDecorationTheme,
                 scaffoldBackgroundColor: lightMainBg,
                 appBarTheme: const AppBarTheme(
                   systemOverlayStyle: SystemUiOverlayStyle(
@@ -117,14 +153,14 @@ class AIGatewayApp extends StatelessWidget {
                   backgroundColor: lightSecondaryBg,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: lightBorderSide ?? BorderSide.none,
+                    side: lightBorderSide,
                   ),
                 ),
                 drawerTheme: DrawerThemeData(
                   backgroundColor: lightSecondaryBg,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
-                    side: lightBorderSide ?? BorderSide.none,
+                    side: lightBorderSide,
                   ),
                 ),
                 navigationDrawerTheme: NavigationDrawerThemeData(
@@ -140,6 +176,8 @@ class AIGatewayApp extends StatelessWidget {
               darkTheme: ThemeData(
                 colorScheme: darkScheme,
                 useMaterial3: true,
+                textTheme: customDarkTextTheme,
+                inputDecorationTheme: darkInputDecorationTheme,
                 scaffoldBackgroundColor: darkMainBg,
                 appBarTheme: const AppBarTheme(
                   systemOverlayStyle: SystemUiOverlayStyle(
@@ -154,14 +192,14 @@ class AIGatewayApp extends StatelessWidget {
                   backgroundColor: darkSecondaryBg,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: darkBorderSide ?? BorderSide.none,
+                    side: darkBorderSide,
                   ),
                 ),
                 drawerTheme: DrawerThemeData(
                   backgroundColor: darkSecondaryBg,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
-                    side: darkBorderSide ?? BorderSide.none,
+                    side: darkBorderSide,
                   ),
                 ),
                 navigationDrawerTheme: NavigationDrawerThemeData(
@@ -175,7 +213,7 @@ class AIGatewayApp extends StatelessWidget {
                 ],
               ),
               onGenerateRoute: generateRoute,
-              initialRoute: AppRoutes.home,
+              initialRoute: AppRoutes.chat,
             );
           },
         );
