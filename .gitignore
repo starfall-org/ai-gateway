@@ -50,3 +50,4 @@ app.*.map.json
 /ios/Runner/GoogleService-Info.plist
 /lib/firebase_options.dart
 wget-log
+android/build/reports/problems/problems-report.html
