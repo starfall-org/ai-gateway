@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 import 'model.dart';
 
 
@@ -51,7 +53,7 @@ class Provider {
        baseUrl = baseUrl ?? _defaultBaseUrl(type);
 
   static String _generateId() {
-    return DateTime.now().millisecondsSinceEpoch.toString() + '_' + (1000 + DateTime.now().microsecond).toString();
+    return const Uuid().v4();
   }
 
   static String _defaultName(ProviderType type) {

@@ -228,7 +228,7 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
 
   Widget _buildProviderCard(Provider provider, int index) {
     return ItemCard(
-      key: ValueKey(provider.name),
+      key: ValueKey(provider.id),
       icon: buildIcon(provider.name),
       title: provider.name,
       subtitle: tl('${provider.type.name} Compatible'),
