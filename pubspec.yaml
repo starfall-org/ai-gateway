@@ -45,6 +45,7 @@ dependencies:
   path_provider: ^2.1.5
   meta: ^1.17.0
   firebase_core: ^4.3.0
+  reorderable_grid_view: ^2.2.7
 
   # Dynamic Color support
   dynamic_color: ^1.7.0

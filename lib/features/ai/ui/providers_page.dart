@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 import '../../../core/data/ai_provider_store.dart';
 import '../../../core/models/ai/provider.dart';
@@ -138,7 +140,7 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
                 },
               )
             : _isGridView
-            ? GridView.builder(
+            ? ReorderableGridView.builder(
                 padding: const EdgeInsets.all(16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -147,8 +149,28 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
                   childAspectRatio: 1.5,
                 ),
                 itemCount: _providers.length,
+                onReorder: _onReorder,
                 itemBuilder: (context, index) =>
-                    _buildProviderCard(_providers[index]),
+                    _buildProviderCard(_providers[index], index),
+                proxyDecorator: (child, index, animation) {
+                  return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) {
+                      final double animValue =
+                          Curves.easeInOut.transform(animation.value);
+                      final double elevation = lerpDouble(0, 6, animValue)!;
+                      return Transform.scale(
+                        scale: lerpDouble(1, 1.02, animValue),
+                        child: Material(
+                          elevation: elevation,
+                          borderRadius: BorderRadius.circular(8),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: child,
+                  );
+                },
               )
             : ReorderableListView.builder(
                 itemCount: _providers.length,
@@ -204,8 +226,9 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
     );
   }
 
-  Widget _buildProviderCard(Provider provider) {
+  Widget _buildProviderCard(Provider provider, int index) {
     return ItemCard(
+      key: ValueKey(provider.name),
       icon: buildIcon(provider.name),
       title: provider.name,
       subtitle: tl('${provider.type.name} Compatible'),
