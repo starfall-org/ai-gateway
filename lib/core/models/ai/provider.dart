@@ -123,8 +123,13 @@ class Provider {
       }
     }
 
+    final type = ProviderType.values.firstWhere(
+      (e) => e.name == json['type'],
+      orElse: () => ProviderType.openai,
+    );
+
     return Provider(
-      type: ProviderType.values.firstWhere((e) => e.name == json['type']),
+      type: type,
       name: json['name'] as String?,
       icon: (json['icon'] as String?) ?? '',
       apiKey: (json['apiKey'] as String?) ?? '',

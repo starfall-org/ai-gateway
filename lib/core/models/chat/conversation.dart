@@ -79,8 +79,8 @@ class Conversation {
               ?.map((e) => ChatMessage.fromJson(e))
               .toList() ??
           [],
-      tokenCount: json['tokenCount'] as int,
-      isAgentConversation: json['isAgentConversation'] as bool,
+      tokenCount: json['tokenCount'] as int?,
+      isAgentConversation: json['isAgentConversation'] == true,
       providerName: json['providerName'] as String?,
       modelName: json['modelName'] as String?,
       enabledToolNames: (json['enabledToolNames'] as List?)
