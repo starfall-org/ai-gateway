@@ -1,4 +1,4 @@
-package org.starfall.ai_gateway;
+package org.starfall.metalore;
 
 import io.flutter.embedding.android.FlutterActivity;
 
