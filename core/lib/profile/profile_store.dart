@@ -59,7 +59,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
           (fields['conversationIds'] as List?)?.cast<String>() ?? const [],
       activeMCPServers:
           (fields['activeMCPServers'] as List?)
-              ?.map((e) => ActiveMCPServer.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => ActiveMCPServer.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           [],
       activeBuiltInTools:
