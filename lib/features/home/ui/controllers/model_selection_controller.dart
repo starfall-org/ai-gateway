@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
-import '../../../../core/llm/models/llm_model/base.dart';
+import 'package:llm/llm.dart';
+import 'package:llm/models/llm_model/base.dart';
+import 'package:metalore/core/llm/data/provider_info_storage.dart';
 
 /// Controller responsible for provider and model selection
 class ModelSelectionController extends ChangeNotifier {

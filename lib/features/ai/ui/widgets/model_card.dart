@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/llm/models/llm_model/base.dart';
+import 'package:llm/llm.dart';
 import '../../../../shared/utils/icon_builder.dart';
 import '../../../../shared/widgets/item_card.dart';
 
@@ -140,7 +140,6 @@ class ModelCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withValues(alpha: isDark ? 0.4 : 0.3)),
       ),
-      // color: color, // Bỏ thuộc tính color bị thừa ở đây nếu Container đã có decoration
       child: label,
     );
   }

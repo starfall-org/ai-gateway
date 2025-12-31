@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:metalore/core/storage/base.dart';
+import 'package:uuid/uuid.dart';
 import '../models/conversation.dart';
 import '../models/message.dart';
-import '../../../../shared/storage/base.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatRepository extends HiveBaseStorage<Conversation> {
   static const String _prefix = 'conv';

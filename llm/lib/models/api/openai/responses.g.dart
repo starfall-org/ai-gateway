@@ -1,0 +1,188 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'responses.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+OpenAiResponses _$OpenAiResponsesFromJson(Map<String, dynamic> json) =>
+    OpenAiResponses(
+      id: json['id'] as String,
+      object: json['object'] as String,
+      createdAt: (json['created_at'] as num).toInt(),
+      model: json['model'] as String,
+      status: json['status'] as String,
+      error: json['error'] == null
+          ? null
+          : ErrorInfo.fromJson(json['error'] as Map<String, dynamic>),
+      incompleteDetails: json['incomplete_details'] == null
+          ? null
+          : IncompleteDetails.fromJson(
+              json['incomplete_details'] as Map<String, dynamic>,
+            ),
+      output: (json['output'] as List<dynamic>)
+          .map((e) => ResponseItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      usage: ResponsesUsage.fromJson(json['usage'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$OpenAiResponsesToJson(OpenAiResponses instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'object': instance.object,
+      'created_at': instance.createdAt,
+      'model': instance.model,
+      'status': instance.status,
+      'error': instance.error,
+      'incomplete_details': instance.incompleteDetails,
+      'output': instance.output,
+      'usage': instance.usage,
+    };
+
+ResponseItem _$ResponseItemFromJson(Map<String, dynamic> json) => ResponseItem(
+  id: json['id'] as String,
+  type: json['type'] as String,
+  role: json['role'] as String,
+  content: (json['content'] as List<dynamic>)
+      .map((e) => MessageContent.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  status: json['status'] as String,
+);
+
+Map<String, dynamic> _$ResponseItemToJson(ResponseItem instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'type': instance.type,
+      'role': instance.role,
+      'content': instance.content,
+      'status': instance.status,
+    };
+
+MessageContent _$MessageContentFromJson(Map<String, dynamic> json) =>
+    MessageContent(
+      type: json['type'] as String,
+      text: json['text'] as String,
+      annotations: (json['annotations'] as List<dynamic>?)
+          ?.map((e) => Annotation.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      logprobs: json['logprobs'] == null
+          ? null
+          : Logprobs.fromJson(json['logprobs'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$MessageContentToJson(MessageContent instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'text': instance.text,
+      'annotations': instance.annotations,
+      'logprobs': instance.logprobs,
+    };
+
+Annotation _$AnnotationFromJson(Map<String, dynamic> json) => Annotation(
+  type: json['type'] as String,
+  text: json['text'] as String,
+  startIndex: (json['start_index'] as num).toInt(),
+  endIndex: (json['end_index'] as num).toInt(),
+  fileId: json['file_id'] as String?,
+  title: json['title'] as String?,
+);
+
+Map<String, dynamic> _$AnnotationToJson(Annotation instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'text': instance.text,
+      'start_index': instance.startIndex,
+      'end_index': instance.endIndex,
+      'file_id': instance.fileId,
+      'title': instance.title,
+    };
+
+Logprobs _$LogprobsFromJson(Map<String, dynamic> json) => Logprobs(
+  token: json['token'] as String,
+  logprob: (json['logprob'] as num).toDouble(),
+  bytes: (json['bytes'] as List<dynamic>)
+      .map((e) => (e as num).toInt())
+      .toList(),
+  topLogprobs: (json['top_logprobs'] as List<dynamic>)
+      .map((e) => TopLogprob.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$LogprobsToJson(Logprobs instance) => <String, dynamic>{
+  'token': instance.token,
+  'logprob': instance.logprob,
+  'bytes': instance.bytes,
+  'top_logprobs': instance.topLogprobs,
+};
+
+TopLogprob _$TopLogprobFromJson(Map<String, dynamic> json) => TopLogprob(
+  token: json['token'] as String,
+  logprob: (json['logprob'] as num).toDouble(),
+  bytes: (json['bytes'] as List<dynamic>)
+      .map((e) => (e as num).toInt())
+      .toList(),
+);
+
+Map<String, dynamic> _$TopLogprobToJson(TopLogprob instance) =>
+    <String, dynamic>{
+      'token': instance.token,
+      'logprob': instance.logprob,
+      'bytes': instance.bytes,
+    };
+
+ErrorInfo _$ErrorInfoFromJson(Map<String, dynamic> json) =>
+    ErrorInfo(code: json['code'] as String, message: json['message'] as String);
+
+Map<String, dynamic> _$ErrorInfoToJson(ErrorInfo instance) => <String, dynamic>{
+  'code': instance.code,
+  'message': instance.message,
+};
+
+IncompleteDetails _$IncompleteDetailsFromJson(Map<String, dynamic> json) =>
+    IncompleteDetails(
+      reason: json['reason'] as String,
+      type: json['type'] as String,
+    );
+
+Map<String, dynamic> _$IncompleteDetailsToJson(IncompleteDetails instance) =>
+    <String, dynamic>{'reason': instance.reason, 'type': instance.type};
+
+ResponsesUsage _$ResponsesUsageFromJson(Map<String, dynamic> json) =>
+    ResponsesUsage(
+      inputTokens: (json['input_tokens'] as num).toInt(),
+      outputTokens: (json['output_tokens'] as num).toInt(),
+      totalTokens: (json['total_tokens'] as num).toInt(),
+      inputTokensDetails: UsageDetails.fromJson(
+        json['input_tokens_details'] as Map<String, dynamic>,
+      ),
+      outputTokensDetails: UsageDetails.fromJson(
+        json['output_tokens_details'] as Map<String, dynamic>,
+      ),
+    );
+
+Map<String, dynamic> _$ResponsesUsageToJson(ResponsesUsage instance) =>
+    <String, dynamic>{
+      'input_tokens': instance.inputTokens,
+      'output_tokens': instance.outputTokens,
+      'total_tokens': instance.totalTokens,
+      'input_tokens_details': instance.inputTokensDetails,
+      'output_tokens_details': instance.outputTokensDetails,
+    };
+
+UsageDetails _$UsageDetailsFromJson(Map<String, dynamic> json) => UsageDetails(
+  cachedTokens: (json['cached_tokens'] as num?)?.toInt(),
+  textTokens: (json['text_tokens'] as num?)?.toInt(),
+  imageTokens: (json['image_tokens'] as num?)?.toInt(),
+  audioTokens: (json['audio_tokens'] as num?)?.toInt(),
+  reasoningTokens: (json['reasoning_tokens'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$UsageDetailsToJson(UsageDetails instance) =>
+    <String, dynamic>{
+      'cached_tokens': instance.cachedTokens,
+      'text_tokens': instance.textTokens,
+      'image_tokens': instance.imageTokens,
+      'audio_tokens': instance.audioTokens,
+      'reasoning_tokens': instance.reasoningTokens,
+    };

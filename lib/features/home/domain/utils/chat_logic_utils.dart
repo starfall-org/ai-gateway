@@ -1,4 +1,4 @@
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
+import 'package:llm/llm.dart';
 import '../models/conversation.dart';
 
 class ChatLogicUtils {

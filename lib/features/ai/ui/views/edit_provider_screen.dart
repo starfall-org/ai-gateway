@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/llm/models/llm_model/base.dart';
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
+import 'package:llm/llm.dart';
+import 'package:llm/models/llm_model/base.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/common_dropdown.dart';
 import '../../../../shared/widgets/custom_text_field.dart';

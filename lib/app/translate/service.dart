@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:llm/llm.dart';
 
-import '../../core/llm/provider/base.dart';
 import '../data/translation_cache.dart';
 
 class TranslationService {

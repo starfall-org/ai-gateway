@@ -1,6 +1,6 @@
-import 'dart:async';
-import '../../../shared/storage/base.dart';
-import '../models/mcp_server.dart';
+import 'package:mcp/models/mcp_server.dart';
+import 'package:mcp/mcp.dart';
+import 'package:metalore/core/storage/base.dart';
 
 class MCPRepository extends HiveBaseStorage<MCPServer> {
   static const String _prefix = 'mcp';
@@ -26,10 +26,4 @@ class MCPRepository extends HiveBaseStorage<MCPServer> {
   MCPServer deserializeFromFields(String id, Map<String, dynamic> fields) {
     return MCPServer.fromJson(fields);
   }
-
-  /// Get all servers
-  List<MCPServer> getMCPServers() => getItems();
-
-  /// Reactive stream of MCP servers; emits immediately and on each change.
-  Stream<List<MCPServer>> get mcpServersStream => itemsStream;
 }

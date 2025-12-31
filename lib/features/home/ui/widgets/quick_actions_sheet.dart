@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/profile/models/profile.dart';
-import '../../../../core/mcp/models/mcp_server.dart';
+import 'package:metalore/core/profile/profile.dart';
+import 'package:mcp/mcp.dart';
 import '../../../../app/translate/tl.dart';
 import '../controllers/chat_controller.dart';
 

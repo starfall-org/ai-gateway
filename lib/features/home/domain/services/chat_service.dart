@@ -1,17 +1,17 @@
-import '../../../../core/llm/provider/anthropic/anthropic.dart';
-import '../../../../core/llm/provider/googleai/aistudio.dart';
-import '../../../../core/llm/provider/googleai/vertexai.dart';
-import '../../../../core/llm/provider/ollama/ollama.dart';
-import '../../../../core/mcp/mcp_client.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/llm/models/api/api.dart';
-import '../../../../core/llm/models/llm_model/base.dart';
-import '../../../../core/profile/models/profile.dart';
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
+import 'dart:async';
+import 'package:llm/llm.dart';
+import 'package:mcp/mcp.dart';
+import 'package:metalore/core/profile/profile.dart';
+
+import 'package:metalore/core/profile/data/ai_profile_store.dart';
+import 'package:metalore/core/llm/data/provider_info_storage.dart';
+import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+
+import 'package:llm/models/api/api.dart'; // Ensure this uses package import if possible, or relative if inside llm
+// Wait, ChatService is in app, llm is package.
+// Provider implementations are exported by llm package.
+
 import '../models/message.dart';
-import '../../../../core/mcp/data/mcpserver_store.dart';
-import '../../../../core/mcp/models/mcp_server.dart';
-import '../../../../core/llm/provider/openai/openai.dart';
 
 class ChatService {
   // Thu thập MCP tools ưu tiên cache; cập nhật khi dùng.
@@ -32,7 +32,6 @@ class ChatService {
 
       if (servers.isEmpty) return const <AIToolFunction>[];
 
-      // Build a map of allowed tools per server for easy lookup
       final allowedToolsMap = {
         for (var s in profile.activeMCPServers) s.id: s.activeToolIds.toSet(),
       };
@@ -46,11 +45,9 @@ class ChatService {
         }).toList();
       }
 
-      // Dùng cache nếu có
       List<MCPTool> cachedTools = filterTools(servers);
 
       if (cachedTools.isEmpty) {
-        // Không có cache: fetch ngay và lưu lại
         final fetchedLists = await Future.wait(
           servers.map((s) async {
             try {
@@ -65,8 +62,6 @@ class ChatService {
         );
         cachedTools = filterTools(fetchedLists);
       } else {
-        // Có cache: làm mới ở nền khi được dùng, không chặn luồng chat
-        // ignore: discarded_futures
         Future(() async {
           for (final s in servers) {
             try {
@@ -77,7 +72,6 @@ class ChatService {
         });
       }
 
-      // Khử trùng lặp theo tên tool
       final map = <String, AIToolFunction>{};
       for (final t in cachedTools) {
         map[t.name] = AIToolFunction(
@@ -92,13 +86,11 @@ class ChatService {
     }
   }
 
-  // Built-in Gemini tools toggling based on AIProfile and Model capabilities
   static List<AIToolFunction> _collectGeminiBuiltinTools(
     Provider provider,
     String modelName,
     AIProfile profile,
   ) {
-    // 1. Check model capabilities (if defined)
     final lower = modelName.toLowerCase();
     AIModel? selectedModel;
     for (final m in provider.models) {
@@ -108,7 +100,6 @@ class ChatService {
       }
     }
 
-    // Default capabilities if not explicitly defined
     bool supportsSearch = lower.contains('gemini');
     bool supportsCode = lower.contains('gemini');
     bool supportsUrlContext = lower.contains('gemini');
@@ -119,12 +110,10 @@ class ChatService {
       supportsUrlContext = selectedModel.builtInTools!.urlContext;
     }
 
-    // 2. Check profile activation
     final builtin = <AIToolFunction>[];
 
     if (supportsSearch &&
         profile.activeBuiltInTools.contains('google_search')) {
-      // Use reserved name for Google Search Grounding
       builtin.add(
         const AIToolFunction(
           name: '__google_search__',
@@ -135,7 +124,6 @@ class ChatService {
     }
 
     if (supportsCode && profile.activeBuiltInTools.contains('code_execution')) {
-      // Use reserved name for Code Execution
       builtin.add(
         const AIToolFunction(
           name: '__code_execution__',
@@ -147,7 +135,6 @@ class ChatService {
 
     if (supportsUrlContext &&
         profile.activeBuiltInTools.contains('url_context')) {
-      // Use reserved name for URL Context
       builtin.add(
         const AIToolFunction(
           name: '__url_context__',

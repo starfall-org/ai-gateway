@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../domain/models/message.dart';
-import '../../domain/models/conversation.dart';
-import '../../../../core/profile/models/profile.dart';
+import 'package:metalore/features/home/domain/domain.dart';
+import 'package:metalore/core/profile/profile.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
-import '../../domain/services/chat_service.dart';
-import '../../domain/utils/chat_logic_utils.dart';
 import '../../../../app/data/preferences.dart';
 import '../../../../shared/widgets/error_debug_dialog.dart';
 import '../widgets/edit_message_sheet.dart';

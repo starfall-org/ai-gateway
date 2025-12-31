@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../../../../core/llm/models/llm_model/base.dart';
+import 'package:llm/llm.dart';
 
 Future<List<AIModel>> fetchModels(
   String url,
