@@ -49,7 +49,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
 
   @override
   AIProfile deserializeFromFields(String id, Map<String, dynamic> fields) {
-    final configMap = fields['config'] as Map<String, dynamic>? ?? {};
+    final configMap = fields['config'] != null ? Map<String, dynamic>.from(fields['config'] as Map) : <String, dynamic>{};
 
     return AIProfile(
       id: fields['id'] as String,
