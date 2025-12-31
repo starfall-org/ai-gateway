@@ -37,8 +37,8 @@ class TTSRepository extends HiveBaseStorage<SpeechService> {
         'id': (fields['id'] ?? id) as String,
         'name': (fields['name'] as String?) ?? '',
         'icon': fields['icon'] as String?,
-        'tts': fields['tts'] as Map<String, dynamic>,
-        'stt': fields['stt'] as Map<String, dynamic>,
+        'tts': Map<String, dynamic>.from(fields['tts'] as Map),
+        'stt': Map<String, dynamic>.from(fields['stt'] as Map),
       });
     }
 
