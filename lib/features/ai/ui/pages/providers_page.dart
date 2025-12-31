@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
+import 'package:llm/llm.dart';
+import 'package:metalore/core/llm/data/provider_info_storage.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/resource_tile.dart';
 import '../../../../shared/widgets/empty_state.dart';

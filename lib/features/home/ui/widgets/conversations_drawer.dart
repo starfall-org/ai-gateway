@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/data/chat_store.dart';
-import '../../../../core/profile/models/profile.dart';
-import '../../domain/models/conversation.dart';
+import 'package:metalore/features/home/domain/domain.dart';
+import 'package:metalore/core/profile/profile.dart';
+import 'package:metalore/features/home/domain/domain.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../ai/ui/pages/profiles_page.dart';
 

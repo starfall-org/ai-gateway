@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/profile/data/ai_profile_store.dart';
-import '../../domain/data/chat_store.dart';
-import '../../../../core/mcp/data/mcpserver_store.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/profile/models/profile.dart';
-import '../../../../core/llm/models/llm_provider/provider_info.dart';
-import '../../domain/models/conversation.dart';
-import '../../domain/models/message.dart';
-import '../../../../core/mcp/models/mcp_server.dart';
+import 'package:metalore/core/profile/profile.dart';
+import 'package:metalore/features/home/domain/domain.dart';
+import 'package:mcp/mcp.dart';
+import 'package:llm/llm.dart';
+import 'package:metalore/core/speech/speech.dart';
+
+import 'package:metalore/core/llm/data/provider_info_storage.dart';
+import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+
 import '../../../../app/data/preferences.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
-import '../../domain/services/tts_service.dart';
-import '../../domain/utils/chat_logic_utils.dart';
 import 'chat_controller_parts/chat_navigation_interface.dart';
 
 // Import các controller con
@@ -115,6 +113,7 @@ class ChatController extends ChangeNotifier {
       attachmentController.setInspectingAttachments(attachments);
   void openAttachmentsSidebar(List<String> attachments) =>
       attachmentController.openAttachmentsSidebar(attachments);
+  void openEndDrawer() => navigator.openEndDrawer();
 
   bool shouldPersistSelections() {
     final prefs = preferencesSp.currentPreferences;
@@ -428,10 +427,6 @@ class ChatController extends ChangeNotifier {
 
   void openDrawer() {
     navigator.openDrawer();
-  }
-
-  void openEndDrawer() {
-    navigator.openEndDrawer();
   }
 
   void closeEndDrawer() {

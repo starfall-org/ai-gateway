@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/llm/models/llm_model/base.dart';
+import 'package:llm/llm.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../settings/ui/widgets/settings_card.dart';
 import '../controllers/edit_provider_controller.dart';

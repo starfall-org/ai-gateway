@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/data/chat_store.dart';
-import '../../domain/models/conversation.dart';
-import '../../domain/models/message.dart';
+import 'package:metalore/features/home/domain/domain.dart';
 
 /// Controller responsible for managing chat sessions/conversations
 class SessionController extends ChangeNotifier {

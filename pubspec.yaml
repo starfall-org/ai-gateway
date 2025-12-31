@@ -53,6 +53,12 @@ dependencies:
   translator: ^1.0.4+1
   image_picker: ^1.2.1
   json_annotation: ^4.9.0
+  
+  # Metalore packages
+  llm:
+    path: llm
+  mcp:
+    path: mcp
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

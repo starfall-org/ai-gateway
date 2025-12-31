@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/profile/data/ai_profile_store.dart';
-import '../../../../core/mcp/data/mcpserver_store.dart';
-import '../../../../core/profile/models/profile.dart';
-import '../../../../core/mcp/models/mcp_server.dart';
+import 'package:metalore/core/profile/profile.dart';
+import 'package:mcp/mcp.dart';
+import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+import 'package:metalore/core/profile/data/ai_profile_store.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 

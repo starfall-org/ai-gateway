@@ -1,13 +1,16 @@
-import '../../features/home/domain/services/tts_service.dart';
+import 'package:metalore/features/home/domain/domain.dart';
+import 'package:llm/llm.dart';
+import 'package:mcp/mcp.dart';
+import 'package:metalore/core/profile/profile.dart';
+import 'package:metalore/core/speech/speech.dart';
+
+import 'package:metalore/core/llm/data/provider_info_storage.dart';
+import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+
 import '../data/appearance.dart';
 import '../data/language.dart';
 import '../data/preferences.dart';
-import '../../core/profile/data/ai_profile_store.dart';
-import '../../features/home/domain/data/chat_store.dart';
 import '../data/default_options.dart';
-import '../../core/mcp/data/mcpserver_store.dart';
-import '../../core/llm/data/provider_info_storage.dart';
-import '../../core/speechservice/data/speechservice_store.dart';
 
 /// Centralized service locator for application repositories and services.
 /// Handles initialization and dependency management without external libraries.
