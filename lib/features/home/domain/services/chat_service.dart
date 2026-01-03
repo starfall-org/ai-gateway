@@ -5,7 +5,7 @@ import 'package:metalore/core/profile/profile.dart';
 
 import 'package:metalore/core/profile/data/ai_profile_store.dart';
 import 'package:metalore/core/llm/data/provider_info_storage.dart';
-import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+import 'package:metalore/core/storage/mcpserver_store.dart';
 
 import 'package:llm/models/api/api.dart'; // Ensure this uses package import if possible, or relative if inside llm
 // Wait, ChatService is in app, llm is package.

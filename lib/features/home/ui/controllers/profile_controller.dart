@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:metalore/core/profile/profile.dart';
 import 'package:mcp/mcp.dart';
-import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+import 'package:metalore/core/storage/mcpserver_store.dart';
 
 /// Controller responsible for AI profile and MCP server management
 class ProfileController extends ChangeNotifier {

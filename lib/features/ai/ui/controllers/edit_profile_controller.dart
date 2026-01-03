@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import 'package:metalore/core/profile/profile.dart';
 import 'package:mcp/mcp.dart';
-import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+import 'package:metalore/core/storage/mcpserver_store.dart';
 import 'package:metalore/core/profile/data/ai_profile_store.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/app_snackbar.dart';

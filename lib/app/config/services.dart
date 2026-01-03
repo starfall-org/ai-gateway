@@ -5,7 +5,7 @@ import 'package:metalore/core/profile/profile.dart';
 import 'package:metalore/core/speech/speech.dart';
 
 import 'package:metalore/core/llm/data/provider_info_storage.dart';
-import 'package:metalore/core/mcp/data/mcpserver_store.dart';
+import 'package:metalore/core/storage/mcpserver_store.dart';
 
 import '../data/appearance.dart';
 import '../data/language.dart';
