@@ -49,7 +49,7 @@ class OpenAI extends AIBaseApi {
     return payload;
   }
 
-  Future<OpenAiResponses> responses(AIRequest request) async {
+  Future<OpenAiResponses> responses(OpenAiResponsesRequest request) async {
     final input = <Map<String, dynamic>>[];
 
     for (final msg in request.messages) {
@@ -282,8 +282,7 @@ class OpenAI extends AIBaseApi {
       'model': request.model,
       if (request.extra['n'] != null) 'n': request.extra['n'],
       if (request.extra['size'] != null) 'size': request.extra['size'],
-      if (request.extra['quality'] != null)
-        'quality': request.extra['quality'],
+      if (request.extra['quality'] != null) 'quality': request.extra['quality'],
       if (request.extra['response_format'] != null)
         'response_format': request.extra['response_format'],
       ...request.extra,
@@ -358,9 +357,7 @@ class OpenAI extends AIBaseApi {
         raw: {'content_type': accept},
       );
     }
-    throw Exception(
-      'OpenAI audio speech error ${res.statusCode}: ${res.body}',
-    );
+    throw Exception('OpenAI audio speech error ${res.statusCode}: ${res.body}');
   }
 
   Future<AIResponse> videos(AIRequest request) async {

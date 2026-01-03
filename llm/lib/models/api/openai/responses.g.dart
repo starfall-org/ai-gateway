@@ -186,3 +186,55 @@ Map<String, dynamic> _$UsageDetailsToJson(UsageDetails instance) =>
       'audio_tokens': instance.audioTokens,
       'reasoning_tokens': instance.reasoningTokens,
     };
+
+OpenAiResponsesRequest _$OpenAiResponsesRequestFromJson(
+  Map<String, dynamic> json,
+) => OpenAiResponsesRequest(
+  model: json['model'] as String,
+  input: json['input'],
+  instructions: json['instructions'] as String?,
+  maxOutputTokens: (json['max_output_tokens'] as num?)?.toInt(),
+  include: (json['include'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  previousResponseId: json['previous_response_id'] as String?,
+  store: json['store'] as bool?,
+  metadata: json['metadata'] as Map<String, dynamic>?,
+  serviceTier: json['service_tier'] as String?,
+  background: json['background'] as bool?,
+  promptCacheKey: json['prompt_cache_key'] as String?,
+  promptCacheRetention: json['prompt_cache_retention'] as String?,
+  safetyIdentifier: json['safety_identifier'] as String?,
+  parallelToolCalls: json['parallel_tool_calls'] as bool?,
+  maxToolCalls: (json['max_tool_calls'] as num?)?.toInt(),
+  reasoning: json['reasoning'] == null
+      ? null
+      : ReasoningConfig.fromJson(json['reasoning'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$OpenAiResponsesRequestToJson(
+  OpenAiResponsesRequest instance,
+) => <String, dynamic>{
+  'model': instance.model,
+  'input': instance.input,
+  'instructions': instance.instructions,
+  'max_output_tokens': instance.maxOutputTokens,
+  'include': instance.include,
+  'previous_response_id': instance.previousResponseId,
+  'store': instance.store,
+  'metadata': instance.metadata,
+  'service_tier': instance.serviceTier,
+  'background': instance.background,
+  'prompt_cache_key': instance.promptCacheKey,
+  'prompt_cache_retention': instance.promptCacheRetention,
+  'safety_identifier': instance.safetyIdentifier,
+  'parallel_tool_calls': instance.parallelToolCalls,
+  'max_tool_calls': instance.maxToolCalls,
+  'reasoning': instance.reasoning,
+};
+
+ReasoningConfig _$ReasoningConfigFromJson(Map<String, dynamic> json) =>
+    ReasoningConfig(effort: json['effort'] as String);
+
+Map<String, dynamic> _$ReasoningConfigToJson(ReasoningConfig instance) =>
+    <String, dynamic>{'effort': instance.effort};

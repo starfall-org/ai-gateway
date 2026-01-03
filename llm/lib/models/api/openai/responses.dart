@@ -98,7 +98,8 @@ class Annotation {
     this.title,
   });
 
-  factory Annotation.fromJson(Map<String, dynamic> json) => _$AnnotationFromJson(json);
+  factory Annotation.fromJson(Map<String, dynamic> json) =>
+      _$AnnotationFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnnotationToJson(this);
 }
@@ -118,7 +119,8 @@ class Logprobs {
     required this.topLogprobs,
   });
 
-  factory Logprobs.fromJson(Map<String, dynamic> json) => _$LogprobsFromJson(json);
+  factory Logprobs.fromJson(Map<String, dynamic> json) =>
+      _$LogprobsFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogprobsToJson(this);
 }
@@ -129,13 +131,10 @@ class TopLogprob {
   final double logprob;
   final List<int> bytes;
 
-  TopLogprob({
-    required this.token,
-    required this.logprob,
-    required this.bytes,
-  });
+  TopLogprob({required this.token, required this.logprob, required this.bytes});
 
-  factory TopLogprob.fromJson(Map<String, dynamic> json) => _$TopLogprobFromJson(json);
+  factory TopLogprob.fromJson(Map<String, dynamic> json) =>
+      _$TopLogprobFromJson(json);
 
   Map<String, dynamic> toJson() => _$TopLogprobToJson(this);
 }
@@ -145,12 +144,10 @@ class ErrorInfo {
   final String code;
   final String message;
 
-  ErrorInfo({
-    required this.code,
-    required this.message,
-  });
+  ErrorInfo({required this.code, required this.message});
 
-  factory ErrorInfo.fromJson(Map<String, dynamic> json) => _$ErrorInfoFromJson(json);
+  factory ErrorInfo.fromJson(Map<String, dynamic> json) =>
+      _$ErrorInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ErrorInfoToJson(this);
 }
@@ -160,12 +157,10 @@ class IncompleteDetails {
   final String reason;
   final String type;
 
-  IncompleteDetails({
-    required this.reason,
-    required this.type,
-  });
+  IncompleteDetails({required this.reason, required this.type});
 
-  factory IncompleteDetails.fromJson(Map<String, dynamic> json) => _$IncompleteDetailsFromJson(json);
+  factory IncompleteDetails.fromJson(Map<String, dynamic> json) =>
+      _$IncompleteDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$IncompleteDetailsToJson(this);
 }
@@ -191,7 +186,8 @@ class ResponsesUsage {
     required this.outputTokensDetails,
   });
 
-  factory ResponsesUsage.fromJson(Map<String, dynamic> json) => _$ResponsesUsageFromJson(json);
+  factory ResponsesUsage.fromJson(Map<String, dynamic> json) =>
+      _$ResponsesUsageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ResponsesUsageToJson(this);
 }
@@ -217,7 +213,72 @@ class UsageDetails {
     this.reasoningTokens,
   });
 
-  factory UsageDetails.fromJson(Map<String, dynamic> json) => _$UsageDetailsFromJson(json);
+  factory UsageDetails.fromJson(Map<String, dynamic> json) =>
+      _$UsageDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$UsageDetailsToJson(this);
+}
+
+@JsonSerializable()
+class OpenAiResponsesRequest {
+  final String model;
+  final dynamic input;
+  final String? instructions;
+  @JsonKey(name: 'max_output_tokens')
+  final int? maxOutputTokens;
+  final List<String>? include;
+  @JsonKey(name: 'previous_response_id')
+  final String? previousResponseId;
+  final bool? store;
+  final Map<String, dynamic>? metadata;
+  @JsonKey(name: 'service_tier')
+  final String? serviceTier;
+  final bool? background;
+  @JsonKey(name: 'prompt_cache_key')
+  final String? promptCacheKey;
+  @JsonKey(name: 'prompt_cache_retention')
+  final String? promptCacheRetention;
+  @JsonKey(name: 'safety_identifier')
+  final String? safetyIdentifier;
+  @JsonKey(name: 'parallel_tool_calls')
+  final bool? parallelToolCalls;
+  @JsonKey(name: 'max_tool_calls')
+  final int? maxToolCalls;
+  final ReasoningConfig? reasoning;
+
+  OpenAiResponsesRequest({
+    required this.model,
+    this.input,
+    this.instructions,
+    this.maxOutputTokens,
+    this.include,
+    this.previousResponseId,
+    this.store,
+    this.metadata,
+    this.serviceTier,
+    this.background,
+    this.promptCacheKey,
+    this.promptCacheRetention,
+    this.safetyIdentifier,
+    this.parallelToolCalls,
+    this.maxToolCalls,
+    this.reasoning,
+  });
+
+  factory OpenAiResponsesRequest.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiResponsesRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OpenAiResponsesRequestToJson(this);
+}
+
+@JsonSerializable()
+class ReasoningConfig {
+  final String effort;
+
+  ReasoningConfig({required this.effort});
+
+  factory ReasoningConfig.fromJson(Map<String, dynamic> json) =>
+      _$ReasoningConfigFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReasoningConfigToJson(this);
 }

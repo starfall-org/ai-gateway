@@ -6,6 +6,7 @@ part 'models.g.dart';
 @JsonSerializable()
 class GeminiModelsResponse {
   final List<GeminiModel>? models;
+  @JsonKey(name: 'next_page_token')
   final int? nextPageToken;
 
   GeminiModelsResponse({
@@ -22,9 +23,11 @@ class GeminiModelsResponse {
 @JsonSerializable()
 class GeminiModel {
   final String? name;
+  @JsonKey(name: 'display_name')
   final String? displayName;
   final String? description;
   final String? version;
+  @JsonKey(name: 'base_model_id')
   final String? baseModelId;
   final GeminiModelCapabilities? capabilities;
   final GeminiModelInput? input;

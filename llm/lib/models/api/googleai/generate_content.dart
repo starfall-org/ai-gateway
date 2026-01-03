@@ -6,10 +6,15 @@ part 'generate_content.g.dart';
 @JsonSerializable()
 class GeminiGenerateContentRequest {
   final List<GeminiContent> contents;
+  
+  @JsonKey(name: 'generation_config')
   final GeminiGenerationConfig? generationConfig;
   final List<GeminiTool>? tools;
+  @JsonKey(name: 'tool_config')
   final GeminiToolConfig? toolConfig;
+  @JsonKey(name: 'safety_settings')
   final List<GeminiSafetySetting>? safetySettings;
+  @JsonKey(name: 'system_instruction')
   final dynamic systemInstruction; // Can be string or GeminiContent
 
   GeminiGenerateContentRequest({
@@ -43,11 +48,17 @@ class GeminiContent {
 @JsonSerializable()
 class GeminiPart {
   final String? text;
+  @JsonKey(name: 'inline_data')
   final GeminiInlineData? inlineData;
+  @JsonKey(name: 'file_data')
   final GeminiFileData? fileData;
+  @JsonKey(name: 'function_call')
   final GeminiFunctionCall? functionCall;
+  @JsonKey(name: 'function_response')
   final GeminiFunctionResponse? functionResponse;
+  @JsonKey(name: 'executable_code')
   final GeminiExecutableCode? executableCode;
+  @JsonKey(name: 'code_execution_result')
   final GeminiCodeExecutionResult? codeExecutionResult;
 
   GeminiPart({
@@ -147,12 +158,18 @@ class GeminiCodeExecutionResult {
 @JsonSerializable()
 class GeminiGenerationConfig {
   final double? temperature;
+  @JsonKey(name: 'max_output_tokens')
   final int? maxOutputTokens;
   final double? topP;
+  @JsonKey(name: 'top_k')
   final int? topK;
+  @JsonKey(name: 'stop_sequences')
   final List<String>? stopSequences;
+  @JsonKey(name: 'response_mime_type')
   final String? responseMimeType;
+  @JsonKey(name: 'response_schema')
   final Map<String, dynamic>? responseSchema;
+  @JsonKey(name: 'candidate_count')
   final int? candidateCount;
 
   GeminiGenerationConfig({
@@ -174,7 +191,9 @@ class GeminiGenerationConfig {
 
 @JsonSerializable()
 class GeminiTool {
+  @JsonKey(name: 'function_declarations')
   final List<GeminiFunctionDeclaration>? functionDeclarations;
+  @JsonKey(name: 'code_execution')
   final GeminiCodeExecution? codeExecution;
 
   GeminiTool({
@@ -231,6 +250,7 @@ class GeminiToolConfig {
 @JsonSerializable()
 class GeminiFunctionCallingConfig {
   final String? mode;
+  @JsonKey(name: 'allowed_function_names')
   final List<String>? allowedFunctionNames;
 
   GeminiFunctionCallingConfig({
@@ -281,12 +301,18 @@ class GeminiGenerateContentResponse {
 @JsonSerializable()
 class GeminiCandidate {
   final GeminiContent? content;
+  @JsonKey(name: 'finish_reason')
   final String? finishReason;
+  @JsonKey(name: 'avg_logprobs')
   final double? avgLogprobs;
   final int? index;
+  @JsonKey(name: 'safety_ratings')
   final List<GeminiSafetyRating>? safetyRatings;
+  @JsonKey(name: 'citation_metadata')
   final GeminiCitationMetadata? citationMetadata;
+  @JsonKey(name: 'grounding_metadata')
   final GeminiGroundingMetadata? groundingMetadata;
+  @JsonKey(name: 'logprobs_result')
   final GeminiLogprobsResult? logprobsResult;
 
   GeminiCandidate({
@@ -518,9 +544,13 @@ class GeminiTopCandidate {
 
 @JsonSerializable()
 class GeminiUsageMetadata {
+  @JsonKey(name: 'prompt_token_count')
   final int? promptTokenCount;
+  @JsonKey(name: 'candidates_token_count')
   final int? candidatesTokenCount;
+  @JsonKey(name: 'total_token_count')
   final int? totalTokenCount;
+  @JsonKey(name: 'cached_content_token_count')
   final GeminiCachedContentTokenCount? cachedContentTokenCount;
 
   GeminiUsageMetadata({

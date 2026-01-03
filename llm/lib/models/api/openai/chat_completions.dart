@@ -8,35 +8,52 @@ class OpenAiChatCompletionRequest {
   final String model;
   final List<RequestMessage> messages;
   final Map<String, String>? metadata;
+  @JsonKey(name: 'top_logprobs')
   final int? topLogprobs;
   final double? temperature;
+  @JsonKey(name: 'top_p')
   final double? topP;
   final String? user;
+  @JsonKey(name: 'safety_identifier')
   final String? safetyIdentifier;
+  @JsonKey(name: 'prompt_cache_key')
   final String? promptCacheKey;
+  @JsonKey(name: 'service_tier')
   final String? serviceTier;
   final List<String>? modalities;
   final String? verbosity;
+  @JsonKey(name: 'reasoning_effort')
   final String? reasoningEffort;
+  @JsonKey(name: 'max_completion_tokens')
   final int? maxCompletionTokens;
+  @JsonKey(name: 'frequency_penalty')
   final double? frequencyPenalty;
+  @JsonKey(name: 'presence_penalty')
   final double? presencePenalty;
+  @JsonKey(name: 'web_search_options')
   final WebSearchOptions? webSearchOptions;
+  @JsonKey(name: 'response_format')
   final ResponseFormat? responseFormat;
   final AudioConfig? audio;
   final bool? store;
   final bool? stream;
   final String? stop;
+  @JsonKey(name: 'logit_bias')
   final Map<String, dynamic>? logitBias;
   final bool? logprobs;
+  @JsonKey(name: 'max_tokens')
   final int? maxTokens;
   final int? n;
   final Prediction? prediction;
   final int? seed;
+  @JsonKey(name: 'stream_options')
   final StreamOptions? streamOptions;
   final List<Tool>? tools;
+  @JsonKey(name: 'tool_choice')
   final String? toolChoice;
+  @JsonKey(name: 'parallel_tool_calls')
   final bool? parallelToolCalls;
+  @JsonKey(name: 'function_call')
   final String? functionCall;
   final List<FunctionDefinition>? functions;
 
@@ -99,7 +116,9 @@ class RequestMessage {
 
 @JsonSerializable()
 class WebSearchOptions {
+  @JsonKey(name: 'user_location')
   final UserLocation? userLocation;
+  @JsonKey(name: 'search_context_size')
   final String? searchContextSize;
 
   WebSearchOptions({this.userLocation, this.searchContextSize});
@@ -178,7 +197,9 @@ class Prediction {
 
 @JsonSerializable()
 class StreamOptions {
+  @JsonKey(name: 'include_usage')
   final bool? includeUsage;
+  @JsonKey(name: 'include_obfuscation')
   final bool? includeObfuscation;
 
   StreamOptions({this.includeUsage, this.includeObfuscation});
@@ -230,7 +251,9 @@ class OpenAiChatCompletion {
   final String? model;
   final List<Choice>? choices;
   final ChatCompletionUsage? usage;
+  @JsonKey(name: 'system_fingerprint')
   final String? systemFingerprint;
+  @JsonKey(name: 'service_tier')
   final String? serviceTier;
 
   OpenAiChatCompletion({
@@ -255,6 +278,7 @@ class Choice {
   final int? index;
   final Message? message;
   final Delta? delta;
+  @JsonKey(name: 'finish_reason')
   final String? finishReason;
   final Logprobs? logprobs;
 
@@ -276,10 +300,13 @@ class Message {
   final String? content;
   final String? refusal;
   final String role;
+  @JsonKey(name: 'function_call')
   final FunctionCall? functionCall;
+  @JsonKey(name: 'tool_calls')
   final List<ToolCall>? toolCalls;
   final List<Annotation>? annotations;
   final Audio? audio;
+  @JsonKey(name: 'reasoning_content')
   final String? reasoningContent;
 
   Message({
@@ -304,7 +331,9 @@ class Delta {
   final String? content;
   final String? role;
   final String? refusal;
+  @JsonKey(name: 'function_call')
   final FunctionCall? functionCall;
+  @JsonKey(name: 'tool_calls')
   final List<ToolCall>? toolCalls;
 
   Delta({
@@ -432,10 +461,15 @@ class TopLogprob {
 
 @JsonSerializable()
 class ChatCompletionUsage {
+  @JsonKey(name: 'prompt_tokens')
   final int? promptTokens;
+  @JsonKey(name: 'completion_tokens')
   final int? completionTokens;
+  @JsonKey(name: 'total_tokens')
   final int? totalTokens;
+  @JsonKey(name: 'completion_tokens_details')
   final CompletionTokenDetails? completionTokensDetails;
+  @JsonKey(name: 'prompt_tokens_details')
   final PromptTokenDetails? promptTokensDetails;
 
   ChatCompletionUsage({
