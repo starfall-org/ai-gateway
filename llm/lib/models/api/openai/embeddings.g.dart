@@ -26,25 +26,23 @@ Map<String, dynamic> _$OpenAiEmbeddingsRequestToJson(
   'user': instance.user,
 };
 
-OpenAiEmbeddingsResponse _$OpenAiEmbeddingsResponseFromJson(
-  Map<String, dynamic> json,
-) => OpenAiEmbeddingsResponse(
-  object: json['object'] as String,
-  data: (json['data'] as List<dynamic>)
-      .map((e) => EmbeddingData.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  model: json['model'] as String,
-  usage: EmbeddingUsage.fromJson(json['usage'] as Map<String, dynamic>),
-);
+OpenAiEmbeddings _$OpenAiEmbeddingsFromJson(Map<String, dynamic> json) =>
+    OpenAiEmbeddings(
+      object: json['object'] as String,
+      data: (json['data'] as List<dynamic>)
+          .map((e) => EmbeddingData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      model: json['model'] as String,
+      usage: EmbeddingUsage.fromJson(json['usage'] as Map<String, dynamic>),
+    );
 
-Map<String, dynamic> _$OpenAiEmbeddingsResponseToJson(
-  OpenAiEmbeddingsResponse instance,
-) => <String, dynamic>{
-  'object': instance.object,
-  'data': instance.data,
-  'model': instance.model,
-  'usage': instance.usage,
-};
+Map<String, dynamic> _$OpenAiEmbeddingsToJson(OpenAiEmbeddings instance) =>
+    <String, dynamic>{
+      'object': instance.object,
+      'data': instance.data,
+      'model': instance.model,
+      'usage': instance.usage,
+    };
 
 EmbeddingData _$EmbeddingDataFromJson(Map<String, dynamic> json) =>
     EmbeddingData(

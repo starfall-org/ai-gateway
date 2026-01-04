@@ -1,6 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'basic_model.g.dart';
+
+@JsonSerializable()
 class BasicModel {
   final String id;
+  @JsonKey(name: 'display_name')
   final String displayName;
+  @JsonKey(name: 'owned_by')
   final String ownedBy;
 
   BasicModel({
@@ -9,31 +16,22 @@ class BasicModel {
     required this.ownedBy,
   });
 
-  factory BasicModel.fromAnthropicJson(Map<String, dynamic> json) {
-    return BasicModel(
-      id: json['id'],
-      displayName: json['display_name'],
-      ownedBy: "anthropic",
-    );
-  }
-
-  factory BasicModel.fromOpenAiJson(Map<String, dynamic> json) {
-    return BasicModel(
-      id: json['id'],
-      displayName: json['id'],
-      ownedBy: json['owned_by'] ?? "unknown",
-    );
-  }
-
   factory BasicModel.fromJson(Map<String, dynamic> json) {
-    try {
-      return BasicModel.fromAnthropicJson(json);
-    } catch (e) {
-      return BasicModel.fromOpenAiJson(json);
-    }
+    return BasicModel(
+      id: json['id'],
+      displayName: json['display_name'] ?? json['id'],
+      ownedBy:
+          json['owned_by'] ??
+          (json['display_name'] != null ? 'anthropic' : 'unknown'),
+    );
   }
 
   Map<String, dynamic> toJson() {
     return {'id': id, 'display_name': displayName, 'owned_by': ownedBy};
+  }
+
+  @override
+  String toString() {
+    return 'BasicModel(id: $id, displayName: $displayName, ownedBy: $ownedBy)';
   }
 }

@@ -6,9 +6,9 @@ part of 'chat_completions.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpenAiChatCompletionRequest _$OpenAiChatCompletionRequestFromJson(
+OpenAiChatCompletionsRequest _$OpenAiChatCompletionsRequestFromJson(
   Map<String, dynamic> json,
-) => OpenAiChatCompletionRequest(
+) => OpenAiChatCompletionsRequest(
   model: json['model'] as String,
   messages: (json['messages'] as List<dynamic>)
       .map((e) => RequestMessage.fromJson(e as Map<String, dynamic>))
@@ -16,93 +16,95 @@ OpenAiChatCompletionRequest _$OpenAiChatCompletionRequestFromJson(
   metadata: (json['metadata'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, e as String),
   ),
-  topLogprobs: (json['topLogprobs'] as num?)?.toInt(),
+  topLogprobs: (json['top_logprobs'] as num?)?.toInt(),
   temperature: (json['temperature'] as num?)?.toDouble(),
-  topP: (json['topP'] as num?)?.toDouble(),
+  topP: (json['top_p'] as num?)?.toDouble(),
   user: json['user'] as String?,
-  safetyIdentifier: json['safetyIdentifier'] as String?,
-  promptCacheKey: json['promptCacheKey'] as String?,
-  serviceTier: json['serviceTier'] as String?,
+  safetyIdentifier: json['safety_identifier'] as String?,
+  promptCacheKey: json['prompt_cache_key'] as String?,
+  serviceTier: json['service_tier'] as String?,
   modalities: (json['modalities'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
   verbosity: json['verbosity'] as String?,
-  reasoningEffort: json['reasoningEffort'] as String?,
-  maxCompletionTokens: (json['maxCompletionTokens'] as num?)?.toInt(),
-  frequencyPenalty: (json['frequencyPenalty'] as num?)?.toDouble(),
-  presencePenalty: (json['presencePenalty'] as num?)?.toDouble(),
-  webSearchOptions: json['webSearchOptions'] == null
+  reasoningEffort: json['reasoning_effort'] as String?,
+  maxCompletionTokens: (json['max_completion_tokens'] as num?)?.toInt(),
+  frequencyPenalty: (json['frequency_penalty'] as num?)?.toDouble(),
+  presencePenalty: (json['presence_penalty'] as num?)?.toDouble(),
+  webSearchOptions: json['web_search_options'] == null
       ? null
       : WebSearchOptions.fromJson(
-          json['webSearchOptions'] as Map<String, dynamic>,
+          json['web_search_options'] as Map<String, dynamic>,
         ),
-  responseFormat: json['responseFormat'] == null
+  responseFormat: json['response_format'] == null
       ? null
-      : ResponseFormat.fromJson(json['responseFormat'] as Map<String, dynamic>),
+      : ResponseFormat.fromJson(
+          json['response_format'] as Map<String, dynamic>,
+        ),
   audio: json['audio'] == null
       ? null
       : AudioConfig.fromJson(json['audio'] as Map<String, dynamic>),
   store: json['store'] as bool?,
   stream: json['stream'] as bool?,
   stop: json['stop'] as String?,
-  logitBias: json['logitBias'] as Map<String, dynamic>?,
+  logitBias: json['logit_bias'] as Map<String, dynamic>?,
   logprobs: json['logprobs'] as bool?,
-  maxTokens: (json['maxTokens'] as num?)?.toInt(),
+  maxTokens: (json['max_tokens'] as num?)?.toInt(),
   n: (json['n'] as num?)?.toInt(),
   prediction: json['prediction'] == null
       ? null
       : Prediction.fromJson(json['prediction'] as Map<String, dynamic>),
   seed: (json['seed'] as num?)?.toInt(),
-  streamOptions: json['streamOptions'] == null
+  streamOptions: json['stream_options'] == null
       ? null
-      : StreamOptions.fromJson(json['streamOptions'] as Map<String, dynamic>),
+      : StreamOptions.fromJson(json['stream_options'] as Map<String, dynamic>),
   tools: (json['tools'] as List<dynamic>?)
       ?.map((e) => Tool.fromJson(e as Map<String, dynamic>))
       .toList(),
-  toolChoice: json['toolChoice'] as String?,
-  parallelToolCalls: json['parallelToolCalls'] as bool?,
-  functionCall: json['functionCall'] as String?,
+  toolChoice: json['tool_choice'] as String?,
+  parallelToolCalls: json['parallel_tool_calls'] as bool?,
+  functionCall: json['function_call'] as String?,
   functions: (json['functions'] as List<dynamic>?)
       ?.map((e) => FunctionDefinition.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
-Map<String, dynamic> _$OpenAiChatCompletionRequestToJson(
-  OpenAiChatCompletionRequest instance,
+Map<String, dynamic> _$OpenAiChatCompletionsRequestToJson(
+  OpenAiChatCompletionsRequest instance,
 ) => <String, dynamic>{
   'model': instance.model,
   'messages': instance.messages,
   'metadata': instance.metadata,
-  'topLogprobs': instance.topLogprobs,
+  'top_logprobs': instance.topLogprobs,
   'temperature': instance.temperature,
-  'topP': instance.topP,
+  'top_p': instance.topP,
   'user': instance.user,
-  'safetyIdentifier': instance.safetyIdentifier,
-  'promptCacheKey': instance.promptCacheKey,
-  'serviceTier': instance.serviceTier,
+  'safety_identifier': instance.safetyIdentifier,
+  'prompt_cache_key': instance.promptCacheKey,
+  'service_tier': instance.serviceTier,
   'modalities': instance.modalities,
   'verbosity': instance.verbosity,
-  'reasoningEffort': instance.reasoningEffort,
-  'maxCompletionTokens': instance.maxCompletionTokens,
-  'frequencyPenalty': instance.frequencyPenalty,
-  'presencePenalty': instance.presencePenalty,
-  'webSearchOptions': instance.webSearchOptions,
-  'responseFormat': instance.responseFormat,
+  'reasoning_effort': instance.reasoningEffort,
+  'max_completion_tokens': instance.maxCompletionTokens,
+  'frequency_penalty': instance.frequencyPenalty,
+  'presence_penalty': instance.presencePenalty,
+  'web_search_options': instance.webSearchOptions,
+  'response_format': instance.responseFormat,
   'audio': instance.audio,
   'store': instance.store,
   'stream': instance.stream,
   'stop': instance.stop,
-  'logitBias': instance.logitBias,
+  'logit_bias': instance.logitBias,
   'logprobs': instance.logprobs,
-  'maxTokens': instance.maxTokens,
+  'max_tokens': instance.maxTokens,
   'n': instance.n,
   'prediction': instance.prediction,
   'seed': instance.seed,
-  'streamOptions': instance.streamOptions,
+  'stream_options': instance.streamOptions,
   'tools': instance.tools,
-  'toolChoice': instance.toolChoice,
-  'parallelToolCalls': instance.parallelToolCalls,
-  'functionCall': instance.functionCall,
+  'tool_choice': instance.toolChoice,
+  'parallel_tool_calls': instance.parallelToolCalls,
+  'function_call': instance.functionCall,
   'functions': instance.functions,
 };
 
@@ -122,16 +124,18 @@ Map<String, dynamic> _$RequestMessageToJson(RequestMessage instance) =>
 
 WebSearchOptions _$WebSearchOptionsFromJson(Map<String, dynamic> json) =>
     WebSearchOptions(
-      userLocation: json['userLocation'] == null
+      userLocation: json['user_location'] == null
           ? null
-          : UserLocation.fromJson(json['userLocation'] as Map<String, dynamic>),
-      searchContextSize: json['searchContextSize'] as String?,
+          : UserLocation.fromJson(
+              json['user_location'] as Map<String, dynamic>,
+            ),
+      searchContextSize: json['search_context_size'] as String?,
     );
 
 Map<String, dynamic> _$WebSearchOptionsToJson(WebSearchOptions instance) =>
     <String, dynamic>{
-      'userLocation': instance.userLocation,
-      'searchContextSize': instance.searchContextSize,
+      'user_location': instance.userLocation,
+      'search_context_size': instance.searchContextSize,
     };
 
 UserLocation _$UserLocationFromJson(Map<String, dynamic> json) => UserLocation(
@@ -188,14 +192,14 @@ Map<String, dynamic> _$PredictionToJson(Prediction instance) =>
 
 StreamOptions _$StreamOptionsFromJson(Map<String, dynamic> json) =>
     StreamOptions(
-      includeUsage: json['includeUsage'] as bool?,
-      includeObfuscation: json['includeObfuscation'] as bool?,
+      includeUsage: json['include_usage'] as bool?,
+      includeObfuscation: json['include_obfuscation'] as bool?,
     );
 
 Map<String, dynamic> _$StreamOptionsToJson(StreamOptions instance) =>
     <String, dynamic>{
-      'includeUsage': instance.includeUsage,
-      'includeObfuscation': instance.includeObfuscation,
+      'include_usage': instance.includeUsage,
+      'include_obfuscation': instance.includeObfuscation,
     };
 
 Tool _$ToolFromJson(Map<String, dynamic> json) => Tool(
@@ -226,9 +230,9 @@ Map<String, dynamic> _$FunctionDefinitionToJson(FunctionDefinition instance) =>
       'strict': instance.strict,
     };
 
-OpenAiChatCompletion _$OpenAiChatCompletionFromJson(
+OpenAiChatCompletions _$OpenAiChatCompletionsFromJson(
   Map<String, dynamic> json,
-) => OpenAiChatCompletion(
+) => OpenAiChatCompletions(
   id: json['id'] as String?,
   object: json['object'] as String?,
   created: (json['created'] as num?)?.toInt(),
@@ -239,12 +243,12 @@ OpenAiChatCompletion _$OpenAiChatCompletionFromJson(
   usage: json['usage'] == null
       ? null
       : ChatCompletionUsage.fromJson(json['usage'] as Map<String, dynamic>),
-  systemFingerprint: json['systemFingerprint'] as String?,
-  serviceTier: json['serviceTier'] as String?,
+  systemFingerprint: json['system_fingerprint'] as String?,
+  serviceTier: json['service_tier'] as String?,
 );
 
-Map<String, dynamic> _$OpenAiChatCompletionToJson(
-  OpenAiChatCompletion instance,
+Map<String, dynamic> _$OpenAiChatCompletionsToJson(
+  OpenAiChatCompletions instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'object': instance.object,
@@ -252,8 +256,8 @@ Map<String, dynamic> _$OpenAiChatCompletionToJson(
   'model': instance.model,
   'choices': instance.choices,
   'usage': instance.usage,
-  'systemFingerprint': instance.systemFingerprint,
-  'serviceTier': instance.serviceTier,
+  'system_fingerprint': instance.systemFingerprint,
+  'service_tier': instance.serviceTier,
 };
 
 Choice _$ChoiceFromJson(Map<String, dynamic> json) => Choice(
@@ -264,7 +268,7 @@ Choice _$ChoiceFromJson(Map<String, dynamic> json) => Choice(
   delta: json['delta'] == null
       ? null
       : Delta.fromJson(json['delta'] as Map<String, dynamic>),
-  finishReason: json['finishReason'] as String?,
+  finishReason: json['finish_reason'] as String?,
   logprobs: json['logprobs'] == null
       ? null
       : Logprobs.fromJson(json['logprobs'] as Map<String, dynamic>),
@@ -274,7 +278,7 @@ Map<String, dynamic> _$ChoiceToJson(Choice instance) => <String, dynamic>{
   'index': instance.index,
   'message': instance.message,
   'delta': instance.delta,
-  'finishReason': instance.finishReason,
+  'finish_reason': instance.finishReason,
   'logprobs': instance.logprobs,
 };
 
@@ -282,10 +286,10 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
   content: json['content'] as String?,
   refusal: json['refusal'] as String?,
   role: json['role'] as String,
-  functionCall: json['functionCall'] == null
+  functionCall: json['function_call'] == null
       ? null
-      : FunctionCall.fromJson(json['functionCall'] as Map<String, dynamic>),
-  toolCalls: (json['toolCalls'] as List<dynamic>?)
+      : FunctionCall.fromJson(json['function_call'] as Map<String, dynamic>),
+  toolCalls: (json['tool_calls'] as List<dynamic>?)
       ?.map((e) => ToolCall.fromJson(e as Map<String, dynamic>))
       .toList(),
   annotations: (json['annotations'] as List<dynamic>?)
@@ -294,38 +298,44 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
   audio: json['audio'] == null
       ? null
       : Audio.fromJson(json['audio'] as Map<String, dynamic>),
-  reasoningContent: json['reasoningContent'] as String?,
+  reasoningContent: json['reasoning_content'] as String?,
 );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
   'content': instance.content,
   'refusal': instance.refusal,
   'role': instance.role,
-  'functionCall': instance.functionCall,
-  'toolCalls': instance.toolCalls,
+  'function_call': instance.functionCall,
+  'tool_calls': instance.toolCalls,
   'annotations': instance.annotations,
   'audio': instance.audio,
-  'reasoningContent': instance.reasoningContent,
+  'reasoning_content': instance.reasoningContent,
 };
 
 Delta _$DeltaFromJson(Map<String, dynamic> json) => Delta(
   content: json['content'] as String?,
   role: json['role'] as String?,
   refusal: json['refusal'] as String?,
-  functionCall: json['functionCall'] == null
+  functionCall: json['function_call'] == null
       ? null
-      : FunctionCall.fromJson(json['functionCall'] as Map<String, dynamic>),
-  toolCalls: (json['toolCalls'] as List<dynamic>?)
+      : FunctionCall.fromJson(json['function_call'] as Map<String, dynamic>),
+  toolCalls: (json['tool_calls'] as List<dynamic>?)
       ?.map((e) => ToolCall.fromJson(e as Map<String, dynamic>))
       .toList(),
+  audio: json['audio'] == null
+      ? null
+      : Audio.fromJson(json['audio'] as Map<String, dynamic>),
+  reasoningContent: json['reasoning_content'] as String?,
 );
 
 Map<String, dynamic> _$DeltaToJson(Delta instance) => <String, dynamic>{
   'content': instance.content,
   'role': instance.role,
   'refusal': instance.refusal,
-  'functionCall': instance.functionCall,
-  'toolCalls': instance.toolCalls,
+  'function_call': instance.functionCall,
+  'tool_calls': instance.toolCalls,
+  'audio': instance.audio,
+  'reasoning_content': instance.reasoningContent,
 };
 
 ToolCall _$ToolCallFromJson(Map<String, dynamic> json) => ToolCall(
@@ -441,29 +451,29 @@ Map<String, dynamic> _$TopLogprobToJson(TopLogprob instance) =>
 
 ChatCompletionUsage _$ChatCompletionUsageFromJson(Map<String, dynamic> json) =>
     ChatCompletionUsage(
-      promptTokens: (json['promptTokens'] as num?)?.toInt(),
-      completionTokens: (json['completionTokens'] as num?)?.toInt(),
-      totalTokens: (json['totalTokens'] as num?)?.toInt(),
-      completionTokensDetails: json['completionTokensDetails'] == null
+      promptTokens: (json['prompt_tokens'] as num?)?.toInt(),
+      completionTokens: (json['completion_tokens'] as num?)?.toInt(),
+      totalTokens: (json['total_tokens'] as num?)?.toInt(),
+      completionTokensDetails: json['completion_tokens_details'] == null
           ? null
           : CompletionTokenDetails.fromJson(
-              json['completionTokensDetails'] as Map<String, dynamic>,
+              json['completion_tokens_details'] as Map<String, dynamic>,
             ),
-      promptTokensDetails: json['promptTokensDetails'] == null
+      promptTokensDetails: json['prompt_tokens_details'] == null
           ? null
           : PromptTokenDetails.fromJson(
-              json['promptTokensDetails'] as Map<String, dynamic>,
+              json['prompt_tokens_details'] as Map<String, dynamic>,
             ),
     );
 
 Map<String, dynamic> _$ChatCompletionUsageToJson(
   ChatCompletionUsage instance,
 ) => <String, dynamic>{
-  'promptTokens': instance.promptTokens,
-  'completionTokens': instance.completionTokens,
-  'totalTokens': instance.totalTokens,
-  'completionTokensDetails': instance.completionTokensDetails,
-  'promptTokensDetails': instance.promptTokensDetails,
+  'prompt_tokens': instance.promptTokens,
+  'completion_tokens': instance.completionTokens,
+  'total_tokens': instance.totalTokens,
+  'completion_tokens_details': instance.completionTokensDetails,
+  'prompt_tokens_details': instance.promptTokensDetails,
 };
 
 PromptTokenDetails _$PromptTokenDetailsFromJson(Map<String, dynamic> json) =>

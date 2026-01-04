@@ -25,7 +25,7 @@ Map<String, dynamic> _$OpenAiVideosRequestToJson(
   'inputReference': instance.inputReference,
 };
 
-OpenAiVideo _$OpenAiVideoFromJson(Map<String, dynamic> json) => OpenAiVideo(
+OpenAiVideos _$OpenAiVideosFromJson(Map<String, dynamic> json) => OpenAiVideos(
   id: json['id'] as String,
   object: json['object'] as String,
   model: json['model'] as String,
@@ -40,7 +40,7 @@ OpenAiVideo _$OpenAiVideoFromJson(Map<String, dynamic> json) => OpenAiVideo(
       : VideoError.fromJson(json['error'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$OpenAiVideoToJson(OpenAiVideo instance) =>
+Map<String, dynamic> _$OpenAiVideosToJson(OpenAiVideos instance) =>
     <String, dynamic>{
       'id': instance.id,
       'object': instance.object,

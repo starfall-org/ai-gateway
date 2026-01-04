@@ -6,6 +6,48 @@ part of 'responses.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+RequestMessage _$RequestMessageFromJson(Map<String, dynamic> json) =>
+    RequestMessage(
+      role: json['role'] as String,
+      content: json['content'],
+      name: json['name'] as String?,
+    );
+
+Map<String, dynamic> _$RequestMessageToJson(RequestMessage instance) =>
+    <String, dynamic>{
+      'role': instance.role,
+      'content': instance.content,
+      'name': instance.name,
+    };
+
+Tool _$ToolFromJson(Map<String, dynamic> json) => Tool(
+  type: json['type'] as String,
+  function: FunctionDefinition.fromJson(
+    json['function'] as Map<String, dynamic>,
+  ),
+);
+
+Map<String, dynamic> _$ToolToJson(Tool instance) => <String, dynamic>{
+  'type': instance.type,
+  'function': instance.function,
+};
+
+FunctionDefinition _$FunctionDefinitionFromJson(Map<String, dynamic> json) =>
+    FunctionDefinition(
+      description: json['description'] as String?,
+      name: json['name'] as String,
+      parameters: json['parameters'] as Map<String, dynamic>?,
+      strict: json['strict'] as bool?,
+    );
+
+Map<String, dynamic> _$FunctionDefinitionToJson(FunctionDefinition instance) =>
+    <String, dynamic>{
+      'description': instance.description,
+      'name': instance.name,
+      'parameters': instance.parameters,
+      'strict': instance.strict,
+    };
+
 OpenAiResponses _$OpenAiResponsesFromJson(Map<String, dynamic> json) =>
     OpenAiResponses(
       id: json['id'] as String,
@@ -191,7 +233,9 @@ OpenAiResponsesRequest _$OpenAiResponsesRequestFromJson(
   Map<String, dynamic> json,
 ) => OpenAiResponsesRequest(
   model: json['model'] as String,
-  input: json['input'],
+  input: (json['input'] as List<dynamic>)
+      .map((e) => RequestMessage.fromJson(e as Map<String, dynamic>))
+      .toList(),
   instructions: json['instructions'] as String?,
   maxOutputTokens: (json['max_output_tokens'] as num?)?.toInt(),
   include: (json['include'] as List<dynamic>?)
@@ -199,7 +243,9 @@ OpenAiResponsesRequest _$OpenAiResponsesRequestFromJson(
       .toList(),
   previousResponseId: json['previous_response_id'] as String?,
   store: json['store'] as bool?,
-  metadata: json['metadata'] as Map<String, dynamic>?,
+  metadata: (json['metadata'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, e as String),
+  ),
   serviceTier: json['service_tier'] as String?,
   background: json['background'] as bool?,
   promptCacheKey: json['prompt_cache_key'] as String?,
@@ -210,6 +256,9 @@ OpenAiResponsesRequest _$OpenAiResponsesRequestFromJson(
   reasoning: json['reasoning'] == null
       ? null
       : ReasoningConfig.fromJson(json['reasoning'] as Map<String, dynamic>),
+  tools: (json['tools'] as List<dynamic>?)
+      ?.map((e) => Tool.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$OpenAiResponsesRequestToJson(
@@ -231,6 +280,7 @@ Map<String, dynamic> _$OpenAiResponsesRequestToJson(
   'parallel_tool_calls': instance.parallelToolCalls,
   'max_tool_calls': instance.maxToolCalls,
   'reasoning': instance.reasoning,
+  'tools': instance.tools,
 };
 
 ReasoningConfig _$ReasoningConfigFromJson(Map<String, dynamic> json) =>

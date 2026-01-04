@@ -27,7 +27,7 @@ class OpenAiVideosRequest {
 
 // Response Models
 @JsonSerializable()
-class OpenAiVideo {
+class OpenAiVideos {
   final String id;
   final String object;
   final String model;
@@ -39,7 +39,7 @@ class OpenAiVideo {
   final String quality;
   final VideoError? error;
 
-  OpenAiVideo({
+  OpenAiVideos({
     required this.id,
     required this.object,
     required this.model,
@@ -52,10 +52,10 @@ class OpenAiVideo {
     this.error,
   });
 
-  factory OpenAiVideo.fromJson(Map<String, dynamic> json) =>
-      _$OpenAiVideoFromJson(json);
+  factory OpenAiVideos.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiVideosFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAiVideoToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiVideosToJson(this);
 }
 
 @JsonSerializable()
@@ -63,10 +63,7 @@ class VideoError {
   final String code;
   final String message;
 
-  VideoError({
-    required this.code,
-    required this.message,
-  });
+  VideoError({required this.code, required this.message});
 
   factory VideoError.fromJson(Map<String, dynamic> json) =>
       _$VideoErrorFromJson(json);

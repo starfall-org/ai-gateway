@@ -11,15 +11,15 @@ AnthropicModels _$AnthropicModelsFromJson(Map<String, dynamic> json) =>
       data: (json['data'] as List<dynamic>)
           .map((e) => BasicModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      firstId: json['firstId'] as String,
-      hasMore: json['hasMore'] as bool,
-      lastId: json['lastId'] as String,
+      firstId: json['first_id'] as String,
+      hasMore: json['has_more'] as bool,
+      lastId: json['last_id'] as String,
     );
 
 Map<String, dynamic> _$AnthropicModelsToJson(AnthropicModels instance) =>
     <String, dynamic>{
       'data': instance.data,
-      'firstId': instance.firstId,
-      'hasMore': instance.hasMore,
-      'lastId': instance.lastId,
+      'first_id': instance.firstId,
+      'has_more': instance.hasMore,
+      'last_id': instance.lastId,
     };

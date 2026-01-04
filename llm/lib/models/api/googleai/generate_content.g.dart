@@ -12,32 +12,32 @@ GeminiGenerateContentRequest _$GeminiGenerateContentRequestFromJson(
   contents: (json['contents'] as List<dynamic>)
       .map((e) => GeminiContent.fromJson(e as Map<String, dynamic>))
       .toList(),
-  generationConfig: json['generationConfig'] == null
+  generationConfig: json['generation_config'] == null
       ? null
       : GeminiGenerationConfig.fromJson(
-          json['generationConfig'] as Map<String, dynamic>,
+          json['generation_config'] as Map<String, dynamic>,
         ),
   tools: (json['tools'] as List<dynamic>?)
       ?.map((e) => GeminiTool.fromJson(e as Map<String, dynamic>))
       .toList(),
-  toolConfig: json['toolConfig'] == null
+  toolConfig: json['tool_config'] == null
       ? null
-      : GeminiToolConfig.fromJson(json['toolConfig'] as Map<String, dynamic>),
-  safetySettings: (json['safetySettings'] as List<dynamic>?)
+      : GeminiToolConfig.fromJson(json['tool_config'] as Map<String, dynamic>),
+  safetySettings: (json['safety_settings'] as List<dynamic>?)
       ?.map((e) => GeminiSafetySetting.fromJson(e as Map<String, dynamic>))
       .toList(),
-  systemInstruction: json['systemInstruction'],
+  systemInstruction: json['system_instruction'],
 );
 
 Map<String, dynamic> _$GeminiGenerateContentRequestToJson(
   GeminiGenerateContentRequest instance,
 ) => <String, dynamic>{
   'contents': instance.contents,
-  'generationConfig': instance.generationConfig,
+  'generation_config': instance.generationConfig,
   'tools': instance.tools,
-  'toolConfig': instance.toolConfig,
-  'safetySettings': instance.safetySettings,
-  'systemInstruction': instance.systemInstruction,
+  'tool_config': instance.toolConfig,
+  'safety_settings': instance.safetySettings,
+  'system_instruction': instance.systemInstruction,
 };
 
 GeminiContent _$GeminiContentFromJson(Map<String, dynamic> json) =>
@@ -53,43 +53,43 @@ Map<String, dynamic> _$GeminiContentToJson(GeminiContent instance) =>
 
 GeminiPart _$GeminiPartFromJson(Map<String, dynamic> json) => GeminiPart(
   text: json['text'] as String?,
-  inlineData: json['inlineData'] == null
+  inlineData: json['inline_data'] == null
       ? null
-      : GeminiInlineData.fromJson(json['inlineData'] as Map<String, dynamic>),
-  fileData: json['fileData'] == null
+      : GeminiInlineData.fromJson(json['inline_data'] as Map<String, dynamic>),
+  fileData: json['file_data'] == null
       ? null
-      : GeminiFileData.fromJson(json['fileData'] as Map<String, dynamic>),
-  functionCall: json['functionCall'] == null
+      : GeminiFileData.fromJson(json['file_data'] as Map<String, dynamic>),
+  functionCall: json['function_call'] == null
       ? null
       : GeminiFunctionCall.fromJson(
-          json['functionCall'] as Map<String, dynamic>,
+          json['function_call'] as Map<String, dynamic>,
         ),
-  functionResponse: json['functionResponse'] == null
+  functionResponse: json['function_response'] == null
       ? null
       : GeminiFunctionResponse.fromJson(
-          json['functionResponse'] as Map<String, dynamic>,
+          json['function_response'] as Map<String, dynamic>,
         ),
-  executableCode: json['executableCode'] == null
+  executableCode: json['executable_code'] == null
       ? null
       : GeminiExecutableCode.fromJson(
-          json['executableCode'] as Map<String, dynamic>,
+          json['executable_code'] as Map<String, dynamic>,
         ),
-  codeExecutionResult: json['codeExecutionResult'] == null
+  codeExecutionResult: json['code_execution_result'] == null
       ? null
       : GeminiCodeExecutionResult.fromJson(
-          json['codeExecutionResult'] as Map<String, dynamic>,
+          json['code_execution_result'] as Map<String, dynamic>,
         ),
 );
 
 Map<String, dynamic> _$GeminiPartToJson(GeminiPart instance) =>
     <String, dynamic>{
       'text': instance.text,
-      'inlineData': instance.inlineData,
-      'fileData': instance.fileData,
-      'functionCall': instance.functionCall,
-      'functionResponse': instance.functionResponse,
-      'executableCode': instance.executableCode,
-      'codeExecutionResult': instance.codeExecutionResult,
+      'inline_data': instance.inlineData,
+      'file_data': instance.fileData,
+      'function_call': instance.functionCall,
+      'function_response': instance.functionResponse,
+      'executable_code': instance.executableCode,
+      'code_execution_result': instance.codeExecutionResult,
     };
 
 GeminiInlineData _$GeminiInlineDataFromJson(Map<String, dynamic> json) =>
@@ -159,47 +159,47 @@ GeminiGenerationConfig _$GeminiGenerationConfigFromJson(
   Map<String, dynamic> json,
 ) => GeminiGenerationConfig(
   temperature: (json['temperature'] as num?)?.toDouble(),
-  maxOutputTokens: (json['maxOutputTokens'] as num?)?.toInt(),
+  maxOutputTokens: (json['max_output_tokens'] as num?)?.toInt(),
   topP: (json['topP'] as num?)?.toDouble(),
-  topK: (json['topK'] as num?)?.toInt(),
-  stopSequences: (json['stopSequences'] as List<dynamic>?)
+  topK: (json['top_k'] as num?)?.toInt(),
+  stopSequences: (json['stop_sequences'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
-  responseMimeType: json['responseMimeType'] as String?,
-  responseSchema: json['responseSchema'] as Map<String, dynamic>?,
-  candidateCount: (json['candidateCount'] as num?)?.toInt(),
+  responseMimeType: json['response_mime_type'] as String?,
+  responseSchema: json['response_schema'] as Map<String, dynamic>?,
+  candidateCount: (json['candidate_count'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$GeminiGenerationConfigToJson(
   GeminiGenerationConfig instance,
 ) => <String, dynamic>{
   'temperature': instance.temperature,
-  'maxOutputTokens': instance.maxOutputTokens,
+  'max_output_tokens': instance.maxOutputTokens,
   'topP': instance.topP,
-  'topK': instance.topK,
-  'stopSequences': instance.stopSequences,
-  'responseMimeType': instance.responseMimeType,
-  'responseSchema': instance.responseSchema,
-  'candidateCount': instance.candidateCount,
+  'top_k': instance.topK,
+  'stop_sequences': instance.stopSequences,
+  'response_mime_type': instance.responseMimeType,
+  'response_schema': instance.responseSchema,
+  'candidate_count': instance.candidateCount,
 };
 
 GeminiTool _$GeminiToolFromJson(Map<String, dynamic> json) => GeminiTool(
-  functionDeclarations: (json['functionDeclarations'] as List<dynamic>?)
+  functionDeclarations: (json['function_declarations'] as List<dynamic>?)
       ?.map(
         (e) => GeminiFunctionDeclaration.fromJson(e as Map<String, dynamic>),
       )
       .toList(),
-  codeExecution: json['codeExecution'] == null
+  codeExecution: json['code_execution'] == null
       ? null
       : GeminiCodeExecution.fromJson(
-          json['codeExecution'] as Map<String, dynamic>,
+          json['code_execution'] as Map<String, dynamic>,
         ),
 );
 
 Map<String, dynamic> _$GeminiToolToJson(GeminiTool instance) =>
     <String, dynamic>{
-      'functionDeclarations': instance.functionDeclarations,
-      'codeExecution': instance.codeExecution,
+      'function_declarations': instance.functionDeclarations,
+      'code_execution': instance.codeExecution,
     };
 
 GeminiFunctionDeclaration _$GeminiFunctionDeclarationFromJson(
@@ -241,7 +241,7 @@ GeminiFunctionCallingConfig _$GeminiFunctionCallingConfigFromJson(
   Map<String, dynamic> json,
 ) => GeminiFunctionCallingConfig(
   mode: json['mode'] as String?,
-  allowedFunctionNames: (json['allowedFunctionNames'] as List<dynamic>?)
+  allowedFunctionNames: (json['allowed_function_names'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
 );
@@ -250,7 +250,7 @@ Map<String, dynamic> _$GeminiFunctionCallingConfigToJson(
   GeminiFunctionCallingConfig instance,
 ) => <String, dynamic>{
   'mode': instance.mode,
-  'allowedFunctionNames': instance.allowedFunctionNames,
+  'allowed_function_names': instance.allowedFunctionNames,
 };
 
 GeminiSafetySetting _$GeminiSafetySettingFromJson(Map<String, dynamic> json) =>
@@ -299,39 +299,39 @@ GeminiCandidate _$GeminiCandidateFromJson(Map<String, dynamic> json) =>
       content: json['content'] == null
           ? null
           : GeminiContent.fromJson(json['content'] as Map<String, dynamic>),
-      finishReason: json['finishReason'] as String?,
-      avgLogprobs: (json['avgLogprobs'] as num?)?.toDouble(),
+      finishReason: json['finish_reason'] as String?,
+      avgLogprobs: (json['avg_logprobs'] as num?)?.toDouble(),
       index: (json['index'] as num?)?.toInt(),
-      safetyRatings: (json['safetyRatings'] as List<dynamic>?)
+      safetyRatings: (json['safety_ratings'] as List<dynamic>?)
           ?.map((e) => GeminiSafetyRating.fromJson(e as Map<String, dynamic>))
           .toList(),
-      citationMetadata: json['citationMetadata'] == null
+      citationMetadata: json['citation_metadata'] == null
           ? null
           : GeminiCitationMetadata.fromJson(
-              json['citationMetadata'] as Map<String, dynamic>,
+              json['citation_metadata'] as Map<String, dynamic>,
             ),
-      groundingMetadata: json['groundingMetadata'] == null
+      groundingMetadata: json['grounding_metadata'] == null
           ? null
           : GeminiGroundingMetadata.fromJson(
-              json['groundingMetadata'] as Map<String, dynamic>,
+              json['grounding_metadata'] as Map<String, dynamic>,
             ),
-      logprobsResult: json['logprobsResult'] == null
+      logprobsResult: json['logprobs_result'] == null
           ? null
           : GeminiLogprobsResult.fromJson(
-              json['logprobsResult'] as Map<String, dynamic>,
+              json['logprobs_result'] as Map<String, dynamic>,
             ),
     );
 
 Map<String, dynamic> _$GeminiCandidateToJson(GeminiCandidate instance) =>
     <String, dynamic>{
       'content': instance.content,
-      'finishReason': instance.finishReason,
-      'avgLogprobs': instance.avgLogprobs,
+      'finish_reason': instance.finishReason,
+      'avg_logprobs': instance.avgLogprobs,
       'index': instance.index,
-      'safetyRatings': instance.safetyRatings,
-      'citationMetadata': instance.citationMetadata,
-      'groundingMetadata': instance.groundingMetadata,
-      'logprobsResult': instance.logprobsResult,
+      'safety_ratings': instance.safetyRatings,
+      'citation_metadata': instance.citationMetadata,
+      'grounding_metadata': instance.groundingMetadata,
+      'logprobs_result': instance.logprobsResult,
     };
 
 GeminiSafetyRating _$GeminiSafetyRatingFromJson(Map<String, dynamic> json) =>
@@ -530,23 +530,23 @@ Map<String, dynamic> _$GeminiTopCandidateToJson(GeminiTopCandidate instance) =>
 
 GeminiUsageMetadata _$GeminiUsageMetadataFromJson(Map<String, dynamic> json) =>
     GeminiUsageMetadata(
-      promptTokenCount: (json['promptTokenCount'] as num?)?.toInt(),
-      candidatesTokenCount: (json['candidatesTokenCount'] as num?)?.toInt(),
-      totalTokenCount: (json['totalTokenCount'] as num?)?.toInt(),
-      cachedContentTokenCount: json['cachedContentTokenCount'] == null
+      promptTokenCount: (json['prompt_token_count'] as num?)?.toInt(),
+      candidatesTokenCount: (json['candidates_token_count'] as num?)?.toInt(),
+      totalTokenCount: (json['total_token_count'] as num?)?.toInt(),
+      cachedContentTokenCount: json['cached_content_token_count'] == null
           ? null
           : GeminiCachedContentTokenCount.fromJson(
-              json['cachedContentTokenCount'] as Map<String, dynamic>,
+              json['cached_content_token_count'] as Map<String, dynamic>,
             ),
     );
 
 Map<String, dynamic> _$GeminiUsageMetadataToJson(
   GeminiUsageMetadata instance,
 ) => <String, dynamic>{
-  'promptTokenCount': instance.promptTokenCount,
-  'candidatesTokenCount': instance.candidatesTokenCount,
-  'totalTokenCount': instance.totalTokenCount,
-  'cachedContentTokenCount': instance.cachedContentTokenCount,
+  'prompt_token_count': instance.promptTokenCount,
+  'candidates_token_count': instance.candidatesTokenCount,
+  'total_token_count': instance.totalTokenCount,
+  'cached_content_token_count': instance.cachedContentTokenCount,
 };
 
 GeminiCachedContentTokenCount _$GeminiCachedContentTokenCountFromJson(

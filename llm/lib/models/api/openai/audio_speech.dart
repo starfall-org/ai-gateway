@@ -27,14 +27,14 @@ enum OpenAIAudioResponseFormat {
 /// Request model cho API /v1/audio/speech
 @immutable
 @JsonSerializable()
-class OpenAIAudioSpeechRequest {
+class OpenAiAudioSpeechRequest {
   final String model;
   final String input;
   final String voice;
   final OpenAIAudioResponseFormat? responseFormat;
   final double? speed;
 
-  const OpenAIAudioSpeechRequest({
+  const OpenAiAudioSpeechRequest({
     required this.model,
     required this.input,
     required this.voice,
@@ -42,19 +42,18 @@ class OpenAIAudioSpeechRequest {
     this.speed,
   });
 
-  factory OpenAIAudioSpeechRequest.fromJson(Map<String, dynamic> json) =>
-      _$OpenAIAudioSpeechRequestFromJson(json);
+  factory OpenAiAudioSpeechRequest.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiAudioSpeechRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAIAudioSpeechRequestToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiAudioSpeechRequestToJson(this);
 
   @override
-  String toString() =>
-      'OpenAIAudioSpeechRequest(model: $model, input: $input, voice: $voice)';
+  String toString() => 'Request(model: $model, input: $input, voice: $voice)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is OpenAIAudioSpeechRequest &&
+    return other is OpenAiAudioSpeechRequest &&
         other.model == model &&
         other.input == input &&
         other.voice == voice &&
@@ -69,25 +68,24 @@ class OpenAIAudioSpeechRequest {
 /// Response model cho API /v1/audio/speech
 @immutable
 @JsonSerializable()
-class OpenAIAudioSpeechResponse {
+class OpenAiAudioSpeech {
   @JsonKey(name: 'audio_content')
   final String audioContent;
 
-  const OpenAIAudioSpeechResponse({required this.audioContent});
+  const OpenAiAudioSpeech({required this.audioContent});
 
-  factory OpenAIAudioSpeechResponse.fromJson(Map<String, dynamic> json) =>
-      _$OpenAIAudioSpeechResponseFromJson(json);
+  factory OpenAiAudioSpeech.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiAudioSpeechFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAIAudioSpeechResponseToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiAudioSpeechToJson(this);
 
   @override
-  String toString() => 'OpenAIAudioSpeechResponse(audioContent: $audioContent)';
+  String toString() => '(audioContent: $audioContent)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is OpenAIAudioSpeechResponse &&
-        other.audioContent == audioContent;
+    return other is OpenAiAudioSpeech && other.audioContent == audioContent;
   }
 
   @override

@@ -3,8 +3,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../../models/api/openai/audio_speech.dart';
+import '../../models/api/openai/chat_completions.dart';
+import '../../models/api/openai/embeddings.dart';
+import '../../models/api/openai/image_generations.dart';
+import '../../models/api/openai/models.dart';
+import '../../models/api/openai/videos.dart';
 import '../base.dart';
-import '../../../utils.dart';
 import '../../models/api/openai/responses.dart';
 
 class OpenAI extends AIBaseApi {
@@ -31,85 +36,12 @@ class OpenAI extends AIBaseApi {
     super.headers = const {},
   });
 
-  Map<String, dynamic> _buildPayload(AIRequest request, {bool stream = false}) {
-    final payload = <String, dynamic>{
-      'model': request.model,
-      'messages': toOpenAIMessages(
-        request.messages,
-        extraImages: request.images,
-      ),
-      if (request.tools.isNotEmpty) 'tools': toOpenAITools(request.tools),
-      if (request.toolChoice != null)
-        'tool_choice': toOpenAIToolChoice(request.toolChoice!),
-      if (request.temperature != null) 'temperature': request.temperature,
-      if (request.maxTokens != null) 'max_tokens': request.maxTokens,
-      if (stream) 'stream': true,
-      ...request.extra,
-    };
-    return payload;
-  }
-
   Future<OpenAiResponses> responses(OpenAiResponsesRequest request) async {
-    final input = <Map<String, dynamic>>[];
-
-    for (final msg in request.messages) {
-      for (final c in msg.content) {
-        if (c.type == AIContentType.text && (c.text ?? '').isNotEmpty) {
-          input.add({'type': 'input_text', 'text': c.text});
-        } else if (c.type == AIContentType.image) {
-          final url = (c.uri != null && c.uri!.isNotEmpty)
-              ? c.uri
-              : ((c.dataBase64 != null && (c.mimeType ?? '').isNotEmpty)
-                    ? encodeDataUrl(
-                        mimeType: c.mimeType!,
-                        base64Data: c.dataBase64!,
-                      )
-                    : null);
-          if (url != null) {
-            input.add({
-              'type': 'input_image',
-              'image_url': {'url': url},
-            });
-          }
-        }
-      }
-    }
-
-    // also include request-level images
-    for (final c in request.images) {
-      if (c.type == AIContentType.image) {
-        final url = (c.uri != null && c.uri!.isNotEmpty)
-            ? c.uri
-            : ((c.dataBase64 != null && (c.mimeType ?? '').isNotEmpty)
-                  ? encodeDataUrl(
-                      mimeType: c.mimeType!,
-                      base64Data: c.dataBase64!,
-                    )
-                  : null);
-        if (url != null) {
-          input.add({
-            'type': 'input_image',
-            'image_url': {'url': url},
-          });
-        }
-      }
-    }
-
-    final body = <String, dynamic>{
-      'model': request.model,
-      'input': input,
-      if (request.temperature != null) 'temperature': request.temperature,
-      if (request.maxTokens != null) 'max_output_tokens': request.maxTokens,
-      if (request.tools.isNotEmpty) 'tools': toOpenAITools(request.tools),
-      if (request.toolChoice != null)
-        'tool_choice': toOpenAIToolChoice(request.toolChoice!),
-      ...request.extra,
-    };
-
+    final payload = request.toJson();
     final res = await http.post(
       uri(responsesPath),
       headers: getHeaders(),
-      body: jsonEncode(body),
+      body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
@@ -118,75 +50,29 @@ class OpenAI extends AIBaseApi {
     throw Exception('OpenAI responses error ${res.statusCode}: ${res.body}');
   }
 
-  Future<AIResponse> chatCompletions(AIRequest request) async {
-    final payload = _buildPayload(request, stream: false);
+  Future<OpenAiChatCompletions> chatCompletions(
+    OpenAiChatCompletionsRequest request,
+  ) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(chatPath),
       headers: getHeaders(),
       body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return parseOpenAIResponse(jsonDecode(res.body) as Map<String, dynamic>);
+      final j = jsonDecode(res.body) as Map<String, dynamic>;
+      return OpenAiChatCompletions.fromJson(j);
     }
     throw Exception('OpenAI error ${res.statusCode}: ${res.body}');
   }
 
-  Stream<OpenAiResponses> responsesStream(AIRequest request) async* {
-    final input = <Map<String, dynamic>>[];
-
-    for (final msg in request.messages) {
-      for (final c in msg.content) {
-        if (c.type == AIContentType.text && (c.text ?? '').isNotEmpty) {
-          input.add({'type': 'input_text', 'text': c.text});
-        } else if (c.type == AIContentType.image) {
-          final url = (c.uri != null && c.uri!.isNotEmpty)
-              ? c.uri
-              : ((c.dataBase64 != null && (c.mimeType ?? '').isNotEmpty)
-                    ? encodeDataUrl(
-                        mimeType: c.mimeType!,
-                        base64Data: c.dataBase64!,
-                      )
-                    : null);
-          if (url != null) {
-            input.add({
-              'type': 'input_image',
-              'image_url': {'url': url},
-            });
-          }
-        }
-      }
-    }
-
-    // also include request-level images
-    for (final c in request.images) {
-      if (c.type == AIContentType.image) {
-        final url = (c.uri != null && c.uri!.isNotEmpty)
-            ? c.uri
-            : ((c.dataBase64 != null && (c.mimeType ?? '').isNotEmpty)
-                  ? encodeDataUrl(
-                      mimeType: c.mimeType!,
-                      base64Data: c.dataBase64!,
-                    )
-                  : null);
-        if (url != null) {
-          input.add({
-            'type': 'input_image',
-            'image_url': {'url': url},
-          });
-        }
-      }
-    }
-
-    final body = <String, dynamic>{
-      'model': request.model,
-      'input': input,
-      'stream': true,
-      ...request.extra,
-    };
-
+  Stream<OpenAiResponses> responsesStream(
+    OpenAiResponsesRequest request,
+  ) async* {
+    final payload = request.toJson();
     final rq = http.Request('POST', uri(responsesPath))
       ..headers.addAll(getHeaders())
-      ..body = jsonEncode(body);
+      ..body = jsonEncode(payload);
     final rs = await rq.send();
 
     if (rs.statusCode < 200 || rs.statusCode >= 300) {
@@ -216,8 +102,10 @@ class OpenAI extends AIBaseApi {
     }
   }
 
-  Stream<AIResponse> chatCompletionsStream(AIRequest request) async* {
-    final payload = _buildPayload(request, stream: true);
+  Stream<OpenAiChatCompletions> chatCompletionsStream(
+    OpenAiChatCompletionsRequest request,
+  ) async* {
+    final payload = request.toJson();
     final rq = http.Request('POST', uri(chatPath))
       ..headers.addAll(getHeaders())
       ..body = jsonEncode(payload);
@@ -240,28 +128,8 @@ class OpenAI extends AIBaseApi {
         }
         try {
           final j = jsonDecode(data) as Map<String, dynamic>;
-          final choices = (j['choices'] as List? ?? const []);
-          if (choices.isEmpty) continue;
-          final delta =
-              ((choices.first as Map)['delta'] as Map?)
-                  ?.cast<String, dynamic>() ??
-              const {};
-          if (delta.containsKey('content')) {
-            final c = delta['content'];
-            if (c is String) {
-              yield AIResponse(text: c);
-            } else if (c is List) {
-              for (final p in c) {
-                final mp = (p as Map).cast<String, dynamic>();
-                if (mp['type'] == 'text') {
-                  final t = (mp['text'] as String?) ?? '';
-                  if (t.isNotEmpty) {
-                    yield AIResponse(text: t);
-                  }
-                }
-              }
-            }
-          }
+          final response = OpenAiChatCompletions.fromJson(j);
+          yield response;
         } catch (_) {
           // ignore malformed chunks
         }
@@ -269,362 +137,74 @@ class OpenAI extends AIBaseApi {
     }
   }
 
-  Future<AIResponse> imagesGenerations(AIRequest request) async {
-    final prompt =
-        (request.extra['prompt'] as String?) ??
-        request.messages
-            .map((m) => ensureTextFromContent(m.content))
-            .where((s) => s.trim().isNotEmpty)
-            .join('\n');
-
-    final body = <String, dynamic>{
-      'prompt': prompt,
-      'model': request.model,
-      if (request.extra['n'] != null) 'n': request.extra['n'],
-      if (request.extra['size'] != null) 'size': request.extra['size'],
-      if (request.extra['quality'] != null) 'quality': request.extra['quality'],
-      if (request.extra['response_format'] != null)
-        'response_format': request.extra['response_format'],
-      ...request.extra,
-    };
-
+  Future<OpenAiImagesGenerations> imagesGenerations(
+    OpenAiImagesGenerationsRequest request,
+  ) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(imagesGenerationsPath),
       headers: getHeaders(),
-      body: jsonEncode(body),
+      body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      final data = (j['data'] as List? ?? const []);
-      final contents = <AIContent>[];
-      for (final it in data) {
-        final m = (it as Map).cast<String, dynamic>();
-        if (m['b64_json'] is String) {
-          contents.add(
-            AIContent(
-              type: AIContentType.image,
-              dataBase64: m['b64_json'] as String,
-              mimeType: 'image/png',
-            ),
-          );
-        } else if (m['url'] is String) {
-          contents.add(
-            AIContent(type: AIContentType.image, uri: m['url'] as String),
-          );
-        }
-      }
-      return AIResponse(text: '', contents: contents, raw: j);
+      return OpenAiImagesGenerations.fromJson(j);
     }
     throw Exception('OpenAI images error ${res.statusCode}: ${res.body}');
   }
 
-  Future<AIResponse> audioSpeech(AIRequest request) async {
-    final inputText =
-        (request.extra['input'] as String?) ??
-        request.messages
-            .map((m) => ensureTextFromContent(m.content))
-            .where((s) => s.trim().isNotEmpty)
-            .join('\n');
-    final voice = (request.extra['voice'] as String?) ?? 'alloy';
-    final responseFormat =
-        (request.extra['response_format'] as String?) ?? 'mp3';
-    final accept = responseFormat == 'wav' ? 'audio/wav' : 'audio/mpeg';
-
-    final body = <String, dynamic>{
-      'model': request.model,
-      'input': inputText,
-      'voice': voice,
-      'response_format': responseFormat,
-      ...request.extra,
-    };
-
+  Future<OpenAiAudioSpeech> audioSpeech(
+    OpenAiAudioSpeechRequest request,
+  ) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(audioSpeechPath),
-      headers: getHeaders(overrides: {'Accept': accept}),
-      body: jsonEncode(body),
+      headers: getHeaders(),
+      body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final bytes = res.bodyBytes;
       final b64 = base64Encode(bytes);
-      final content = AIContent(
-        type: AIContentType.audio,
-        dataBase64: b64,
-        mimeType: accept,
-      );
-      return AIResponse(
-        text: '',
-        contents: [content],
-        raw: {'content_type': accept},
-      );
+      return OpenAiAudioSpeech(audioContent: b64);
     }
     throw Exception('OpenAI audio speech error ${res.statusCode}: ${res.body}');
   }
 
-  Future<AIResponse> videos(AIRequest request) async {
-    final prompt =
-        (request.extra['prompt'] as String?) ??
-        request.messages
-            .map((m) => ensureTextFromContent(m.content))
-            .where((s) => s.trim().isNotEmpty)
-            .join('\n');
-
-    final body = <String, dynamic>{
-      'model': request.model,
-      'prompt': prompt,
-      ...request.extra,
-    };
-
+  Future<OpenAiVideos> videos(OpenAiVideosRequest request) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(videosPath),
       headers: getHeaders(),
-      body: jsonEncode(body),
+      body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      final contents = <AIContent>[];
-      final data = j['data'];
-      if (data is List) {
-        for (final it in data) {
-          final m = (it as Map).cast<String, dynamic>();
-          if (m['b64_json'] is String) {
-            contents.add(
-              AIContent(
-                type: AIContentType.video,
-                dataBase64: m['b64_json'] as String,
-                mimeType: 'video/mp4',
-              ),
-            );
-          } else if (m['url'] is String) {
-            contents.add(
-              AIContent(type: AIContentType.video, uri: m['url'] as String),
-            );
-          }
-        }
-      }
-      return AIResponse(text: '', contents: contents, raw: j);
+      return OpenAiVideos.fromJson(j);
     }
     throw Exception('OpenAI videos error ${res.statusCode}: ${res.body}');
   }
 
-  @override
-  Future<AIResponse> generate(AIRequest request) async {
-    String inferMode() {
-      final m = request.extra['mode'];
-      if (m is String && m.isNotEmpty) return m;
-      if (request.images.isNotEmpty && request.messages.isEmpty) return 'image';
-      if (request.audios.isNotEmpty && request.messages.isEmpty) {
-        return 'audio_speech';
-      }
-      return 'chat';
-    }
-
-    final mode = (request.extra['mode'] as String?) ?? inferMode();
-
-    if (mode == 'responses') {
-      // Chuyển hướng sang phương thức responses mới
-      final response = await responses(request);
-      // Chuyển đổi OpenAiResponses thành AIResponse để tương thích
-      final text = response.output
-          .where((item) => item.content.any((c) => c.type == 'text'))
-          .expand((item) => item.content.where((c) => c.type == 'text'))
-          .map((c) => c.text)
-          .join('');
-      return AIResponse(text: text, raw: response.toJson());
-    }
-
-    if (mode == 'image') {
-      final prompt =
-          (request.extra['prompt'] as String?) ??
-          request.messages
-              .map((m) => ensureTextFromContent(m.content))
-              .where((s) => s.trim().isNotEmpty)
-              .join('\n');
-
-      final body = <String, dynamic>{
-        'prompt': prompt,
-        'model': request.model,
-        if (request.extra['n'] != null) 'n': request.extra['n'],
-        if (request.extra['size'] != null) 'size': request.extra['size'],
-        if (request.extra['quality'] != null)
-          'quality': request.extra['quality'],
-        if (request.extra['response_format'] != null)
-          'response_format': request.extra['response_format'],
-        ...request.extra,
-      };
-
-      final res = await http.post(
-        uri(imagesGenerationsPath),
-        headers: getHeaders(),
-        body: jsonEncode(body),
-      );
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        final j = jsonDecode(res.body) as Map<String, dynamic>;
-        final data = (j['data'] as List? ?? const []);
-        final contents = <AIContent>[];
-        for (final it in data) {
-          final m = (it as Map).cast<String, dynamic>();
-          if (m['b64_json'] is String) {
-            contents.add(
-              AIContent(
-                type: AIContentType.image,
-                dataBase64: m['b64_json'] as String,
-                mimeType: 'image/png',
-              ),
-            );
-          } else if (m['url'] is String) {
-            contents.add(
-              AIContent(type: AIContentType.image, uri: m['url'] as String),
-            );
-          }
-        }
-        return AIResponse(text: '', contents: contents, raw: j);
-      }
-      throw Exception('OpenAI images error ${res.statusCode}: ${res.body}');
-    }
-
-    if (mode == 'audio_speech') {
-      final inputText =
-          (request.extra['input'] as String?) ??
-          request.messages
-              .map((m) => ensureTextFromContent(m.content))
-              .where((s) => s.trim().isNotEmpty)
-              .join('\n');
-      final voice = (request.extra['voice'] as String?) ?? 'alloy';
-      final responseFormat =
-          (request.extra['response_format'] as String?) ?? 'mp3';
-      final accept = responseFormat == 'wav' ? 'audio/wav' : 'audio/mpeg';
-
-      final body = <String, dynamic>{
-        'model': request.model,
-        'input': inputText,
-        'voice': voice,
-        'response_format': responseFormat,
-        ...request.extra,
-      };
-
-      final res = await http.post(
-        uri(audioSpeechPath),
-        headers: getHeaders(overrides: {'Accept': accept}),
-        body: jsonEncode(body),
-      );
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        final bytes = res.bodyBytes;
-        final b64 = base64Encode(bytes);
-        final content = AIContent(
-          type: AIContentType.audio,
-          dataBase64: b64,
-          mimeType: accept,
-        );
-        return AIResponse(
-          text: '',
-          contents: [content],
-          raw: {'content_type': accept},
-        );
-      }
-      throw Exception(
-        'OpenAI audio speech error ${res.statusCode}: ${res.body}',
-      );
-    }
-
-    if (mode == 'video') {
-      final prompt =
-          (request.extra['prompt'] as String?) ??
-          request.messages
-              .map((m) => ensureTextFromContent(m.content))
-              .where((s) => s.trim().isNotEmpty)
-              .join('\n');
-
-      final body = <String, dynamic>{
-        'model': request.model,
-        'prompt': prompt,
-        ...request.extra,
-      };
-
-      final res = await http.post(
-        uri(videosPath),
-        headers: getHeaders(),
-        body: jsonEncode(body),
-      );
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        final j = jsonDecode(res.body) as Map<String, dynamic>;
-        final contents = <AIContent>[];
-        final data = j['data'];
-        if (data is List) {
-          for (final it in data) {
-            final m = (it as Map).cast<String, dynamic>();
-            if (m['b64_json'] is String) {
-              contents.add(
-                AIContent(
-                  type: AIContentType.video,
-                  dataBase64: m['b64_json'] as String,
-                  mimeType: 'video/mp4',
-                ),
-              );
-            } else if (m['url'] is String) {
-              contents.add(
-                AIContent(type: AIContentType.video, uri: m['url'] as String),
-              );
-            }
-          }
-        }
-        return AIResponse(text: '', contents: contents, raw: j);
-      }
-      throw Exception('OpenAI videos error ${res.statusCode}: ${res.body}');
-    }
-
-    // default chat
-    return await chatCompletions(request);
-  }
-
-  @override
-  Stream<AIResponse> generateStream(AIRequest request) async* {
-    final mode = (request.extra['mode'] as String?) ?? 'chat';
-
-    if (mode == 'responses') {
-      // Sử dụng responsesStream mới
-      await for (final response in responsesStream(request)) {
-        // Chuyển đổi OpenAiResponses thành AIResponse
-        final text = response.output
-            .where((item) => item.content.any((c) => c.type == 'text'))
-            .expand((item) => item.content.where((c) => c.type == 'text'))
-            .map((c) => c.text)
-            .join('');
-        yield AIResponse(text: text, raw: response.toJson());
-      }
-    } else {
-      // Sử dụng chatCompletionsStream mới
-      yield* chatCompletionsStream(request);
-    }
-  }
-
-  @override
-  Future<List<AIModel>> listModels() async {
+  Future<OpenAiModels> listModels() async {
     final res = await http.get(uri(modelsPath), headers: getHeaders());
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      final data = (j['data'] as List? ?? const []);
-      return data
-          .map((e) => AIModel.fromJson((e as Map).cast<String, dynamic>()))
-          .toList();
+      return OpenAiModels.fromJson(j);
     }
-    // Fallback nếu API list models lỗi hoặc không được hỗ trợ (một số provider tương thích OpenAI nhưng chặn endpoint này)
-    return [];
+    throw Exception('OpenAI list models error ${res.statusCode}: ${res.body}');
   }
 
-  @override
-  Future<dynamic> embed({
-    required String model,
-    required dynamic input,
-    Map<String, dynamic> options = const {},
+  Future<OpenAiEmbeddings> embeddings({
+    required OpenAiEmbeddingsRequest request,
   }) async {
-    final body = {'model': model, 'input': input, ...options};
+    final body = request.toJson();
     final res = await http.post(
       uri(embeddingsPath),
       headers: getHeaders(),
       body: jsonEncode(body),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return jsonDecode(res.body);
+      final j = jsonDecode(res.body) as Map<String, dynamic>;
+      return OpenAiEmbeddings.fromJson(j);
     }
     throw Exception('OpenAI embed error ${res.statusCode}: ${res.body}');
   }

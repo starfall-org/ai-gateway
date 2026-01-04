@@ -4,7 +4,7 @@ part 'chat_completions.g.dart';
 
 // Request Models
 @JsonSerializable()
-class OpenAiChatCompletionRequest {
+class OpenAiChatCompletionsRequest {
   final String model;
   final List<RequestMessage> messages;
   final Map<String, String>? metadata;
@@ -57,7 +57,7 @@ class OpenAiChatCompletionRequest {
   final String? functionCall;
   final List<FunctionDefinition>? functions;
 
-  OpenAiChatCompletionRequest({
+  OpenAiChatCompletionsRequest({
     required this.model,
     required this.messages,
     this.metadata,
@@ -94,10 +94,10 @@ class OpenAiChatCompletionRequest {
     this.functions,
   });
 
-  factory OpenAiChatCompletionRequest.fromJson(Map<String, dynamic> json) =>
-      _$OpenAiChatCompletionRequestFromJson(json);
+  factory OpenAiChatCompletionsRequest.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiChatCompletionsRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAiChatCompletionRequestToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiChatCompletionsRequestToJson(this);
 }
 
 @JsonSerializable()
@@ -244,7 +244,7 @@ class FunctionDefinition {
 
 // Response Models
 @JsonSerializable()
-class OpenAiChatCompletion {
+class OpenAiChatCompletions {
   final String? id;
   final String? object;
   final int? created;
@@ -256,7 +256,7 @@ class OpenAiChatCompletion {
   @JsonKey(name: 'service_tier')
   final String? serviceTier;
 
-  OpenAiChatCompletion({
+  OpenAiChatCompletions({
     this.id,
     this.object,
     this.created,
@@ -267,10 +267,15 @@ class OpenAiChatCompletion {
     this.serviceTier,
   });
 
-  factory OpenAiChatCompletion.fromJson(Map<String, dynamic> json) =>
-      _$OpenAiChatCompletionFromJson(json);
+  factory OpenAiChatCompletions.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiChatCompletionsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAiChatCompletionToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiChatCompletionsToJson(this);
+
+  @override
+  String toString() {
+    return 'OpenAiChatCompletions(id: $id, object: $object, created: $created, model: $model, choices: $choices, usage: $usage, systemFingerprint: $systemFingerprint, serviceTier: $serviceTier)';
+  }
 }
 
 @JsonSerializable()
@@ -293,6 +298,11 @@ class Choice {
   factory Choice.fromJson(Map<String, dynamic> json) => _$ChoiceFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChoiceToJson(this);
+
+  @override
+  String toString() {
+    return 'Choice(index: $index, message: $message, delta: $delta, finishReason: $finishReason, logprobs: $logprobs)';
+  }
 }
 
 @JsonSerializable()
@@ -324,6 +334,11 @@ class Message {
       _$MessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$MessageToJson(this);
+
+  @override
+  String toString() {
+    return 'Message(content: $content, refusal: $refusal, role: $role, functionCall: $functionCall, toolCalls: $toolCalls, annotations: $annotations, audio: $audio, reasoningContent: $reasoningContent)';
+  }
 }
 
 @JsonSerializable()
@@ -335,6 +350,9 @@ class Delta {
   final FunctionCall? functionCall;
   @JsonKey(name: 'tool_calls')
   final List<ToolCall>? toolCalls;
+  final Audio? audio;
+  @JsonKey(name: 'reasoning_content')
+  final String? reasoningContent;
 
   Delta({
     this.content,
@@ -342,11 +360,18 @@ class Delta {
     this.refusal,
     this.functionCall,
     this.toolCalls,
+    this.audio,
+    this.reasoningContent,
   });
 
   factory Delta.fromJson(Map<String, dynamic> json) => _$DeltaFromJson(json);
 
   Map<String, dynamic> toJson() => _$DeltaToJson(this);
+
+  @override
+  String toString() {
+    return 'Delta(content: $content, role: $role, refusal: $refusal, functionCall: $functionCall, toolCalls: $toolCalls, audio: $audio, reasoningContent: $reasoningContent)';
+  }
 }
 
 @JsonSerializable()
@@ -361,6 +386,11 @@ class ToolCall {
       _$ToolCallFromJson(json);
 
   Map<String, dynamic> toJson() => _$ToolCallToJson(this);
+
+  @override
+  String toString() {
+    return 'ToolCall(id: $id, type: $type, function: $function)';
+  }
 }
 
 @JsonSerializable()
@@ -374,6 +404,11 @@ class FunctionCall {
       _$FunctionCallFromJson(json);
 
   Map<String, dynamic> toJson() => _$FunctionCallToJson(this);
+
+  @override
+  String toString() {
+    return 'FunctionCall(name: $name, arguments: $arguments)';
+  }
 }
 
 @JsonSerializable()
@@ -387,6 +422,11 @@ class Annotation {
       _$AnnotationFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnnotationToJson(this);
+
+  @override
+  String toString() {
+    return 'Annotation(type: $type, urlCitation: $urlCitation)';
+  }
 }
 
 @JsonSerializable()
@@ -402,6 +442,11 @@ class UrlCitation {
       _$UrlCitationFromJson(json);
 
   Map<String, dynamic> toJson() => _$UrlCitationToJson(this);
+
+  @override
+  String toString() {
+    return 'UrlCitation(endIndex: $endIndex, startIndex: $startIndex, url: $url, title: $title)';
+  }
 }
 
 @JsonSerializable()
@@ -416,6 +461,11 @@ class Audio {
   factory Audio.fromJson(Map<String, dynamic> json) => _$AudioFromJson(json);
 
   Map<String, dynamic> toJson() => _$AudioToJson(this);
+
+  @override
+  String toString() {
+    return 'Audio(id: $id, expiresAt: $expiresAt, data: $data, transcript: $transcript)';
+  }
 }
 
 @JsonSerializable()
@@ -429,6 +479,11 @@ class Logprobs {
       _$LogprobsFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogprobsToJson(this);
+
+  @override
+  String toString() {
+    return 'Logprobs(content: $content, refusal: $refusal)';
+  }
 }
 
 @JsonSerializable()
@@ -443,6 +498,11 @@ class Token {
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$TokenToJson(this);
+
+  @override
+  String toString() {
+    return 'Token(token: $token, logprob: $logprob, bytes: $bytes, topLogprobs: $topLogprobs)';
+  }
 }
 
 @JsonSerializable()
@@ -457,6 +517,11 @@ class TopLogprob {
       _$TopLogprobFromJson(json);
 
   Map<String, dynamic> toJson() => _$TopLogprobToJson(this);
+
+  @override
+  String toString() {
+    return 'TopLogprob(token: $token, logprob: $logprob, bytes: $bytes)';
+  }
 }
 
 @JsonSerializable()

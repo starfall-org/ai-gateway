@@ -2,6 +2,52 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'responses.g.dart';
 
+@JsonSerializable()
+class RequestMessage {
+  final String role;
+  final dynamic content;
+  final String? name;
+
+  RequestMessage({required this.role, required this.content, this.name});
+
+  factory RequestMessage.fromJson(Map<String, dynamic> json) =>
+      _$RequestMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RequestMessageToJson(this);
+}
+
+@JsonSerializable()
+class Tool {
+  final String type;
+  final FunctionDefinition function;
+
+  Tool({required this.type, required this.function});
+
+  factory Tool.fromJson(Map<String, dynamic> json) => _$ToolFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ToolToJson(this);
+}
+
+@JsonSerializable()
+class FunctionDefinition {
+  final String? description;
+  final String name;
+  final Map<String, dynamic>? parameters;
+  final bool? strict;
+
+  FunctionDefinition({
+    this.description,
+    required this.name,
+    this.parameters,
+    this.strict,
+  });
+
+  factory FunctionDefinition.fromJson(Map<String, dynamic> json) =>
+      _$FunctionDefinitionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FunctionDefinitionToJson(this);
+}
+
 // Response-related classes
 @JsonSerializable()
 class OpenAiResponses {
@@ -33,6 +79,11 @@ class OpenAiResponses {
       _$OpenAiResponsesFromJson(json);
 
   Map<String, dynamic> toJson() => _$OpenAiResponsesToJson(this);
+
+  @override
+  String toString() {
+    return 'OpenAiResponses(id: $id, object: $object, createdAt: $createdAt, model: $model, status: $status, error: $error, incompleteDetails: $incompleteDetails, output: $output, usage: $usage)';
+  }
 }
 
 @JsonSerializable()
@@ -55,6 +106,11 @@ class ResponseItem {
       _$ResponseItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ResponseItemToJson(this);
+
+  @override
+  String toString() {
+    return 'ResponseItem(id: $id, type: $type, role: $role, content: $content, status: $status)';
+  }
 }
 
 @JsonSerializable()
@@ -75,6 +131,11 @@ class MessageContent {
       _$MessageContentFromJson(json);
 
   Map<String, dynamic> toJson() => _$MessageContentToJson(this);
+
+  @override
+  String toString() {
+    return 'MessageContent(type: $type, text: $text, annotations: $annotations, logprobs: $logprobs)';
+  }
 }
 
 @JsonSerializable()
@@ -102,6 +163,11 @@ class Annotation {
       _$AnnotationFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnnotationToJson(this);
+
+  @override
+  String toString() {
+    return 'Annotation(type: $type, text: $text, startIndex: $startIndex, endIndex: $endIndex, fileId: $fileId, title: $title)';
+  }
 }
 
 @JsonSerializable()
@@ -123,6 +189,11 @@ class Logprobs {
       _$LogprobsFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogprobsToJson(this);
+
+  @override
+  String toString() {
+    return 'Logprobs(token: $token, logprob: $logprob, bytes: $bytes, topLogprobs: $topLogprobs)';
+  }
 }
 
 @JsonSerializable()
@@ -137,6 +208,11 @@ class TopLogprob {
       _$TopLogprobFromJson(json);
 
   Map<String, dynamic> toJson() => _$TopLogprobToJson(this);
+
+  @override
+  String toString() {
+    return 'TopLogprob(token: $token, logprob: $logprob, bytes: $bytes)';
+  }
 }
 
 @JsonSerializable()
@@ -150,6 +226,11 @@ class ErrorInfo {
       _$ErrorInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ErrorInfoToJson(this);
+
+  @override
+  String toString() {
+    return 'ErrorInfo(code: $code, message: $message)';
+  }
 }
 
 @JsonSerializable()
@@ -163,6 +244,11 @@ class IncompleteDetails {
       _$IncompleteDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$IncompleteDetailsToJson(this);
+
+  @override
+  String toString() {
+    return 'IncompleteDetails(reason: $reason, type: $type)';
+  }
 }
 
 @JsonSerializable()
@@ -190,6 +276,11 @@ class ResponsesUsage {
       _$ResponsesUsageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ResponsesUsageToJson(this);
+
+  @override
+  String toString() {
+    return 'ResponsesUsage(inputTokens: $inputTokens, outputTokens: $outputTokens, totalTokens: $totalTokens, inputTokensDetails: $inputTokensDetails, outputTokensDetails: $outputTokensDetails)';
+  }
 }
 
 @JsonSerializable()
@@ -217,12 +308,17 @@ class UsageDetails {
       _$UsageDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$UsageDetailsToJson(this);
+
+  @override
+  String toString() {
+    return 'UsageDetails(cachedTokens: $cachedTokens, textTokens: $textTokens, imageTokens: $imageTokens, audioTokens: $audioTokens, reasoningTokens: $reasoningTokens)';
+  }
 }
 
 @JsonSerializable()
 class OpenAiResponsesRequest {
   final String model;
-  final dynamic input;
+  final List<RequestMessage> input;
   final String? instructions;
   @JsonKey(name: 'max_output_tokens')
   final int? maxOutputTokens;
@@ -230,7 +326,7 @@ class OpenAiResponsesRequest {
   @JsonKey(name: 'previous_response_id')
   final String? previousResponseId;
   final bool? store;
-  final Map<String, dynamic>? metadata;
+  final Map<String, String>? metadata;
   @JsonKey(name: 'service_tier')
   final String? serviceTier;
   final bool? background;
@@ -245,10 +341,11 @@ class OpenAiResponsesRequest {
   @JsonKey(name: 'max_tool_calls')
   final int? maxToolCalls;
   final ReasoningConfig? reasoning;
+  final List<Tool>? tools;
 
   OpenAiResponsesRequest({
     required this.model,
-    this.input,
+    required this.input,
     this.instructions,
     this.maxOutputTokens,
     this.include,
@@ -263,6 +360,7 @@ class OpenAiResponsesRequest {
     this.parallelToolCalls,
     this.maxToolCalls,
     this.reasoning,
+    this.tools,
   });
 
   factory OpenAiResponsesRequest.fromJson(Map<String, dynamic> json) =>

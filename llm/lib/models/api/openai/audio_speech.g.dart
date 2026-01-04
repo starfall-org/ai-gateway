@@ -6,9 +6,9 @@ part of 'audio_speech.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpenAIAudioSpeechRequest _$OpenAIAudioSpeechRequestFromJson(
+OpenAiAudioSpeechRequest _$OpenAiAudioSpeechRequestFromJson(
   Map<String, dynamic> json,
-) => OpenAIAudioSpeechRequest(
+) => OpenAiAudioSpeechRequest(
   model: json['model'] as String,
   input: json['input'] as String,
   voice: json['voice'] as String,
@@ -18,8 +18,8 @@ OpenAIAudioSpeechRequest _$OpenAIAudioSpeechRequestFromJson(
   speed: (json['speed'] as num?)?.toDouble(),
 );
 
-Map<String, dynamic> _$OpenAIAudioSpeechRequestToJson(
-  OpenAIAudioSpeechRequest instance,
+Map<String, dynamic> _$OpenAiAudioSpeechRequestToJson(
+  OpenAiAudioSpeechRequest instance,
 ) => <String, dynamic>{
   'model': instance.model,
   'input': instance.input,
@@ -28,10 +28,8 @@ Map<String, dynamic> _$OpenAIAudioSpeechRequestToJson(
   'speed': instance.speed,
 };
 
-OpenAIAudioSpeechResponse _$OpenAIAudioSpeechResponseFromJson(
-  Map<String, dynamic> json,
-) => OpenAIAudioSpeechResponse(audioContent: json['audio_content'] as String);
+OpenAiAudioSpeech _$OpenAiAudioSpeechFromJson(Map<String, dynamic> json) =>
+    OpenAiAudioSpeech(audioContent: json['audio_content'] as String);
 
-Map<String, dynamic> _$OpenAIAudioSpeechResponseToJson(
-  OpenAIAudioSpeechResponse instance,
-) => <String, dynamic>{'audio_content': instance.audioContent};
+Map<String, dynamic> _$OpenAiAudioSpeechToJson(OpenAiAudioSpeech instance) =>
+    <String, dynamic>{'audio_content': instance.audioContent};

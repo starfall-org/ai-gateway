@@ -39,7 +39,7 @@ class OpenAiEmbeddingsRequest {
 
 // Response Models
 @JsonSerializable()
-class OpenAiEmbeddingsResponse {
+class OpenAiEmbeddings {
   /// The object type, which is always "list".
   final String object;
 
@@ -52,17 +52,17 @@ class OpenAiEmbeddingsResponse {
   /// Information about the API usage.
   final EmbeddingUsage usage;
 
-  OpenAiEmbeddingsResponse({
+  OpenAiEmbeddings({
     required this.object,
     required this.data,
     required this.model,
     required this.usage,
   });
 
-  factory OpenAiEmbeddingsResponse.fromJson(Map<String, dynamic> json) =>
-      _$OpenAiEmbeddingsResponseFromJson(json);
+  factory OpenAiEmbeddings.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiEmbeddingsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAiEmbeddingsResponseToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiEmbeddingsToJson(this);
 }
 
 @JsonSerializable()
@@ -99,10 +99,7 @@ class EmbeddingUsage {
   @JsonKey(name: 'total_tokens')
   final int totalTokens;
 
-  EmbeddingUsage({
-    required this.promptTokens,
-    required this.totalTokens,
-  });
+  EmbeddingUsage({required this.promptTokens, required this.totalTokens});
 
   factory EmbeddingUsage.fromJson(Map<String, dynamic> json) =>
       _$EmbeddingUsageFromJson(json);

@@ -3,19 +3,16 @@ import 'package:json_annotation/json_annotation.dart';
 part 'image_generations.g.dart';
 
 @JsonSerializable()
-class OpenAiImageGenerations {
+class OpenAiImagesGenerations {
   final int created;
   final List<ImageData> data;
 
-  OpenAiImageGenerations({
-    required this.created,
-    required this.data,
-  });
+  OpenAiImagesGenerations({required this.created, required this.data});
 
-  factory OpenAiImageGenerations.fromJson(Map<String, dynamic> json) =>
-      _$OpenAiImageGenerationsFromJson(json);
+  factory OpenAiImagesGenerations.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiImagesGenerationsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OpenAiImageGenerationsToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiImagesGenerationsToJson(this);
 }
 
 @JsonSerializable()
@@ -24,11 +21,7 @@ class ImageData {
   final String? url;
   final String? revisedPrompt;
 
-  ImageData({
-    this.b64Json,
-    this.url,
-    this.revisedPrompt,
-  });
+  ImageData({this.b64Json, this.url, this.revisedPrompt});
 
   factory ImageData.fromJson(Map<String, dynamic> json) =>
       _$ImageDataFromJson(json);
@@ -37,7 +30,7 @@ class ImageData {
 }
 
 @JsonSerializable()
-class ImageGenerationsRequest {
+class OpenAiImagesGenerationsRequest {
   final String prompt;
   final String model;
   final int? n;
@@ -47,7 +40,7 @@ class ImageGenerationsRequest {
   final String? style;
   final String? user;
 
-  ImageGenerationsRequest({
+  OpenAiImagesGenerationsRequest({
     required this.prompt,
     required this.model,
     this.n,
@@ -58,8 +51,8 @@ class ImageGenerationsRequest {
     this.user,
   });
 
-  factory ImageGenerationsRequest.fromJson(Map<String, dynamic> json) =>
-      _$ImageGenerationsRequestFromJson(json);
+  factory OpenAiImagesGenerationsRequest.fromJson(Map<String, dynamic> json) =>
+      _$OpenAiImagesGenerationsRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ImageGenerationsRequestToJson(this);
+  Map<String, dynamic> toJson() => _$OpenAiImagesGenerationsRequestToJson(this);
 }

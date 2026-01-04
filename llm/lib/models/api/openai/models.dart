@@ -15,4 +15,9 @@ class OpenAiModels {
       _$OpenAiModelsFromJson(json);
 
   Map<String, dynamic> toJson() => _$OpenAiModelsToJson(this);
+
+  @override
+  String toString() {
+    return 'OpenAiModels(object: $object, data: $data)';
+  }
 }

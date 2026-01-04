@@ -3,7 +3,6 @@ import '../../models/llm_model/base.dart';
 export '../../models/api/api.dart';
 export '../../models/llm_model/base.dart';
 
-
 abstract class AIBaseApi {
   final String apiKey;
   final String baseUrl;
@@ -33,17 +32,7 @@ abstract class AIBaseApi {
     return Uri.parse('$baseUrl$normalized');
   }
 
-  Future<AIResponse> generate(AIRequest request);
 
-  Stream<AIResponse>? generateStream(AIRequest request) => null;
-
-  Future<List<AIModel>> listModels();
-
-  Future<dynamic> embed({
-    required String model,
-    required dynamic input,
-    Map<String, dynamic> options = const {},
-  });
 }
 
 /// Helpers

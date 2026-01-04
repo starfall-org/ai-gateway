@@ -6,17 +6,17 @@ part of 'image_generations.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpenAiImageGenerations _$OpenAiImageGenerationsFromJson(
+OpenAiImagesGenerations _$OpenAiImagesGenerationsFromJson(
   Map<String, dynamic> json,
-) => OpenAiImageGenerations(
+) => OpenAiImagesGenerations(
   created: (json['created'] as num).toInt(),
   data: (json['data'] as List<dynamic>)
       .map((e) => ImageData.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
-Map<String, dynamic> _$OpenAiImageGenerationsToJson(
-  OpenAiImageGenerations instance,
+Map<String, dynamic> _$OpenAiImagesGenerationsToJson(
+  OpenAiImagesGenerations instance,
 ) => <String, dynamic>{'created': instance.created, 'data': instance.data};
 
 ImageData _$ImageDataFromJson(Map<String, dynamic> json) => ImageData(
@@ -31,9 +31,9 @@ Map<String, dynamic> _$ImageDataToJson(ImageData instance) => <String, dynamic>{
   'revisedPrompt': instance.revisedPrompt,
 };
 
-ImageGenerationsRequest _$ImageGenerationsRequestFromJson(
+OpenAiImagesGenerationsRequest _$OpenAiImagesGenerationsRequestFromJson(
   Map<String, dynamic> json,
-) => ImageGenerationsRequest(
+) => OpenAiImagesGenerationsRequest(
   prompt: json['prompt'] as String,
   model: json['model'] as String,
   n: (json['n'] as num?)?.toInt(),
@@ -44,8 +44,8 @@ ImageGenerationsRequest _$ImageGenerationsRequestFromJson(
   user: json['user'] as String?,
 );
 
-Map<String, dynamic> _$ImageGenerationsRequestToJson(
-  ImageGenerationsRequest instance,
+Map<String, dynamic> _$OpenAiImagesGenerationsRequestToJson(
+  OpenAiImagesGenerationsRequest instance,
 ) => <String, dynamic>{
   'prompt': instance.prompt,
   'model': instance.model,
