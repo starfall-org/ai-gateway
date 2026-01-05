@@ -1,9 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'mcp_core.dart';
 
 /// Response result for 'initialize' method
 class InitializeResult {
+  @JsonKey(name: 'protocol_version')
   final String protocolVersion;
   final MCPServerCapabilities capabilities;
+  @JsonKey(name: 'server_info')
   final MCPImplementation serverInfo;
 
   InitializeResult({
@@ -14,12 +18,12 @@ class InitializeResult {
 
   factory InitializeResult.fromJson(Map<String, dynamic> json) {
     return InitializeResult(
-      protocolVersion: json['protocolVersion'] as String,
+      protocolVersion: json['protocol_version'] as String,
       capabilities: MCPServerCapabilities.fromJson(
         json['capabilities'] as Map<String, dynamic>,
       ),
       serverInfo: MCPImplementation.fromJson(
-        json['serverInfo'] as Map<String, dynamic>,
+        json['server_info'] as Map<String, dynamic>,
       ),
     );
   }
@@ -28,6 +32,7 @@ class InitializeResult {
 /// Response result for 'tools/list' method
 class ListToolsResult {
   final List<MCPTool> tools;
+  @JsonKey(name: 'next_cursor')
   final String? nextCursor;
 
   ListToolsResult({required this.tools, this.nextCursor});
@@ -37,7 +42,7 @@ class ListToolsResult {
       tools: (json['tools'] as List)
           .map((t) => MCPTool.fromJson(t as Map<String, dynamic>))
           .toList(),
-      nextCursor: json['nextCursor'] as String?,
+      nextCursor: json['next_cursor'] as String?,
     );
   }
 }
@@ -45,6 +50,7 @@ class ListToolsResult {
 /// Response result for 'tools/call' method
 class CallToolResult {
   final List<MCPContent> content;
+  @JsonKey(name: 'is_error')
   final bool isError;
 
   CallToolResult({required this.content, this.isError = false});
@@ -54,7 +60,7 @@ class CallToolResult {
       content: (json['content'] as List)
           .map((c) => MCPContent.fromJson(c as Map<String, dynamic>))
           .toList(),
-      isError: json['isError'] as bool? ?? false,
+      isError: json['is_error'] as bool? ?? false,
     );
   }
 }
@@ -62,6 +68,7 @@ class CallToolResult {
 /// Response result for 'resources/list' method
 class ListResourcesResult {
   final List<MCPResource> resources;
+  @JsonKey(name: 'next_cursor')
   final String? nextCursor;
 
   ListResourcesResult({required this.resources, this.nextCursor});
@@ -71,7 +78,7 @@ class ListResourcesResult {
       resources: (json['resources'] as List)
           .map((r) => MCPResource.fromJson(r as Map<String, dynamic>))
           .toList(),
-      nextCursor: json['nextCursor'] as String?,
+      nextCursor: json['next_cursor'] as String?,
     );
   }
 }
@@ -94,6 +101,7 @@ class ReadResourceResult {
 /// Response result for 'prompts/list' method
 class ListPromptsResult {
   final List<MCPPrompt> prompts;
+  @JsonKey(name: 'next_cursor')
   final String? nextCursor;
 
   ListPromptsResult({required this.prompts, this.nextCursor});
@@ -103,7 +111,7 @@ class ListPromptsResult {
       prompts: (json['prompts'] as List)
           .map((p) => MCPPrompt.fromJson(p as Map<String, dynamic>))
           .toList(),
-      nextCursor: json['nextCursor'] as String?,
+      nextCursor: json['next_cursor'] as String?,
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:metalore/core/profile/profile.dart';
+import '../../../../core/profile/profile.dart';
 import '../../../../app/translate/tl.dart';
 import '../views/edit_profile_screen.dart';
 

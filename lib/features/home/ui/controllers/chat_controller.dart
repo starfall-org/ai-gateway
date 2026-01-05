@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:metalore/core/profile/profile.dart';
-import 'package:metalore/features/home/domain/domain.dart';
+import '../../../../core/profile/profile.dart';
+import '../../domain/domain.dart';
 import 'package:mcp/mcp.dart';
 import 'package:llm/llm.dart';
-import 'package:metalore/core/speech/speech.dart';
+import '../../../../core/speech/speech.dart';
 
-import 'package:metalore/core/llm/data/provider_info_storage.dart';
-import 'package:metalore/core/storage/mcpserver_store.dart';
+import '../../../../core/llm/data/provider_info_storage.dart';
+import '../../../../core/storage/mcpserver_store.dart';
 
 import '../../../../app/data/preferences.dart';
 import '../../../../app/translate/tl.dart';

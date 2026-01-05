@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:llm/llm.dart';
-import 'package:metalore/core/llm/data/provider_info_storage.dart';
+import '../../../../core/llm/data/provider_info_storage.dart';
 import 'package:llm/models/llm_model/base.dart';
 import '../../../../app/translate/tl.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:llm/llm.dart';
-import 'package:metalore/core/speech/speech.dart';
-import 'package:metalore/core/llm/data/provider_info_storage.dart';
+import '../../../../core/speech/speech.dart';
+import '../../../../core/llm/data/provider_info_storage.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/common_dropdown.dart';
 import '../../../../shared/widgets/custom_text_field.dart';

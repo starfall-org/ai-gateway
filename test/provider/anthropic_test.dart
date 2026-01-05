@@ -5,7 +5,6 @@ import 'dart:convert';
 
 import 'package:llm/provider/anthropic/anthropic.dart';
 import 'package:llm/models/api/anthropic/messages.dart';
-import 'package:llm/models/api/anthropic/models.dart';
 
 void main() {
   group('Anthropic Provider Tests', () {

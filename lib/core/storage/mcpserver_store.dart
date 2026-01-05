@@ -1,6 +1,6 @@
 import 'package:mcp/models/mcp_server.dart';
 import 'package:mcp/mcp.dart';
-import 'package:metalore/core/storage/base.dart';
+import 'base.dart';
 
 class MCPRepository extends HiveBaseStorage<MCPServer> {
   static const String _prefix = 'mcp';

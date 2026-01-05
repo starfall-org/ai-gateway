@@ -1,4 +1,4 @@
-library provider;
+library;
 
 export '../models/api/api.dart';
 export 'anthropic/anthropic.dart';

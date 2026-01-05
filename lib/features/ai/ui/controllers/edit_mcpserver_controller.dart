@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mcp/mcp.dart';
-import 'package:metalore/core/storage/mcpserver_store.dart';
+import '../../../../core/storage/mcpserver_store.dart';
 import '../../../../app/translate/tl.dart';
 
 class EditMCPServerViewModel extends ChangeNotifier {

@@ -1,4 +1,4 @@
-library home_domain;
+library;
 
 export 'models/conversation.dart';
 export 'models/message.dart';

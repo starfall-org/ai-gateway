@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:metalore/core/profile/profile.dart';
+import '../../../../core/profile/profile.dart';
 import 'package:mcp/mcp.dart';
-import 'package:metalore/core/storage/mcpserver_store.dart';
-import 'package:metalore/core/profile/data/ai_profile_store.dart';
+import '../../../../core/storage/mcpserver_store.dart';
+import '../../../../core/profile/data/ai_profile_store.dart';
 import '../../../../app/translate/tl.dart';
 
 /// Options for chat persistence: On, Off, and Disable

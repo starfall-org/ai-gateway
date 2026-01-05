@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:metalore/core/storage/base.dart';
-import 'package:metalore/core/profile/models/profile_model.dart';
+import '../../storage/base.dart';
+import '../models/profile_model.dart';
 
 class AIProfileRepository extends HiveBaseStorage<AIProfile> {
   static const String _prefix = 'profile';

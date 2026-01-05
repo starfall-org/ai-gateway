@@ -102,6 +102,8 @@ class MCPService {
   ) async {
     final requestHeaders = Map<String, String>.from(headers);
     requestHeaders.putIfAbsent('Content-Type', () => 'application/json');
+    // Streamable HTTP servers may require both content types
+    requestHeaders.putIfAbsent('Accept', () => 'application/json, text/event-stream');
 
     final response = await http.post(
       Uri.parse(url),

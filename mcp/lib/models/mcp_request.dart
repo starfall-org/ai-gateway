@@ -10,9 +10,9 @@ class InitializeRequest extends MCPRequest {
   }) : super(
          method: 'initialize',
          params: {
-           'protocolVersion': protocolVersion,
+           'protocol_version': protocolVersion,
            'capabilities': capabilities,
-           'clientInfo': clientInfo,
+           'client_info': clientInfo,
          },
        );
 }

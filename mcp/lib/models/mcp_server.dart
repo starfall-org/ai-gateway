@@ -132,7 +132,7 @@ class MCPServer {
       'name': name,
       if (description != null) 'description': description,
       'transport': transport.name,
-      if (httpConfig != null) 'httpConfig': httpConfig!.toJson(),
+      if (httpConfig != null) 'http_config': httpConfig!.toJson(),
       if (capabilities != null) 'capabilities': capabilities!.toJson(),
       'tools': tools.map((t) => t.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),
@@ -149,8 +149,8 @@ class MCPServer {
         (e) => e.name == json['transport'],
         orElse: () => MCPTransportType.sse,
       ),
-      httpConfig: json['httpConfig'] != null
-          ? MCPHttpConfig.fromJson(json['httpConfig'] as Map<String, dynamic>)
+      httpConfig: json['http_config'] != null
+          ? MCPHttpConfig.fromJson(json['http_config'] as Map<String, dynamic>)
           : null,
       capabilities: json['capabilities'] != null
           ? MCPServerCapabilities.fromJson(

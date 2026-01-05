@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:metalore/features/home/domain/domain.dart';
-import 'package:metalore/core/profile/profile.dart';
-import 'package:metalore/features/home/domain/domain.dart';
+import '../../domain/domain.dart';
+import '../../../../core/profile/profile.dart';
+import '../../domain/domain.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../ai/ui/pages/profiles_page.dart';
 

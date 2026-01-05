@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:metalore/core/speech/speech.dart';
+import '../../../../core/speech/speech.dart';
 import '../../../../app/translate/tl.dart';
 import '../views/edit_speechservice_screen.dart';
 

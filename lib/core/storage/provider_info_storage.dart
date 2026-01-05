@@ -1,5 +1,5 @@
 import 'package:llm/llm.dart';
-import 'package:metalore/core/storage/base.dart';
+import 'base.dart';
 
 class ProviderInfoStorage extends HiveBaseStorage<ProviderInfo> {
   static const String _prefix = 'provider_info';
