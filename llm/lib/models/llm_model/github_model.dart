@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'github_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class GitHubModel {
   final String id;
   final String name;
@@ -16,26 +21,10 @@ class GitHubModel {
   });
 
   factory GitHubModel.fromJson(Map<String, dynamic> json) {
-    return GitHubModel(
-      id: json['id'],
-      name: json['name'],
-      supportedInputModalities: json['supported_input_modalities'],
-      supportedOutputModalities: json['supported_output_modalities'],
-      maxInputTokens: json['limits']['max_input_tokens'],
-      maxOutputTokens: json['limits']['max_output_tokens'],
-    );
+    return _$GitHubModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'supported_input_modalities': supportedInputModalities,
-      'supported_output_modalities': supportedOutputModalities,
-      'limits': {
-        'max_input_tokens': maxInputTokens,
-        'max_output_tokens': maxOutputTokens,
-      },
-    };
+    return _$GitHubModelToJson(this);
   }
 }

@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'ollama_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class OllamaModel {
   final String name;
   final String model;
@@ -12,22 +17,10 @@ class OllamaModel {
   });
 
   factory OllamaModel.fromJson(Map<String, dynamic> json) {
-    return OllamaModel(
-      name: json['name'],
-      model: json['model'],
-      parameterSize: json['details']['parameter_size'],
-      quantizationLevel: json['details']['quantization_level'],
-    );
+    return _$OllamaModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'model': model,
-      'details': {
-        'parameter_size': parameterSize,
-        'quantization_level': quantizationLevel,
-      },
-    };
+    return _$OllamaModelToJson(this);
   }
 }

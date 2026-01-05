@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'googleai_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class GoogleAiModel {
   final String name;
   final String displayName;
@@ -24,32 +29,10 @@ class GoogleAiModel {
   });
 
   factory GoogleAiModel.fromJson(Map<String, dynamic> json) {
-    return GoogleAiModel(
-      name: json['name'],
-      displayName: json['display_name'],
-      inputTokenLimit: json['input_token_limit'],
-      outputTokenLimit: json['output_token_limit'],
-      supportedGenerationMethods: json['supported_generation_methods'],
-      thinking: json['thinking'],
-      temperature: json['temperature'],
-      maxTemperature: json['max_temperature'],
-      topP: json['top_p'],
-      topK: json['top_k'],
-    );
+    return _$GoogleAiModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'display_name': displayName,
-      'input_token_limit': inputTokenLimit,
-      'output_token_limit': outputTokenLimit,
-      'supported_generation_methods': supportedGenerationMethods,
-      'thinking': thinking,
-      'temperature': temperature,
-      'max_temperature': maxTemperature,
-      'top_p': topP,
-      'top_k': topK,
-    };
+    return _$GoogleAiModelToJson(this);
   }
 }

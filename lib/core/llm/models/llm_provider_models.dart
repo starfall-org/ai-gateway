@@ -1,0 +1,27 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:llm/models/llm_model/ollama_model.dart';
+import 'package:llm/models/llm_model/basic_model.dart';
+import 'package:llm/models/llm_model/googleai_model.dart';
+import 'package:llm/models/llm_model/github_model.dart';
+
+part 'llm_provider_models.g.dart';
+
+@JsonSerializable()
+class LlmProviderModels {
+  final List<BasicModel?> basicModels;
+  final List<OllamaModel?> ollamaModels;
+  final List<GoogleAiModel?> googleAiModels;
+  final List<GitHubModel?> githubModels;
+
+  LlmProviderModels({
+    required this.basicModels,
+    required this.ollamaModels,
+    required this.googleAiModels,
+    required this.githubModels,
+  });
+
+  factory LlmProviderModels.fromJson(Map<String, dynamic> json) =>
+      _$LlmProviderModelsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LlmProviderModelsToJson(this);
+}
