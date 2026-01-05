@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 import 'package:metalore/features/home/domain/domain.dart';
 import 'package:metalore/core/profile/profile.dart';
 import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../../app/data/preferences.dart';
 import '../../../../shared/widgets/error_debug_dialog.dart';
 import '../widgets/edit_message_sheet.dart';

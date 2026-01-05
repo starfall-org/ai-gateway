@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:metalore/core/speech/speech.dart';
 import '../../../../app/translate/tl.dart';
 import '../views/edit_speechservice_screen.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 
 class SpeechServicesPage extends StatefulWidget {
   const SpeechServicesPage({super.key});

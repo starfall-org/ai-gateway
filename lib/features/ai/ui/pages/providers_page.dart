@@ -9,7 +9,6 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/confirm_dialog.dart';
 import '../../../../shared/widgets/item_card.dart';
 import '../../../../shared/utils/icon_builder.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import '../views/edit_provider_screen.dart';
 
 class AiProvidersPage extends StatefulWidget {

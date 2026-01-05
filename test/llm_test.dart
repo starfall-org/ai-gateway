@@ -4,7 +4,6 @@ import 'package:llm/models/api/openai/chat_completions.dart';
 import 'package:llm/models/api/openai/responses.dart';
 import 'package:llm/provider/openai/openai.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 void main() async {
   testOpenai();

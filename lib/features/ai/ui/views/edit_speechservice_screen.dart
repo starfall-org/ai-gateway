@@ -7,7 +7,6 @@ import 'package:metalore/core/llm/data/provider_info_storage.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/common_dropdown.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 
 class AddTTSProfileScreen extends StatefulWidget {
   const AddTTSProfileScreen({super.key});

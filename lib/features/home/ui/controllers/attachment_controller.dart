@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 
 /// Controller responsible for attachment management
 class AttachmentController extends ChangeNotifier {

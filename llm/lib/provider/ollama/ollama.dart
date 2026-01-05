@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import '../../models/api/ollama/chat.dart';
+import '../../models/api/ollama/embed.dart';
+import '../../models/api/ollama/tags.dart';
 import '../base.dart';
-import '../../../utils.dart';
 
 class Ollama extends AIBaseApi {
   final String chatPath;
@@ -18,23 +21,8 @@ class Ollama extends AIBaseApi {
     super.headers = const {},
   });
 
-  Map<String, dynamic> _buildPayload(AIRequest request, {bool stream = false}) {
-    return {
-      'model': request.model,
-      'messages': toOllamaMessages(
-        request.messages,
-        extraImages: request.images,
-      ),
-      if (request.temperature != null) 'temperature': request.temperature,
-      if (request.maxTokens != null) 'num_predict': request.maxTokens,
-      if (stream) 'stream': true,
-      ...request.extra,
-    };
-  }
-
-  @override
-  Future<AIResponse> generate(AIRequest request) async {
-    final payload = _buildPayload(request, stream: false);
+  Future<OllamaChatResponse> chat(OllamaChatRequest request) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(chatPath),
       headers: getHeaders(),
@@ -42,21 +30,21 @@ class Ollama extends AIBaseApi {
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      return parseOllamaResponse(j);
+      return OllamaChatResponse.fromJson(j);
     }
-    throw Exception('Ollama error ${res.statusCode}: ${res.body}');
+    throw Exception('Ollama chat error ${res.statusCode}: ${res.body}');
   }
 
-  @override
-  Stream<AIResponse> generateStream(AIRequest request) async* {
-    final payload = _buildPayload(request, stream: true);
+  Stream<OllamaChatStreamResponse> chatStream(OllamaChatRequest request) async* {
+    final payload = request.toJson();
     final rq = http.Request('POST', uri(chatPath))
       ..headers.addAll(getHeaders())
       ..body = jsonEncode(payload);
     final rs = await rq.send();
+    
     if (rs.statusCode < 200 || rs.statusCode >= 300) {
       final body = await rs.stream.bytesToString();
-      throw Exception('Ollama stream error ${rs.statusCode}: $body');
+      throw Exception('Ollama chat stream error ${rs.statusCode}: $body');
     }
 
     await for (final chunk in rs.stream.transform(utf8.decoder)) {
@@ -65,49 +53,38 @@ class Ollama extends AIBaseApi {
         if (trimmed.isEmpty) continue;
         try {
           final j = jsonDecode(trimmed) as Map<String, dynamic>;
-          final done = j['done'] as bool? ?? false;
-          final msg =
-              (j['message'] as Map?)?.cast<String, dynamic>() ?? const {};
-          final delta = (msg['content'] as String?) ?? '';
-          if (delta.isNotEmpty) {
-            yield AIResponse(text: delta);
-          }
-          if (done) {
+          final response = OllamaChatStreamResponse.fromJson(j);
+          yield response;
+          if (response.done == true) {
             return;
           }
-        } catch (_) {}
+        } catch (_) {
+          // ignore malformed chunks
+        }
       }
     }
   }
 
-  @override
-  Future<List<AIModel>> listModels() async {
+  Future<OllamaTagsResponse> listModels() async {
     final res = await http.get(uri(tagsPath), headers: getHeaders());
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      final data = (j['models'] as List? ?? const []);
-      return data
-          .map((e) => AIModel.fromJson((e as Map).cast<String, dynamic>()))
-          .toList();
+      return OllamaTagsResponse.fromJson(j);
     }
     throw Exception('Ollama list models error ${res.statusCode}: ${res.body}');
   }
 
-  @override
-  Future<dynamic> embed({
-    required String model,
-    required dynamic input,
-    Map<String, dynamic> options = const {},
-  }) async {
-    final body = {'model': model, 'input': input, ...options};
+  Future<OllamaEmbedResponse> embeddings(OllamaEmbedRequest request) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(embeddingsPath),
       headers: getHeaders(),
-      body: jsonEncode(body),
+      body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return jsonDecode(res.body);
+      final j = jsonDecode(res.body) as Map<String, dynamic>;
+      return OllamaEmbedResponse.fromJson(j);
     }
-    throw Exception('Ollama embed error ${res.statusCode}: ${res.body}');
+    throw Exception('Ollama embeddings error ${res.statusCode}: ${res.body}');
   }
 }

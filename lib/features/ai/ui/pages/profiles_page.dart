@@ -7,7 +7,6 @@ import '../../../../shared/widgets/confirm_dialog.dart';
 import '../../../../shared/widgets/item_card.dart';
 import '../views/edit_profile_screen.dart';
 import '../widgets/view_profile_dialog.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 
 class AIProfilesScreen extends StatefulWidget {
   const AIProfilesScreen({super.key});

@@ -13,7 +13,6 @@ import 'package:metalore/core/storage/mcpserver_store.dart';
 
 import '../../../../app/data/preferences.dart';
 import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import './chat_controller_parts/chat_navigation_interface.dart';
 
 // Import các controller con

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import '../controllers/preferences_controller.dart';
 import '../widgets/settings_card.dart';
 import '../widgets/settings_section_header.dart';

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import '../../models/api/anthropic/messages.dart';
+import '../../models/api/anthropic/models.dart';
 import '../base.dart';
-import '../../../utils.dart';
 
 class Anthropic extends AIBaseApi {
   final String messagesPath;
@@ -29,45 +31,22 @@ class Anthropic extends AIBaseApi {
     };
   }
 
-  Map<String, dynamic> _buildPayload(AIRequest request, {bool stream = false}) {
-    final split = splitSystemAndMessages(request.messages);
-    final system = split.$1;
-    final msgs = split.$2;
-
-    final payload = <String, dynamic>{
-      'model': request.model,
-      'messages': toAnthropicMessages(msgs, extraImages: request.images),
-      'max_tokens': request.maxTokens ?? 1024,
-      if (system != null) 'system': system,
-      if (request.temperature != null) 'temperature': request.temperature,
-      if (request.tools.isNotEmpty) 'tools': toAnthropicTools(request.tools),
-      if (request.toolChoice != null)
-        'tool_choice': toAnthropicToolChoice(request.toolChoice!),
-      if (stream) 'stream': true,
-      ...request.extra,
-    };
-    return payload;
-  }
-
-  @override
-  Future<AIResponse> generate(AIRequest request) async {
-    final payload = _buildPayload(request, stream: false);
+  Future<AnthropicMessagesResponse> messages(AnthropicMessagesRequest request) async {
+    final payload = request.toJson();
     final res = await http.post(
       uri(messagesPath),
       headers: getHeaders(),
       body: jsonEncode(payload),
     );
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return parseAnthropicResponse(
-        jsonDecode(res.body) as Map<String, dynamic>,
-      );
+      final j = jsonDecode(res.body) as Map<String, dynamic>;
+      return AnthropicMessagesResponse.fromJson(j);
     }
-    throw Exception('Anthropic error ${res.statusCode}: ${res.body}');
+    throw Exception('Anthropic messages error ${res.statusCode}: ${res.body}');
   }
 
-  @override
-  Stream<AIResponse> generateStream(AIRequest request) async* {
-    final payload = _buildPayload(request, stream: true);
+  Stream<AnthropicMessagesResponse> messagesStream(AnthropicMessagesRequest request) async* {
+    final payload = request.toJson();
     final rq = http.Request('POST', uri(messagesPath))
       ..headers.addAll(getHeaders())
       ..body = jsonEncode(payload);
@@ -75,10 +54,9 @@ class Anthropic extends AIBaseApi {
 
     if (rs.statusCode < 200 || rs.statusCode >= 300) {
       final body = await rs.stream.bytesToString();
-      throw Exception('Anthropic stream error ${rs.statusCode}: $body');
+      throw Exception('Anthropic messages stream error ${rs.statusCode}: $body');
     }
 
-    final buffer = StringBuffer();
     await for (final chunk in rs.stream.transform(utf8.decoder)) {
       final lines = chunk.split('\n');
       for (final line in lines) {
@@ -93,51 +71,54 @@ class Anthropic extends AIBaseApi {
           final j = jsonDecode(data) as Map<String, dynamic>;
           final type = j['type'] as String? ?? j['event'] as String? ?? '';
           if (type == 'content_block_delta') {
-            final delta =
-                (j['delta'] as Map?)?.cast<String, dynamic>() ?? const {};
+            final delta = (j['delta'] as Map?)?.cast<String, dynamic>() ?? const {};
             if ((delta['type'] as String? ?? '') == 'text_delta') {
               final t = delta['text'] as String? ?? '';
               if (t.isNotEmpty) {
-                buffer.write(t);
-                yield AIResponse(text: t);
+                // Create a partial response for streaming
+                final response = AnthropicMessagesResponse(
+                  id: 'stream',
+                  type: 'message',
+                  role: 'assistant',
+                  content: [AnthropicContent(type: 'text', text: t)],
+                  model: request.model,
+                  stopReason: null,
+                  stopSequence: null,
+                  usage: AnthropicUsage(inputTokens: 0, outputTokens: 0),
+                );
+                yield response;
               }
             }
           } else if (type == 'message_delta') {
-            final delta =
-                (j['delta'] as Map?)?.cast<String, dynamic>() ?? const {};
+            final delta = (j['delta'] as Map?)?.cast<String, dynamic>() ?? const {};
             final stop = delta['stop_reason'] as String?;
             if (stop != null) {
-              yield AIResponse(text: '', finishReason: stop);
+              final response = AnthropicMessagesResponse(
+                id: 'stream',
+                type: 'message',
+                role: 'assistant',
+                content: [],
+                model: request.model,
+                stopReason: stop,
+                stopSequence: null,
+                usage: AnthropicUsage(inputTokens: 0, outputTokens: 0),
+              );
+              yield response;
             }
           }
-        } catch (_) {}
+        } catch (_) {
+          // ignore malformed chunks
+        }
       }
     }
   }
 
-  @override
-  Future<List<AIModel>> listModels() async {
+  Future<AnthropicModels> listModels() async {
     final res = await http.get(uri(modelsPath), headers: getHeaders());
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final j = jsonDecode(res.body) as Map<String, dynamic>;
-      final data = (j['data'] as List? ?? const []);
-      return data
-          .map((e) => AIModel.fromJson((e as Map).cast<String, dynamic>()))
-          .toList();
+      return AnthropicModels.fromJson(j);
     }
-    throw Exception(
-      'Anthropic list models error ${res.statusCode}: ${res.body}',
-    );
-  }
-
-  @override
-  Future<dynamic> embed({
-    required String model,
-    required dynamic input,
-    Map<String, dynamic> options = const {},
-  }) {
-    throw UnsupportedError(
-      'Anthropic does not support embeddings in this client.',
-    );
+    throw Exception('Anthropic list models error ${res.statusCode}: ${res.body}');
   }
 }

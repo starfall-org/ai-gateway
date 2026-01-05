@@ -1,8 +1,3 @@
-import '../../models/api/api.dart';
-import '../../models/llm_model/base.dart';
-export '../../models/api/api.dart';
-export '../../models/llm_model/base.dart';
-
 abstract class AIBaseApi {
   final String apiKey;
   final String baseUrl;
@@ -31,8 +26,4 @@ abstract class AIBaseApi {
     final normalized = pathOrUrl.startsWith('/') ? pathOrUrl : '/$pathOrUrl';
     return Uri.parse('$baseUrl$normalized');
   }
-
-
 }
-
-/// Helpers

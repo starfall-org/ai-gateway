@@ -5,7 +5,6 @@ import 'dart:io';
 import '../../../../app/config/services.dart';
 import '../../../../app/translate/tl.dart';
 import '../../../../shared/widgets/app_dialog.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../controllers/chat_controller.dart';
 import '../controllers/chat_controller_parts/chat_navigation_interface.dart';
