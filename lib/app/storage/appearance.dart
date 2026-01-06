@@ -62,19 +62,11 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
     return {
       'themeMode': item.themeMode.index,
       'selection': item.selection.index,
-      'primaryColor': item.primaryColor,
-      'secondaryColor': item.secondaryColor,
-      'backgroundColor': item.backgroundColor,
-      'surfaceColor': item.surfaceColor,
-      'textColor': item.textColor,
-      'textHintColor': item.textHintColor,
+      'colors': item.colors.toJson(),
+      'font': item.font.toJson(),
       'superDarkMode': item.superDarkMode,
       'dynamicColor': item.dynamicColor,
-      'fontFamily': item.fontFamily,
-      'chatFontSize': item.chatFontSize,
-      'appFontSize': item.appFontSize,
       'enableAnimation': item.enableAnimation,
-      'secondaryBackgroundMode': null,
     };
   }
 
@@ -103,25 +95,25 @@ class AppearanceSp extends SharedPreferencesBase<AppearanceSetting> {
     // Xác định màu mặc định dựa trên theme mode
     final bool isDark = mode == ThemeMode.dark;
 
+    // Parse nested objects
+    final colorsMap = fields['colors'] as Map<String, dynamic>?;
+    final fontMap = fields['font'] as Map<String, dynamic>?;
+
+    final colors = colorsMap != null
+        ? ColorSettings.fromJson(colorsMap)
+        : ColorSettings.defaults(isDark: isDark);
+
+    final font = fontMap != null
+        ? FontSettings.fromJson(fontMap)
+        : FontSettings.defaults();
+
     return AppearanceSetting(
       themeMode: mode,
       selection: sel,
-      primaryColor: fields['primaryColor'] as int? ?? Colors.blue.toARGB32(),
-      secondaryColor:
-          fields['secondaryColor'] as int? ?? Colors.purple.toARGB32(),
-      backgroundColor: fields['backgroundColor'] as int? ??
-          (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
-      surfaceColor: fields['surfaceColor'] as int? ??
-          (isDark ? Colors.black.toARGB32() : Colors.white.toARGB32()),
-      textColor: fields['textColor'] as int? ??
-          (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
-      textHintColor: fields['textHintColor'] as int? ??
-          (isDark ? Colors.white.toARGB32() : Colors.black.toARGB32()),
+      colors: colors,
+      font: font,
       superDarkMode: fields['superDarkMode'] as bool? ?? false,
       dynamicColor: fields['dynamicColor'] as bool? ?? false,
-      fontFamily: fields['fontFamily'] as String? ?? 'Roboto',
-      chatFontSize: fields['chatFontSize'] as int? ?? 16,
-      appFontSize: fields['appFontSize'] as int? ?? 16,
       enableAnimation: fields['enableAnimation'] as bool? ?? true,
     );
   }

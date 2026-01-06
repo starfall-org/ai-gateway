@@ -9,18 +9,18 @@ part of 'provider_info.dart';
 ProviderInfo _$ProviderInfoFromJson(Map<String, dynamic> json) => ProviderInfo(
       type: $enumDecode(_$ProviderTypeEnumMap, json['type']),
       name: json['name'] as String?,
-      apiKey: json['apiKey'] as String?,
+      apiKey: json['api_key'] as String?,
       icon: json['icon'] as String?,
-      baseUrl: json['baseUrl'] as String?,
+      baseUrl: json['base_url'] as String?,
     );
 
 Map<String, dynamic> _$ProviderInfoToJson(ProviderInfo instance) =>
     <String, dynamic>{
       'name': instance.name,
       'type': _$ProviderTypeEnumMap[instance.type]!,
-      'apiKey': instance.apiKey,
+      'api_key': instance.apiKey,
       'icon': instance.icon,
-      'baseUrl': instance.baseUrl,
+      'base_url': instance.baseUrl,
     };
 
 const _$ProviderTypeEnumMap = {

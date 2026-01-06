@@ -61,14 +61,7 @@ class PreferencesSp extends SharedPreferencesBase<PreferencesSetting> {
       'hideNavigationBar': item.hideNavigationBar,
       'debugMode': item.debugMode,
       'hasInitializedIcons': item.hasInitializedIcons,
-      'activeSidebar': item.activeSidebar,
-      'vibrationSettings': {
-        'enable': item.vibrationSettings.enable,
-        'onHoldChatConversation': item.vibrationSettings.onHoldChatConversation,
-        'onNewMessage': item.vibrationSettings.onNewMessage,
-        'onGenerateToken': item.vibrationSettings.onGenerateToken,
-        'onDeleteItem': item.vibrationSettings.onDeleteItem,
-      },
+      'vibrationSettings': item.vibrationSettings.toJson(),
     };
   }
 
@@ -78,7 +71,11 @@ class PreferencesSp extends SharedPreferencesBase<PreferencesSetting> {
     Map<String, dynamic> fields,
   ) {
     final vibrationSettingsMap =
-        fields['vibrationSettings'] as Map<String, dynamic>? ?? {};
+        fields['vibrationSettings'] as Map<String, dynamic>?;
+
+    final vibrationSettings = vibrationSettingsMap != null
+        ? VibrationSettings.fromJson(vibrationSettingsMap)
+        : VibrationSettings.defaults();
 
     return PreferencesSetting(
       persistChatSelection: fields['persistChatSelection'] as bool? ?? false,
@@ -86,16 +83,7 @@ class PreferencesSp extends SharedPreferencesBase<PreferencesSetting> {
       hideNavigationBar: fields['hideNavigationBar'] as bool? ?? false,
       debugMode: fields['debugMode'] as bool? ?? false,
       hasInitializedIcons: fields['hasInitializedIcons'] as bool? ?? false,
-      activeSidebar: fields['activeSidebar'] as String?,
-      vibrationSettings: VibrationSettings(
-        enable: vibrationSettingsMap['enable'] as bool? ?? false,
-        onHoldChatConversation:
-            vibrationSettingsMap['onHoldChatConversation'] as bool? ?? false,
-        onNewMessage: vibrationSettingsMap['onNewMessage'] as bool? ?? false,
-        onGenerateToken:
-            vibrationSettingsMap['onGenerateToken'] as bool? ?? false,
-        onDeleteItem: vibrationSettingsMap['onDeleteItem'] as bool? ?? false,
-      ),
+      vibrationSettings: vibrationSettings,
     );
   }
 
@@ -131,8 +119,5 @@ class PreferencesSp extends SharedPreferencesBase<PreferencesSetting> {
     await updatePreferences(current.copyWith(hasInitializedIcons: initialized));
   }
 
-  Future<void> setActiveSidebar(String? sidebar) async {
-    final current = currentPreferences;
-    await updatePreferences(current.copyWith(activeSidebar: sidebar));
-  }
+
 }

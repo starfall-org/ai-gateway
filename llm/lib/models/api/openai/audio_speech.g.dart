@@ -12,9 +12,9 @@ OpenAiAudioSpeechRequest _$OpenAiAudioSpeechRequestFromJson(
   model: json['model'] as String,
   input: json['input'] as String,
   voice: json['voice'] as String,
-  responseFormat: json['responseFormat'] == null
+  responseFormat: json['response_format'] == null
       ? null
-      : OpenAIAudioResponseFormat.fromJson(json['responseFormat'] as String),
+      : OpenAIAudioResponseFormat.fromJson(json['response_format'] as String),
   speed: (json['speed'] as num?)?.toDouble(),
 );
 
@@ -24,7 +24,7 @@ Map<String, dynamic> _$OpenAiAudioSpeechRequestToJson(
   'model': instance.model,
   'input': instance.input,
   'voice': instance.voice,
-  'responseFormat': instance.responseFormat,
+  'response_format': instance.responseFormat,
   'speed': instance.speed,
 };
 

@@ -56,41 +56,41 @@ Map<String, dynamic> _$GeminiModelToJson(GeminiModel instance) =>
 GeminiModelCapabilities _$GeminiModelCapabilitiesFromJson(
   Map<String, dynamic> json,
 ) => GeminiModelCapabilities(
-  mediaUnderstanding: json['mediaUnderstanding'] as bool?,
-  codeExecution: json['codeExecution'] as bool?,
-  videoGeneration: json['videoGeneration'] as bool?,
-  audioGeneration: json['audioGeneration'] as bool?,
-  imageGeneration: json['imageGeneration'] as bool?,
+  mediaUnderstanding: json['media_understanding'] as bool?,
+  codeExecution: json['code_execution'] as bool?,
+  videoGeneration: json['video_generation'] as bool?,
+  audioGeneration: json['audio_generation'] as bool?,
+  imageGeneration: json['image_generation'] as bool?,
 );
 
 Map<String, dynamic> _$GeminiModelCapabilitiesToJson(
   GeminiModelCapabilities instance,
 ) => <String, dynamic>{
-  'mediaUnderstanding': instance.mediaUnderstanding,
-  'codeExecution': instance.codeExecution,
-  'videoGeneration': instance.videoGeneration,
-  'audioGeneration': instance.audioGeneration,
-  'imageGeneration': instance.imageGeneration,
+  'media_understanding': instance.mediaUnderstanding,
+  'code_execution': instance.codeExecution,
+  'video_generation': instance.videoGeneration,
+  'audio_generation': instance.audioGeneration,
+  'image_generation': instance.imageGeneration,
 };
 
 GeminiModelInput _$GeminiModelInputFromJson(Map<String, dynamic> json) =>
     GeminiModelInput(
       type: json['type'] as String?,
-      mimeType: (json['mimeType'] as List<dynamic>?)
+      mimeType: (json['mime_type'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
     );
 
 Map<String, dynamic> _$GeminiModelInputToJson(GeminiModelInput instance) =>
-    <String, dynamic>{'type': instance.type, 'mimeType': instance.mimeType};
+    <String, dynamic>{'type': instance.type, 'mime_type': instance.mimeType};
 
 GeminiModelOutput _$GeminiModelOutputFromJson(Map<String, dynamic> json) =>
     GeminiModelOutput(
       type: json['type'] as String?,
-      mimeType: (json['mimeType'] as List<dynamic>?)
+      mimeType: (json['mime_type'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
     );
 
 Map<String, dynamic> _$GeminiModelOutputToJson(GeminiModelOutput instance) =>
-    <String, dynamic>{'type': instance.type, 'mimeType': instance.mimeType};
+    <String, dynamic>{'type': instance.type, 'mime_type': instance.mimeType};

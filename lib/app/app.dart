@@ -4,7 +4,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 
 import 'app_routes.dart';
 import 'config/theme.dart';
-import 'data/appearance.dart';
+import 'storage/appearance.dart';
 
 class MultiGatewayApp extends StatelessWidget {
   const MultiGatewayApp({super.key});
@@ -23,27 +23,27 @@ class MultiGatewayApp extends StatelessWidget {
             final ColorScheme lightScheme = (useDynamic && lightDynamic != null)
                 ? lightDynamic.harmonized()
                 : ColorScheme.fromSeed(
-                    seedColor: Color(settings.primaryColor),
+                    seedColor: Color(settings.colors.primaryColor),
                     brightness: Brightness.light,
                   ).copyWith(
-                    secondary: Color(settings.secondaryColor),
-                    surface: Color(settings.surfaceColor),
+                    secondary: Color(settings.colors.secondaryColor),
+                    surface: Color(settings.colors.surfaceColor),
                   );
 
             final ColorScheme darkScheme = (useDynamic && darkDynamic != null)
                 ? darkDynamic.harmonized()
                 : ColorScheme.fromSeed(
-                    seedColor: Color(settings.primaryColor),
+                    seedColor: Color(settings.colors.primaryColor),
                     brightness: Brightness.dark,
                   ).copyWith(
-                    secondary: Color(settings.secondaryColor),
-                    surface: Color(settings.surfaceColor),
+                    secondary: Color(settings.colors.secondaryColor),
+                    surface: Color(settings.colors.surfaceColor),
                   );
 
             // Apply custom text colors only if they match the current brightness
             // Otherwise use ColorScheme defaults (fixes black text in dark mode when using system theme)
-            final Color customTextColor = Color(settings.textColor);
-            final Color customTextHintColor = Color(settings.textHintColor);
+            final Color customTextColor = Color(settings.colors.textColor);
+            final Color customTextHintColor = Color(settings.colors.textHintColor);
 
             final bool useCustomTextColor =
                 (lightScheme.brightness == Brightness.light &&
@@ -127,7 +127,7 @@ class MultiGatewayApp extends StatelessWidget {
             );
 
             return MaterialApp(
-              title: 'AI Gateway',
+              title: 'MultiGateway',
               debugShowCheckedModeBanner: false,
               themeMode: settings.themeMode,
               theme: ThemeData(

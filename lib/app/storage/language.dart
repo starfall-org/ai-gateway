@@ -62,7 +62,7 @@ class LanguageSp extends SharedPreferencesBase<LanguageSetting> {
     return {
       'languageCode': item.languageCode,
       'countryCode': item.countryCode,
-      'autoDetectLanguage': item.autoDetectLanguage,
+      'autoDetect': item.autoDetect,
     };
   }
 
@@ -74,7 +74,7 @@ class LanguageSp extends SharedPreferencesBase<LanguageSetting> {
     return LanguageSetting(
       languageCode: fields['languageCode'] as String? ?? 'auto',
       countryCode: fields['countryCode'] as String?,
-      autoDetectLanguage: fields['autoDetectLanguage'] as bool? ?? true,
+      autoDetect: fields['autoDetect'] as bool? ?? true,
     );
   }
 
@@ -97,7 +97,7 @@ class LanguageSp extends SharedPreferencesBase<LanguageSetting> {
       final updated = current.copyWith(
         languageCode: languageCode,
         countryCode: countryCode,
-        autoDetectLanguage: false,
+        autoDetect: false,
       );
       await updatePreferences(updated);
     } catch (e) {
@@ -108,7 +108,7 @@ class LanguageSp extends SharedPreferencesBase<LanguageSetting> {
   Future<void> setAutoDetect(bool autoDetect) async {
     try {
       final current = currentPreferences;
-      final updated = current.copyWith(autoDetectLanguage: autoDetect);
+      final updated = current.copyWith(autoDetect: autoDetect);
       await updatePreferences(updated);
     } catch (e) {
       throw Exception('Failed to set auto detect: $e');
@@ -123,7 +123,7 @@ class LanguageSp extends SharedPreferencesBase<LanguageSetting> {
     try {
       final preferences = currentPreferences;
 
-      if (preferences.autoDetectLanguage ||
+      if (preferences.autoDetect ||
           preferences.languageCode == 'auto') {
         return _getSupportedLocale(deviceLocale);
       } else {

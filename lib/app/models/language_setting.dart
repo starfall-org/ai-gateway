@@ -7,18 +7,18 @@ part 'language_setting.g.dart';
 class LanguageSetting {
   final String languageCode;
   final String? countryCode;
-  final bool autoDetectLanguage;
+  final bool autoDetect;
 
   const LanguageSetting({
     required this.languageCode,
     this.countryCode,
-    this.autoDetectLanguage = true,
+    this.autoDetect = true,
   });
 
   factory LanguageSetting.defaults() {
     return const LanguageSetting(
       languageCode: 'auto',
-      autoDetectLanguage: true,
+      autoDetect: true,
     );
   }
 
@@ -60,7 +60,7 @@ class LanguageSetting {
         r'"countryCode":"([^"]*)"',
       ).firstMatch(cleanJson);
       final autoDetectMatch = RegExp(
-        r'"autoDetectLanguage":(true|false)',
+        r'"autoDetect":(true|false)',
       ).firstMatch(cleanJson);
 
       if (languageCodeMatch != null) {
@@ -70,7 +70,7 @@ class LanguageSetting {
         data['countryCode'] = countryCodeMatch.group(1);
       }
       if (autoDetectMatch != null) {
-        data['autoDetectLanguage'] = autoDetectMatch.group(1) == 'true';
+        data['autoDetect'] = autoDetectMatch.group(1) == 'true';
       }
 
       return data;
@@ -99,7 +99,7 @@ class LanguageSetting {
   }
 
   Locale? getLocale() {
-    if (autoDetectLanguage || languageCode == 'auto') {
+    if (autoDetect || languageCode == 'auto') {
       return null;
     }
 
@@ -112,18 +112,18 @@ class LanguageSetting {
   LanguageSetting copyWith({
     String? languageCode,
     String? countryCode,
-    bool? autoDetectLanguage,
+    bool? autoDetect,
   }) {
     return LanguageSetting(
       languageCode: languageCode ?? this.languageCode,
       countryCode: countryCode ?? this.countryCode,
-      autoDetectLanguage: autoDetectLanguage ?? this.autoDetectLanguage,
+      autoDetect: autoDetect ?? this.autoDetect,
     );
   }
 
   @override
   String toString() {
-    return '{"languageCode":"$languageCode","countryCode":"$countryCode","autoDetectLanguage":$autoDetectLanguage}';
+    return '{"languageCode":"$languageCode","countryCode":"$countryCode","autoDetect":$autoDetect}';
   }
 
   @override
@@ -132,13 +132,13 @@ class LanguageSetting {
     return other is LanguageSetting &&
         other.languageCode == languageCode &&
         other.countryCode == countryCode &&
-        other.autoDetectLanguage == autoDetectLanguage;
+        other.autoDetect == autoDetect;
   }
 
   @override
   int get hashCode {
     return languageCode.hashCode ^
         countryCode.hashCode ^
-        autoDetectLanguage.hashCode;
+        autoDetect.hashCode;
   }
 }

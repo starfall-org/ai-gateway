@@ -362,42 +362,42 @@ Map<String, dynamic> _$FunctionCallToJson(FunctionCall instance) =>
 
 Annotation _$AnnotationFromJson(Map<String, dynamic> json) => Annotation(
   type: json['type'] as String?,
-  urlCitation: json['urlCitation'] == null
+  urlCitation: json['url_citation'] == null
       ? null
-      : UrlCitation.fromJson(json['urlCitation'] as Map<String, dynamic>),
+      : UrlCitation.fromJson(json['url_citation'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AnnotationToJson(Annotation instance) =>
     <String, dynamic>{
       'type': instance.type,
-      'urlCitation': instance.urlCitation,
+      'url_citation': instance.urlCitation,
     };
 
 UrlCitation _$UrlCitationFromJson(Map<String, dynamic> json) => UrlCitation(
-  endIndex: (json['endIndex'] as num?)?.toInt(),
-  startIndex: (json['startIndex'] as num?)?.toInt(),
+  endIndex: (json['end_index'] as num?)?.toInt(),
+  startIndex: (json['start_index'] as num?)?.toInt(),
   url: json['url'] as String?,
   title: json['title'] as String?,
 );
 
 Map<String, dynamic> _$UrlCitationToJson(UrlCitation instance) =>
     <String, dynamic>{
-      'endIndex': instance.endIndex,
-      'startIndex': instance.startIndex,
+      'end_index': instance.endIndex,
+      'start_index': instance.startIndex,
       'url': instance.url,
       'title': instance.title,
     };
 
 Audio _$AudioFromJson(Map<String, dynamic> json) => Audio(
   id: json['id'] as String?,
-  expiresAt: (json['expiresAt'] as num?)?.toInt(),
+  expiresAt: (json['expires_at'] as num?)?.toInt(),
   data: json['data'] as String?,
   transcript: json['transcript'] as String?,
 );
 
 Map<String, dynamic> _$AudioToJson(Audio instance) => <String, dynamic>{
   'id': instance.id,
-  'expiresAt': instance.expiresAt,
+  'expires_at': instance.expiresAt,
   'data': instance.data,
   'transcript': instance.transcript,
 };
@@ -422,7 +422,7 @@ Token _$TokenFromJson(Map<String, dynamic> json) => Token(
   bytes: (json['bytes'] as List<dynamic>?)
       ?.map((e) => (e as num).toInt())
       .toList(),
-  topLogprobs: (json['topLogprobs'] as List<dynamic>?)
+  topLogprobs: (json['top_logprobs'] as List<dynamic>?)
       ?.map((e) => TopLogprob.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
@@ -431,7 +431,7 @@ Map<String, dynamic> _$TokenToJson(Token instance) => <String, dynamic>{
   'token': instance.token,
   'logprob': instance.logprob,
   'bytes': instance.bytes,
-  'topLogprobs': instance.topLogprobs,
+  'top_logprobs': instance.topLogprobs,
 };
 
 TopLogprob _$TopLogprobFromJson(Map<String, dynamic> json) => TopLogprob(
@@ -478,32 +478,34 @@ Map<String, dynamic> _$ChatCompletionUsageToJson(
 
 PromptTokenDetails _$PromptTokenDetailsFromJson(Map<String, dynamic> json) =>
     PromptTokenDetails(
-      cachedTokens: (json['cachedTokens'] as num?)?.toInt(),
-      audioTokens: (json['audioTokens'] as num?)?.toInt(),
+      cachedTokens: (json['cached_tokens'] as num?)?.toInt(),
+      audioTokens: (json['audio_tokens'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$PromptTokenDetailsToJson(PromptTokenDetails instance) =>
     <String, dynamic>{
-      'cachedTokens': instance.cachedTokens,
-      'audioTokens': instance.audioTokens,
+      'cached_tokens': instance.cachedTokens,
+      'audio_tokens': instance.audioTokens,
     };
 
 CompletionTokenDetails _$CompletionTokenDetailsFromJson(
   Map<String, dynamic> json,
 ) => CompletionTokenDetails(
-  reasoningTokens: (json['reasoningTokens'] as num?)?.toInt(),
-  audioTokens: (json['audioTokens'] as num?)?.toInt(),
-  acceptedPredictionTokens: (json['acceptedPredictionTokens'] as num?)?.toInt(),
-  rejectedPredictionTokens: (json['rejectedPredictionTokens'] as num?)?.toInt(),
+  reasoningTokens: (json['reasoning_tokens'] as num?)?.toInt(),
+  audioTokens: (json['audio_tokens'] as num?)?.toInt(),
+  acceptedPredictionTokens: (json['accepted_prediction_tokens'] as num?)
+      ?.toInt(),
+  rejectedPredictionTokens: (json['rejected_prediction_tokens'] as num?)
+      ?.toInt(),
 );
 
 Map<String, dynamic> _$CompletionTokenDetailsToJson(
   CompletionTokenDetails instance,
 ) => <String, dynamic>{
-  'reasoningTokens': instance.reasoningTokens,
-  'audioTokens': instance.audioTokens,
-  'acceptedPredictionTokens': instance.acceptedPredictionTokens,
-  'rejectedPredictionTokens': instance.rejectedPredictionTokens,
+  'reasoning_tokens': instance.reasoningTokens,
+  'audio_tokens': instance.audioTokens,
+  'accepted_prediction_tokens': instance.acceptedPredictionTokens,
+  'rejected_prediction_tokens': instance.rejectedPredictionTokens,
 };
 
 Custom _$CustomFromJson(Map<String, dynamic> json) =>

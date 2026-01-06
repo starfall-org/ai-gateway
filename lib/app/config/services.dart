@@ -7,10 +7,10 @@ import '../../core/speech/speech.dart';
 import '../../core/llm/data/provider_info_storage.dart';
 import '../../core/storage/mcpserver_store.dart';
 
-import '../data/appearance.dart';
-import '../data/language.dart';
-import '../data/preferences.dart';
-import '../data/default_options.dart';
+import '../storage/appearance.dart';
+import '../storage/language.dart';
+import '../storage/preferences.dart';
+import '../storage/default_options.dart';
 
 /// Centralized service locator for application repositories and services.
 /// Handles initialization and dependency management without external libraries.

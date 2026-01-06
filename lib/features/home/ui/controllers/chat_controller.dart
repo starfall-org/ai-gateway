@@ -11,7 +11,7 @@ import '../../../../core/speech/speech.dart';
 import '../../../../core/llm/data/provider_info_storage.dart';
 import '../../../../core/storage/mcpserver_store.dart';
 
-import '../../../../app/data/preferences.dart';
+import '../../../../app/storage/preferences.dart';
 import '../../../../app/translate/tl.dart';
 import './chat_controller_parts/chat_navigation_interface.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../app/data/appearance.dart';
+import '../../../../app/storage/appearance.dart';
 import '../../../../app/models/appearance_setting.dart';
 
 enum ColorType {

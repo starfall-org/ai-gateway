@@ -7,46 +7,40 @@ part of 'messages.dart';
 // **************************************************************************
 
 AnthropicMessagesRequest _$AnthropicMessagesRequestFromJson(
-        Map<String, dynamic> json) =>
-    AnthropicMessagesRequest(
-      model: json['model'] as String,
-      messages: (json['messages'] as List<dynamic>)
-          .map((e) => AnthropicMessage.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      maxTokens: (json['max_tokens'] as num).toInt(),
-      system: json['system'] as String?,
-      temperature: (json['temperature'] as num?)?.toDouble(),
-      tools: (json['tools'] as List<dynamic>?)
-          ?.map((e) => AnthropicTool.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      toolChoice: json['tool_choice'],
-      stream: json['stream'] as bool?,
-    );
+  Map<String, dynamic> json,
+) => AnthropicMessagesRequest(
+  model: json['model'] as String,
+  messages: (json['messages'] as List<dynamic>)
+      .map((e) => AnthropicMessage.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  maxTokens: (json['max_tokens'] as num).toInt(),
+  system: json['system'] as String?,
+  temperature: (json['temperature'] as num?)?.toDouble(),
+  tools: (json['tools'] as List<dynamic>?)
+      ?.map((e) => AnthropicTool.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  toolChoice: json['tool_choice'],
+  stream: json['stream'] as bool?,
+);
 
 Map<String, dynamic> _$AnthropicMessagesRequestToJson(
-        AnthropicMessagesRequest instance) =>
-    <String, dynamic>{
-      'model': instance.model,
-      'messages': instance.messages,
-      'max_tokens': instance.maxTokens,
-      'system': instance.system,
-      'temperature': instance.temperature,
-      'tools': instance.tools,
-      'tool_choice': instance.toolChoice,
-      'stream': instance.stream,
-    };
+  AnthropicMessagesRequest instance,
+) => <String, dynamic>{
+  'model': instance.model,
+  'messages': instance.messages,
+  'max_tokens': instance.maxTokens,
+  'system': instance.system,
+  'temperature': instance.temperature,
+  'tools': instance.tools,
+  'tool_choice': instance.toolChoice,
+  'stream': instance.stream,
+};
 
 AnthropicMessage _$AnthropicMessageFromJson(Map<String, dynamic> json) =>
-    AnthropicMessage(
-      role: json['role'] as String,
-      content: json['content'],
-    );
+    AnthropicMessage(role: json['role'] as String, content: json['content']);
 
 Map<String, dynamic> _$AnthropicMessageToJson(AnthropicMessage instance) =>
-    <String, dynamic>{
-      'role': instance.role,
-      'content': instance.content,
-    };
+    <String, dynamic>{'role': instance.role, 'content': instance.content};
 
 AnthropicContent _$AnthropicContentFromJson(Map<String, dynamic> json) =>
     AnthropicContent(
@@ -81,32 +75,32 @@ Map<String, dynamic> _$AnthropicToolToJson(AnthropicTool instance) =>
     };
 
 AnthropicMessagesResponse _$AnthropicMessagesResponseFromJson(
-        Map<String, dynamic> json) =>
-    AnthropicMessagesResponse(
-      id: json['id'] as String,
-      type: json['type'] as String,
-      role: json['role'] as String,
-      content: (json['content'] as List<dynamic>)
-          .map((e) => AnthropicContent.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      model: json['model'] as String,
-      stopReason: json['stop_reason'] as String?,
-      stopSequence: json['stop_sequence'] as String?,
-      usage: AnthropicUsage.fromJson(json['usage'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => AnthropicMessagesResponse(
+  id: json['id'] as String,
+  type: json['type'] as String,
+  role: json['role'] as String,
+  content: (json['content'] as List<dynamic>)
+      .map((e) => AnthropicContent.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  model: json['model'] as String,
+  stopReason: json['stop_reason'] as String?,
+  stopSequence: json['stop_sequence'] as String?,
+  usage: AnthropicUsage.fromJson(json['usage'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$AnthropicMessagesResponseToJson(
-        AnthropicMessagesResponse instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'type': instance.type,
-      'role': instance.role,
-      'content': instance.content,
-      'model': instance.model,
-      'stop_reason': instance.stopReason,
-      'stop_sequence': instance.stopSequence,
-      'usage': instance.usage,
-    };
+  AnthropicMessagesResponse instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'type': instance.type,
+  'role': instance.role,
+  'content': instance.content,
+  'model': instance.model,
+  'stop_reason': instance.stopReason,
+  'stop_sequence': instance.stopSequence,
+  'usage': instance.usage,
+};
 
 AnthropicUsage _$AnthropicUsageFromJson(Map<String, dynamic> json) =>
     AnthropicUsage(

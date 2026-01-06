@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:translator/translator.dart';
 
-import '../data/translation_cache.dart';
-import '../data/language.dart';
+import '../storage/translation_cache.dart';
+import '../storage/language.dart';
 // import 'service.dart';
 
 /// Dịch text từ English sang ngôn ngữ được cài đặt trong language preferences
@@ -19,7 +19,7 @@ String tl(String text) {
 
     // Xác định target language
     String targetLanguage;
-    if (preferences.autoDetectLanguage || preferences.languageCode == 'auto') {
+    if (preferences.autoDetect || preferences.languageCode == 'auto') {
       final locale = WidgetsBinding.instance.platformDispatcher.locale;
       if (locale.languageCode.toLowerCase() == 'zh') {
         final country = (locale.countryCode ?? '').toUpperCase();

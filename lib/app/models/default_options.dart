@@ -23,7 +23,7 @@ class DefaultModels {
   final DefaultModel? titleGenerationModel;
   final DefaultModel? chatSummarizationModel;
   final DefaultModel? translationModel;
-  final DefaultModel? supportOCRModel;
+  final DefaultModel? supportOcrModel;
   final DefaultModel? embeddingModel;
   final DefaultModel? imageGenerationModel;
   final DefaultModel? chatModel;
@@ -35,7 +35,7 @@ class DefaultModels {
     this.titleGenerationModel,
     this.chatSummarizationModel,
     this.translationModel,
-    this.supportOCRModel,
+    this.supportOcrModel,
     this.embeddingModel,
     this.imageGenerationModel,
     this.chatModel,
@@ -48,7 +48,7 @@ class DefaultModels {
     DefaultModel? titleGenerationModel,
     DefaultModel? chatSummarizationModel,
     DefaultModel? translationModel,
-    DefaultModel? supportOCRModel,
+    DefaultModel? supportOcrModel,
     DefaultModel? embeddingModel,
     DefaultModel? imageGenerationModel,
     DefaultModel? chatModel,
@@ -60,7 +60,7 @@ class DefaultModels {
       titleGenerationModel: titleGenerationModel ?? this.titleGenerationModel,
       chatSummarizationModel:
           chatSummarizationModel ?? this.chatSummarizationModel,
-      supportOCRModel: supportOCRModel ?? this.supportOCRModel,
+      supportOcrModel: supportOcrModel ?? this.supportOcrModel,
       embeddingModel: embeddingModel ?? this.embeddingModel,
       imageGenerationModel: imageGenerationModel ?? this.imageGenerationModel,
       chatModel: chatModel ?? this.chatModel,
@@ -79,9 +79,9 @@ class DefaultModels {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class DefaultModel {
   final String modelName;
-  final String providerName;
+  final String providerId;
 
-  DefaultModel({required this.modelName, required this.providerName});
+  DefaultModel({required this.modelName, required this.providerId});
 
   factory DefaultModel.fromJson(Map<String, dynamic> json) =>
       _$DefaultModelFromJson(json);

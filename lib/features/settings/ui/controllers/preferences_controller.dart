@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../app/models/preferences_setting.dart';
-import '../../../../app/data/language.dart';
-import '../../../../app/data/preferences.dart';
+import '../../../../app/storage/language.dart';
+import '../../../../app/storage/preferences.dart';
 
 class PreferencesController extends ChangeNotifier {
   final LanguageSp _languageSp;
   final PreferencesSp _preferencesSp;
 
-  bool _autoDetectLanguage = true;
+  bool _autoDetect = true;
   String _selectedLanguage = 'auto';
   bool _persistChatSelection = false;
   VibrationSettings _vibrationSettings = VibrationSettings.defaults();
@@ -35,7 +35,7 @@ class PreferencesController extends ChangeNotifier {
     _loadPreferencesSetting();
   }
 
-  bool get autoDetectLanguage => _autoDetectLanguage;
+  bool get autoDetect => _autoDetect;
   String get selectedLanguage => _selectedLanguage;
   bool get persistChatSelection => _persistChatSelection;
   VibrationSettings get vibrationSettings => _vibrationSettings;
@@ -45,7 +45,7 @@ class PreferencesController extends ChangeNotifier {
 
   void _loadPreferences() {
     final preferences = _languageSp.currentPreferences;
-    _autoDetectLanguage = preferences.autoDetectLanguage;
+    _autoDetect = preferences.autoDetect;
     _selectedLanguage = preferences.languageCode;
     notifyListeners();
   }
@@ -96,7 +96,7 @@ class PreferencesController extends ChangeNotifier {
   Future<void> selectLanguage(String languageCode) async {
     try {
       _selectedLanguage = languageCode;
-      _autoDetectLanguage = languageCode == 'auto';
+      _autoDetect = languageCode == 'auto';
       notifyListeners();
 
       if (languageCode == 'auto') {
@@ -121,7 +121,7 @@ class PreferencesController extends ChangeNotifier {
     final preferences = _languageSp.currentPreferences;
     Locale newLocale;
 
-    if (preferences.autoDetectLanguage || preferences.languageCode == 'auto') {
+    if (preferences.autoDetect || preferences.languageCode == 'auto') {
       newLocale = WidgetsBinding.instance.platformDispatcher.locale;
       if (newLocale.languageCode == 'zh') {
         newLocale = const Locale('zh', 'CN');
@@ -138,7 +138,7 @@ class PreferencesController extends ChangeNotifier {
   }
 
   String getCurrentLanguageName() {
-    if (_autoDetectLanguage) {
+    if (_autoDetect) {
       return 'Auto';
     }
 
