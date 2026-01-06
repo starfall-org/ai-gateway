@@ -1,15 +1,15 @@
-import '../../features/home/domain/domain.dart';
+import 'package:multigateway/features/home/domain/domain.dart';
 import 'package:llm/llm.dart';
 import 'package:mcp/mcp.dart';
-import '../../core/profile/profile.dart';
-import '../../core/speech/speech.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/core/speech/speech.dart';
 
-import '../../core/llm/data/provider_info_storage.dart';
-import '../../core/storage/mcpserver_store.dart';
+import 'package:multigateway/core/llm/data/provider_info_storage.dart';
+import 'package:multigateway/core/storage/mcpserver_store.dart';
 
-import '../storage/appearance.dart';
-import '../storage/preferences.dart';
-import '../storage/default_options.dart';
+import 'package:multigateway/app/storage/appearance.dart';
+import 'package:multigateway/app/storage/preferences.dart';
+import 'package:multigateway/app/storage/default_options.dart';
 
 /// Centralized service locator for application repositories and services.
 /// Handles initialization and dependency management without external libraries.
@@ -24,10 +24,10 @@ class AppServices {
   late final AppearanceStorage appearanceSp;
   late final PreferencesStorage preferencesSp;
   late final ChatRepository chatRepository;
-  late final AIProfileRepository aiProfileRepository;
+  late final ChatProfileStorage aiProfileRepository;
   late final LlmProviderInfoStorage pInfStorage;
   late final DefaultOptionsStorage defaultOptionsRepository;
-  late final MCPRepository mcpRepository;
+  late final McpServerStorage McpServerStorage;
   late final TTSRepository ttsRepository;
   late final TTSService ttsService;
 
@@ -44,8 +44,8 @@ class AppServices {
     _instance.pInfStorage = await LlmProviderInfoStorage.init();
     _instance.defaultOptionsRepository = await DefaultOptionsStorage.init();
     _instance.chatRepository = await ChatRepository.init();
-    _instance.aiProfileRepository = await AIProfileRepository.init();
-    _instance.mcpRepository = await MCPRepository.init();
+    _instance.aiProfileRepository = await ChatProfileStorage.init();
+    _instance.McpServerStorage = await McpServerStorage.init();
     _instance.ttsRepository = await TTSRepository.init();
 
     // Services

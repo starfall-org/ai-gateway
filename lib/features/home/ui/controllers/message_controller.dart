@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../domain/domain.dart';
-import '../../../../core/profile/profile.dart';
-import '../../../../app/storage/preferences.dart';
-import '../../../../shared/widgets/error_debug_dialog.dart';
-import '../widgets/edit_message_sheet.dart';
+import 'package:multigateway/features/home/domain/domain.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/app/storage/preferences.dart';
+import 'package:multigateway/shared/widgets/error_debug_dialog.dart';
+import 'package:multigateway/features/home/ui/widgets/edit_message_sheet.dart';
 
 /// Controller responsible for message operations
 class MessageController extends ChangeNotifier {
@@ -21,7 +21,7 @@ class MessageController extends ChangeNotifier {
     required String text,
     required List<String> attachments,
     required Conversation currentSession,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     required bool enableStream,
@@ -93,7 +93,7 @@ class MessageController extends ChangeNotifier {
   Future<void> _handleStreamResponse({
     required String userText,
     required List<ChatMessage> history,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     required Conversation currentSession,
@@ -208,7 +208,7 @@ class MessageController extends ChangeNotifier {
   Future<void> _handleNonStreamResponse({
     required String userText,
     required List<ChatMessage> history,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     required Conversation currentSession,
@@ -275,7 +275,7 @@ class MessageController extends ChangeNotifier {
 
   Future<String?> regenerateLast({
     required Conversation currentSession,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     required bool enableStream,

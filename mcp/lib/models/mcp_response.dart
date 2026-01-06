@@ -8,7 +8,7 @@ part 'mcp_response.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class InitializeResult {
   final String protocolVersion;
-  final MCPServerCapabilities capabilities;
+  final McpServerCapabilities capabilities;
   final MCPImplementation serverInfo;
 
   InitializeResult({

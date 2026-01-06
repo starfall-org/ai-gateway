@@ -1,6 +1,6 @@
 import 'dart:async';
-import '../../storage/base.dart';
-import '../models/speech_service.dart';
+import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/speech/models/speech_service.dart';
 
 class TTSRepository extends HiveBaseStorage<SpeechService> {
   static const String _prefix = 'tts';

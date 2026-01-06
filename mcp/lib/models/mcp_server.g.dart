@@ -6,7 +6,7 @@ part of 'mcp_server.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MCPServer _$MCPServerFromJson(Map<String, dynamic> json) => MCPServer(
+McpServer _$McpServerFromJson(Map<String, dynamic> json) => McpServer(
   id: json['id'] as String,
   name: json['name'] as String,
   description: json['description'] as String?,
@@ -16,7 +16,7 @@ MCPServer _$MCPServerFromJson(Map<String, dynamic> json) => MCPServer(
       : MCPHttpConfig.fromJson(json['http_config'] as Map<String, dynamic>),
   capabilities: json['capabilities'] == null
       ? null
-      : MCPServerCapabilities.fromJson(
+      : McpServerCapabilities.fromJson(
           json['capabilities'] as Map<String, dynamic>,
         ),
   tools:
@@ -36,7 +36,7 @@ MCPServer _$MCPServerFromJson(Map<String, dynamic> json) => MCPServer(
       const [],
 );
 
-Map<String, dynamic> _$MCPServerToJson(MCPServer instance) => <String, dynamic>{
+Map<String, dynamic> _$McpServerToJson(McpServer instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
   'description': instance.description,

@@ -6,7 +6,7 @@ part of 'profile_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AIProfile _$AIProfileFromJson(Map<String, dynamic> json) => AIProfile(
+ChatProfile _$ChatProfileFromJson(Map<String, dynamic> json) => ChatProfile(
       id: json['id'] as String,
       name: json['name'] as String,
       icon: json['icon'] as String?,
@@ -16,8 +16,8 @@ AIProfile _$AIProfileFromJson(Map<String, dynamic> json) => AIProfile(
               ?.map((e) => e as String?)
               .toList() ??
           const [],
-      activeMCPServers: (json['active_m_c_p_servers'] as List<dynamic>?)
-              ?.map((e) => ActiveMCPServer.fromJson(e as Map<String, dynamic>))
+      activeMcpServers: (json['active_m_c_p_servers'] as List<dynamic>?)
+              ?.map((e) => ActiveMcpServer.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       activeBuiltInTools: (json['active_built_in_tools'] as List<dynamic>?)
@@ -27,7 +27,7 @@ AIProfile _$AIProfileFromJson(Map<String, dynamic> json) => AIProfile(
       persistChatSelection: json['persist_chat_selection'] as bool?,
     );
 
-Map<String, dynamic> _$AIProfileToJson(AIProfile instance) => <String, dynamic>{
+Map<String, dynamic> _$ChatProfileToJson(ChatProfile instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'icon': instance.icon,
@@ -35,7 +35,7 @@ Map<String, dynamic> _$AIProfileToJson(AIProfile instance) => <String, dynamic>{
       'profile_conversations': instance.profileConversations,
       'conversation_ids': instance.conversationIds,
       'active_m_c_p_servers':
-          instance.activeMCPServers.map((e) => e.toJson()).toList(),
+          instance.activeMcpServers.map((e) => e.toJson()).toList(),
       'active_built_in_tools': instance.activeBuiltInTools,
       'persist_chat_selection': instance.persistChatSelection,
     };
@@ -77,15 +77,15 @@ const _$ThinkingLevelEnumMap = {
   ThinkingLevel.custom: 'custom',
 };
 
-ActiveMCPServer _$ActiveMCPServerFromJson(Map<String, dynamic> json) =>
-    ActiveMCPServer(
+ActiveMcpServer _$ActiveMcpServerFromJson(Map<String, dynamic> json) =>
+    ActiveMcpServer(
       id: json['id'] as String,
       activeToolIds: (json['active_tool_ids'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
     );
 
-Map<String, dynamic> _$ActiveMCPServerToJson(ActiveMCPServer instance) =>
+Map<String, dynamic> _$ActiveMcpServerToJson(ActiveMcpServer instance) =>
     <String, dynamic>{
       'id': instance.id,
       'active_tool_ids': instance.activeToolIds,

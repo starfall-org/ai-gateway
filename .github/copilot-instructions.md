@@ -84,7 +84,7 @@ Navigator.of(context).pushNamed(AppRoutes.settings);
 
 - Inspect ChangeNotifier state via breakpoints in controllers
 
-- Hive devtools for persisted data, check boxes: ChatStore, AIProfileStore, etc.
+- Hive devtools for persisted data, check boxes: ChatStore, ChatProfileStore, etc.
 
 - File paths for attachments/images in debug logs
 

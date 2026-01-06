@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/domain.dart';
+import 'package:multigateway/features/home/domain/domain.dart';
 
 /// Controller responsible for managing chat sessions/conversations
 class SessionController extends ChangeNotifier {

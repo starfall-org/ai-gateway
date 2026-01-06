@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/speech/speech.dart';
-import '../views/edit_speechservice_screen.dart';
+import 'package:multigateway/core/speech/speech.dart';
+import 'package:multigateway/features/llm/ui/views/edit_speechservice_screen.dart';
 
 class SpeechServicesPage extends StatefulWidget {
   const SpeechServicesPage({super.key});

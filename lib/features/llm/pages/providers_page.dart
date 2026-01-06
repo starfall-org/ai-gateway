@@ -2,14 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:llm/llm.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/resource_tile.dart';
-import '../../../../shared/widgets/empty_state.dart';
-import '../../../../shared/widgets/confirm_dialog.dart';
-import '../../../../shared/widgets/item_card.dart';
-import '../../../../shared/utils/icon_builder.dart';
-import '../views/edit_provider_screen.dart';
+import 'package:multigateway/core/llm/data/provider_info_storage.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/resource_tile.dart';
+import 'package:multigateway/shared/widgets/empty_state.dart';
+import 'package:multigateway/shared/widgets/confirm_dialog.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
+import 'package:multigateway/shared/utils/icon_builder.dart';
+import 'package:multigateway/features/llm/ui/views/edit_provider_screen.dart';
 
 class AiProvidersPage extends StatefulWidget {
   const AiProvidersPage({super.key});

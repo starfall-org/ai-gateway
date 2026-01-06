@@ -1,5 +1,5 @@
-import '../../storage/base.dart';
-import '../models/mcp_server_tools.dart';
+import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/mcp/models/mcp_server_tools.dart';
 
 class McpServerToolsStorage extends HiveBaseStorage<McpServerTools> {
   static const String _prefix = 'provider_info';

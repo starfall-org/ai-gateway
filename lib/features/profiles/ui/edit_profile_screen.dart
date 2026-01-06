@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/profile/profile.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
-import '../../../settings/ui/widgets/settings_card.dart';
-import '../controllers/edit_profile_controller.dart';
-import '../widgets/view_profile_dialog.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/shared/widgets/custom_text_field.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_card.dart';
+import 'package:multigateway/features/llm/controllers/edit_profile_controller.dart';
+import 'package:multigateway/features/llm/ui/widgets/view_profile_dialog.dart';
 
 /// Helper để tạo theme-aware image cho edit profile screen
 Widget _buildThemeAwareImageForProfile(BuildContext context, Widget child) {
@@ -24,7 +24,7 @@ Widget _buildThemeAwareImageForProfile(BuildContext context, Widget child) {
 }
 
 class AddProfileScreen extends StatefulWidget {
-  final AIProfile? profile;
+  final ChatProfile? profile;
 
   const AddProfileScreen({super.key, this.profile});
 
@@ -356,7 +356,7 @@ class _AddProfileScreenState extends State<AddProfileScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_viewModel.availableMCPServers.isNotEmpty) ...[
+            if (_viewModel.availableMcpServers.isNotEmpty) ...[
               Text(
                 tl('MCP Servers'),
                 style: Theme.of(
@@ -366,14 +366,14 @@ class _AddProfileScreenState extends State<AddProfileScreen>
               const SizedBox(height: 16),
               SettingsCard(
                 child: Column(
-                  children: _viewModel.availableMCPServers.map((server) {
+                  children: _viewModel.availableMcpServers.map((server) {
                     return CheckboxListTile(
                       title: Text(server.name),
-                      value: _viewModel.selectedMCPServerIds.contains(
+                      value: _viewModel.selectedMcpServerIds.contains(
                         server.id,
                       ),
                       onChanged: (bool? value) {
-                        _viewModel.toggleMCPServer(server.id);
+                        _viewModel.toggleMcpServer(server.id);
                       },
                     );
                   }).toList(),

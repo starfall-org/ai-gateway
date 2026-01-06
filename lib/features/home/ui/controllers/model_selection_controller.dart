@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:llm/llm.dart';
 import 'package:llm/models/llm_model/base.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
+import 'package:multigateway/core/llm/data/provider_info_storage.dart';
 
 /// Controller responsible for provider and model selection
 class ModelSelectionController extends ChangeNotifier {

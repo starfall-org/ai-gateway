@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert';
 
-import 'message.dart';
+import 'package:multigateway/features/home/domain/models/message.dart';
 
 part 'conversation.g.dart';
 

@@ -106,17 +106,17 @@ Map<String, dynamic> _$MCPPromptToJson(MCPPrompt instance) => <String, dynamic>{
   'arguments': instance.arguments?.map((e) => e.toJson()).toList(),
 };
 
-MCPServerCapabilities _$MCPServerCapabilitiesFromJson(
+McpServerCapabilities _$McpServerCapabilitiesFromJson(
   Map<String, dynamic> json,
-) => MCPServerCapabilities(
+) => McpServerCapabilities(
   tools: json['tools'] as bool? ?? false,
   resources: json['resources'] as bool? ?? false,
   prompts: json['prompts'] as bool? ?? false,
   logging: json['logging'] as bool? ?? false,
 );
 
-Map<String, dynamic> _$MCPServerCapabilitiesToJson(
-  MCPServerCapabilities instance,
+Map<String, dynamic> _$McpServerCapabilitiesToJson(
+  McpServerCapabilities instance,
 ) => <String, dynamic>{
   'tools': instance.tools,
   'resources': instance.resources,

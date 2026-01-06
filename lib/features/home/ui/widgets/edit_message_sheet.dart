@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_dialog.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/app_dialog.dart';
+import 'package:multigateway/shared/widgets/custom_text_field.dart';
 
 /// Helper để tạo theme-aware image cho edit message sheet
 Widget _buildThemeAwareImageForEditSheet(BuildContext context, Widget child) {

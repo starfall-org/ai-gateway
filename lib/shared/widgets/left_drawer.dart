@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_sidebar.dart';
+import 'package:multigateway/shared/widgets/app_sidebar.dart';
 
 class LeftDrawer extends StatelessWidget {
   final Widget child;

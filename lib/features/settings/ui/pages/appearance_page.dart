@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
-import '../../../../app/models/appearance_setting.dart';
-import '../../../../app/translate/tl.dart';
-import '../controllers/appearance_controller.dart';
-import '../widgets/settings_section_header.dart';
-import '../widgets/settings_card.dart';
-import '../widgets/superdarkmode_card.dart';
-import '../widgets/color_picker_dialog.dart';
+import 'package:multigateway/app/models/appearance_setting.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/features/settings/ui/controllers/appearance_controller.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_section_header.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_card.dart';
+import 'package:multigateway/features/settings/ui/widgets/superdarkmode_card.dart';
+import 'package:multigateway/features/settings/ui/widgets/color_picker_dialog.dart';
 
 class AppearancePage extends StatefulWidget {
   const AppearancePage({super.key});

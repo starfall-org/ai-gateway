@@ -2,33 +2,33 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../storage/base.dart';
-import '../models/profile_model.dart';
+import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/profile/models/profile_model.dart';
 
-class AIProfileRepository extends HiveBaseStorage<AIProfile> {
+class ChatProfileStorage extends HiveBaseStorage<ChatProfile> {
   static const String _prefix = 'profile';
   static const String _selectedKey = '__selected_id__';
 
-  AIProfileRepository();
+  ChatProfileStorage();
 
-  static Future<AIProfileRepository> init() async {
-    return AIProfileRepository();
+  static Future<ChatProfileStorage> init() async {
+    return ChatProfileStorage();
   }
 
   @override
   String get prefix => _prefix;
 
   @override
-  String getItemId(AIProfile item) => item.id;
+  String getItemId(ChatProfile item) => item.id;
 
   @override
-  Map<String, dynamic> serializeToFields(AIProfile item) {
+  Map<String, dynamic> serializeToFields(ChatProfile item) {
     return {
       'id': item.id,
       'name': item.name,
       'profileConversations': item.profileConversations,
       'conversationIds': item.conversationIds,
-      'activeMCPServers': item.activeMCPServers.map((e) => e.toJson()).toList(),
+      'activeMcpServers': item.activeMcpServers.map((e) => e.toJson()).toList(),
       'activeBuiltInTools': item.activeBuiltInTools,
       'persistChatSelection': item.persistChatSelection,
       // AiConfig fields
@@ -48,18 +48,18 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
   }
 
   @override
-  AIProfile deserializeFromFields(String id, Map<String, dynamic> fields) {
+  ChatProfile deserializeFromFields(String id, Map<String, dynamic> fields) {
     final configMap = fields['config'] as Map<String, dynamic>? ?? {};
 
-    return AIProfile(
+    return ChatProfile(
       id: fields['id'] as String,
       name: fields['name'] as String,
       profileConversations: fields['profileConversations'] as bool? ?? false,
       conversationIds:
           (fields['conversationIds'] as List?)?.cast<String>() ?? const [],
-      activeMCPServers:
-          (fields['activeMCPServers'] as List?)
-              ?.map((e) => ActiveMCPServer.fromJson(e as Map<String, dynamic>))
+      activeMcpServers:
+          (fields['activeMcpServers'] as List?)
+              ?.map((e) => ActiveMcpServer.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       activeBuiltInTools:
@@ -84,7 +84,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
   }
 
   @override
-  List<AIProfile> getItems() {
+  List<ChatProfile> getItems() {
     final items = super.getItems();
     if (items.isEmpty) {
       final defaultProfile = _createDefaultProfile();
@@ -93,13 +93,13 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
     return items;
   }
 
-  List<AIProfile> getProfiles() => getItems();
+  List<ChatProfile> getProfiles() => getItems();
 
   // Reactive streams
-  Stream<List<AIProfile>> get profilesStream => itemsStream;
+  Stream<List<ChatProfile>> get profilesStream => itemsStream;
 
-  Stream<AIProfile> get selectedProfileStream {
-    final controller = StreamController<AIProfile>.broadcast();
+  Stream<ChatProfile> get selectedProfileStream {
+    final controller = StreamController<ChatProfile>.broadcast();
     StreamSubscription<void>? sub;
     controller.onListen = () async {
       final profile = await getOrInitSelectedProfile();
@@ -116,7 +116,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
     return controller.stream;
   }
 
-  Future<void> addProfile(AIProfile profile) async {
+  Future<void> addProfile(ChatProfile profile) async {
     await saveItem(profile);
     // If no selection yet, select the newly added profile by default
     if (getSelectedProfileId() == null) {
@@ -124,7 +124,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
     }
   }
 
-  Future<void> updateProfile(AIProfile profile) async {
+  Future<void> updateProfile(ChatProfile profile) async {
     await updateItem(profile);
   }
 
@@ -168,7 +168,7 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
     changeNotifier.value++;
   }
 
-  Future<AIProfile> getOrInitSelectedProfile() async {
+  Future<ChatProfile> getOrInitSelectedProfile() async {
     final selectedId = getSelectedProfileId();
 
     if (selectedId != null) {
@@ -193,8 +193,8 @@ class AIProfileRepository extends HiveBaseStorage<AIProfile> {
     return defaultProfile;
   }
 
-  AIProfile _createDefaultProfile() {
-    return AIProfile(
+  ChatProfile _createDefaultProfile() {
+    return ChatProfile(
       id: const Uuid().v4(),
       name: 'Basic Profile',
       config: AiConfig(systemPrompt: '', enableStream: true),

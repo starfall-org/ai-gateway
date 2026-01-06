@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:mcp/mcp.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
-import '../../../../shared/widgets/common_dropdown.dart';
-import '../controllers/edit_mcpserver_controller.dart';
+import 'package:multigateway/shared/widgets/custom_text_field.dart';
+import 'package:multigateway/shared/widgets/common_dropdown.dart';
+import 'package:multigateway/features/mcp/controllers/edit_mcpserver_controller.dart';
 
-class EditMCPServerScreen extends StatefulWidget {
-  final MCPServer? server;
+class EditMcpServerscreen extends StatefulWidget {
+  final McpServer? server;
 
-  const EditMCPServerScreen({super.key, this.server});
+  const EditMcpServerscreen({super.key, this.server});
 
   @override
-  State<EditMCPServerScreen> createState() => _EditMCPServerScreenState();
+  State<EditMcpServerscreen> createState() => _EditMcpServerscreenState();
 }
 
-class _EditMCPServerScreenState extends State<EditMCPServerScreen>
+class _EditMcpServerscreenState extends State<EditMcpServerscreen>
     with SingleTickerProviderStateMixin {
-  late EditMCPServerViewModel _viewModel;
+  late EditMcpServerViewModel _viewModel;
   late TabController _tabController;
 
   @override
@@ -26,7 +26,7 @@ class _EditMCPServerScreenState extends State<EditMCPServerScreen>
     _tabController.addListener(() {
       setState(() {}); // Rebuild to show/hide FAB based on tab
     });
-    _viewModel = EditMCPServerViewModel();
+    _viewModel = EditMcpServerViewModel();
     _viewModel.addListener(_onViewModelChanged);
     _viewModel.initialize(widget.server);
   }

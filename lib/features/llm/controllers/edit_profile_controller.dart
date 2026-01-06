@@ -2,16 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/profile/profile.dart';
+import 'package:multigateway/core/core.dart';
 import 'package:mcp/mcp.dart';
-import '../../../../core/storage/mcpserver_store.dart';
-import '../../../../app/translate/tl.dart';
-
-/// Options for chat persistence: On, Off, and Disable
-/// - On: Enable chat persistence
-/// - Off: Disable chat persistence but follow global setting
-/// - Disable: Force disable chat persistence (overrides global setting)
-enum PersistOverride { on, off, disable }
+import 'package:multigateway/app/translate/tl.dart';
 
 class AddAgentViewModel extends ChangeNotifier {
   // Controllers
@@ -19,7 +12,7 @@ class AddAgentViewModel extends ChangeNotifier {
   final TextEditingController promptController = TextEditingController();
   final TextEditingController avatarController = TextEditingController();
 
-  // State variables representing all fields of AIProfile
+  // State variables representing all fields of ChatProfile
   bool enableStream = true;
   bool isTopPEnabled = false;
   double topPValue = 1.0;
@@ -33,13 +26,11 @@ class AddAgentViewModel extends ChangeNotifier {
   bool isCustomThinkingTokensEnabled = false;
   int customThinkingTokensValue = 0;
   ThinkingLevel thinkingLevel = ThinkingLevel.auto;
-  bool profileConversations = false;
-  List<MCPServer> availableMCPServers = [];
-  final List<String> selectedMCPServerIds = [];
-  PersistOverride persistOverride = PersistOverride.off;
+  List<McpServer> availableMcpServers = [];
+  final List<String> selectedMcpServerIds = [];
 
   // Initialize with optional existing profile
-  void initialize(AIProfile? profile) {
+  void initialize(ChatProfile? profile) {
     if (profile != null) {
       nameController.text = profile.name;
       promptController.text = profile.config.systemPrompt;
@@ -67,28 +58,19 @@ class AddAgentViewModel extends ChangeNotifier {
       }
 
       thinkingLevel = profile.config.thinkingLevel;
-      profileConversations = profile.profileConversations;
-      selectedMCPServerIds.addAll(profile.activeMCPServerIds);
-
-      if (profile.persistChatSelection == null) {
-        persistOverride = PersistOverride.off;
-      } else {
-        persistOverride = profile.persistChatSelection!
-            ? PersistOverride.on
-            : PersistOverride.disable;
-      }
+      selectedMcpServerIds.addAll(profile.activeMcpServerIds);
     }
-    _loadMCPServers();
+    _loadMcpServers();
   }
 
-  Future<void> _loadMCPServers() async {
-    final mcpRepo = await MCPRepository.init();
-    availableMCPServers = mcpRepo.getMCPServers();
+  Future<void> _loadMcpServers() async {
+    final mcpRepo = await McpServerStorage.init();
+    availableMcpServers = mcpRepo.getMcpServers();
     notifyListeners();
   }
 
   Future<void> saveAgent(
-    AIProfile? existingProfile,
+    ChatProfile? existingProfile,
     BuildContext context,
   ) async {
     if (nameController.text.isEmpty) {
@@ -96,11 +78,11 @@ class AddAgentViewModel extends ChangeNotifier {
       return;
     }
 
-    final repository = await AIProfileRepository.init();
-    final newProfile = AIProfile(
+    final repository = await ChatProfileStorage.init();
+    final newProfile = ChatProfile(
       id: existingProfile?.id ?? const Uuid().v4(),
       name: nameController.text,
-      config: AiConfig(
+      config: LlmChatConfig(
         systemPrompt: promptController.text,
         enableStream: enableStream,
         topP: isTopPEnabled ? topPValue : null,
@@ -114,13 +96,9 @@ class AddAgentViewModel extends ChangeNotifier {
             : null,
         thinkingLevel: thinkingLevel,
       ),
-      profileConversations: profileConversations,
-      activeMCPServers: selectedMCPServerIds
-          .map((id) => ActiveMCPServer(id: id, activeToolIds: []))
+      activeMcpServers: selectedMcpServerIds
+          .map((id) => ActiveMcpServer(id: id, activeToolIds: []))
           .toList(),
-      persistChatSelection: persistOverride == PersistOverride.off
-          ? null
-          : (persistOverride == PersistOverride.on ? true : false),
     );
 
     if (existingProfile != null) {
@@ -130,17 +108,12 @@ class AddAgentViewModel extends ChangeNotifier {
     }
   }
 
-  void toggleMCPServer(String serverId) {
-    if (selectedMCPServerIds.contains(serverId)) {
-      selectedMCPServerIds.remove(serverId);
+  void toggleMcpServer(String serverId) {
+    if (selectedMcpServerIds.contains(serverId)) {
+      selectedMcpServerIds.remove(serverId);
     } else {
-      selectedMCPServerIds.add(serverId);
+      selectedMcpServerIds.add(serverId);
     }
-    notifyListeners();
-  }
-
-  void setPersistOverride(PersistOverride value) {
-    persistOverride = value;
     notifyListeners();
   }
 
@@ -203,11 +176,6 @@ class AddAgentViewModel extends ChangeNotifier {
 
   void setThinkingLevel(ThinkingLevel value) {
     thinkingLevel = value;
-    notifyListeners();
-  }
-
-  void toggleProfileConversations(bool value) {
-    profileConversations = value;
     notifyListeners();
   }
 

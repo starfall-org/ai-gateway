@@ -2,25 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/profile/profile.dart';
-import '../../domain/domain.dart';
+import 'package:multigateway/core/core.dart';
+import 'package:multigateway/features/home/domain/domain.dart';
 import 'package:mcp/mcp.dart';
 import 'package:llm/llm.dart';
-import '../../../../core/speech/speech.dart';
 
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/storage/mcpserver_store.dart';
-
-import '../../../../app/storage/preferences.dart';
-import '../../../../app/translate/tl.dart';
-import './chat_controller_parts/chat_navigation_interface.dart';
+import 'package:multigateway/app/storage/preferences.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/features/home/ui/controllers/chat_controller_parts/chat_navigation_interface.dart';
 
 // Import các controller con
-import 'session_controller.dart';
-import 'message_controller.dart';
-import 'attachment_controller.dart';
-import 'model_selection_controller.dart';
-import 'profile_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/session_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/message_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/attachment_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/model_selection_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/profile_controller.dart';
 
 /// Main ChatController orchestrates all sub-controllers
 class ChatController extends ChangeNotifier {
@@ -41,23 +37,23 @@ class ChatController extends ChangeNotifier {
 
   ChatController({
     required this.navigator,
-    required ChatRepository chatRepository,
-    required AIProfileRepository aiProfileRepository,
-    required LlmProviderInfoStorage pInfStorage,
+    required ConversationRepository conversationRepository,
+    required ChatProfileStorage aiProfileRepository,
+    required LlmProviderInfoStorage llmProviderInfoStorage,
     required this.preferencesSp,
-    required MCPRepository mcpRepository,
+    required McpServerStorage McpServerStorage,
     required this.ttsService,
   }) {
     // Initialize sub-controllers
-    sessionController = SessionController(chatRepository: chatRepository);
+    sessionController = SessionController(conversationRepository: conversationRepository);
     messageController = MessageController();
     attachmentController = AttachmentController();
     modelSelectionController = ModelSelectionController(
-      pInfStorage: pInfStorage,
+      llmProviderInfoStorage: llmProviderInfoStorage,
     );
     profileController = ProfileController(
       aiProfileRepository: aiProfileRepository,
-      mcpRepository: mcpRepository,
+      McpServerStorage: McpServerStorage,
     );
 
     // Listen to sub-controllers changes
@@ -70,7 +66,7 @@ class ChatController extends ChangeNotifier {
 
   // Convenience getters for backward compatibility
   Conversation? get currentSession => sessionController.currentSession;
-  AIProfile? get selectedProfile => profileController.selectedProfile;
+  ChatProfile? get selectedProfile => profileController.selectedProfile;
   bool get isLoading => sessionController.isLoading;
   bool get isGenerating => messageController.isGenerating;
   List<String> get pendingAttachments =>
@@ -78,7 +74,7 @@ class ChatController extends ChangeNotifier {
   List<String> get inspectingAttachments =>
       attachmentController.inspectingAttachments;
   List<Provider> get providers => modelSelectionController.providers;
-  List<MCPServer> get mcpServers => profileController.mcpServers;
+  List<McpServer> get McpServers => profileController.McpServers;
   Map<String, bool> get providerCollapsed =>
       modelSelectionController.providerCollapsed;
   String? get selectedProviderName =>
@@ -93,9 +89,9 @@ class ChatController extends ChangeNotifier {
   void clearLoadingState() => sessionController.clearLoadingState();
 
   Future<void> loadSelectedProfile() => profileController.loadSelectedProfile();
-  Future<void> updateProfile(AIProfile profile) =>
+  Future<void> updateProfile(ChatProfile profile) =>
       profileController.updateProfile(profile);
-  Future<void> loadMCPServers() => profileController.loadMCPServers();
+  Future<void> loadMcpServers() => profileController.loadMcpServers();
 
   Future<void> refreshProviders() =>
       modelSelectionController.refreshProviders();
@@ -186,7 +182,7 @@ class ChatController extends ChangeNotifier {
       if (currentSession!.enabledToolNames == null) {
         final profile =
             selectedProfile ??
-            AIProfile(
+            ChatProfile(
               id: const Uuid().v4(),
               name: 'Default Profile',
               config: AiConfig(systemPrompt: '', enableStream: true),
@@ -204,7 +200,7 @@ class ChatController extends ChangeNotifier {
 
     final profile =
         selectedProfile ??
-        AIProfile(
+        ChatProfile(
           id: const Uuid().v4(),
           name: 'Default Profile',
           config: AiConfig(systemPrompt: '', enableStream: true),
@@ -278,7 +274,7 @@ class ChatController extends ChangeNotifier {
       if (currentSession!.enabledToolNames == null) {
         final profile =
             selectedProfile ??
-            AIProfile(
+            ChatProfile(
               id: const Uuid().v4(),
               name: 'Default Profile',
               config: AiConfig(systemPrompt: '', enableStream: true),
@@ -296,7 +292,7 @@ class ChatController extends ChangeNotifier {
 
     final profile =
         selectedProfile ??
-        AIProfile(
+        ChatProfile(
           id: const Uuid().v4(),
           name: 'Default Profile',
           config: AiConfig(systemPrompt: '', enableStream: true),

@@ -1,4 +1,4 @@
-import '../models/conversation.dart';
+import 'package:multigateway/features/home/domain/models/conversation.dart';
 
 class ChatLogicUtils {
   /// Tạo tiêu đề cho cuộc trò chuyện dựa trên tin nhắn đầu tiên hoặc tệp đính kèm

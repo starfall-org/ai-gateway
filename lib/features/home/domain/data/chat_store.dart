@@ -1,8 +1,8 @@
 import 'dart:async';
-import '../../../../core/storage/base.dart';
+import 'package:multigateway/core/storage/base.dart';
 import 'package:uuid/uuid.dart';
-import '../models/conversation.dart';
-import '../models/message.dart';
+import 'package:multigateway/features/home/domain/models/conversation.dart';
+import 'package:multigateway/features/home/domain/models/message.dart';
 
 class ChatRepository extends HiveBaseStorage<Conversation> {
   static const String _prefix = 'conv';

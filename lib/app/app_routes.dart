@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../features/ai/ui/pages/mcpservers_page.dart';
-import '../features/ai/ui/pages/profiles_page.dart';
-import '../features/ai/ui/pages/providers_page.dart';
-import '../features/ai/ui/pages/speechsevices_page.dart';
-import '../features/home/ui/pages/chat_screen.dart';
-import '../features/settings/ui/pages/about_page.dart';
-import '../features/settings/ui/pages/appearance_page.dart';
-import '../features/settings/ui/pages/preferences_page.dart';
-import '../features/settings/ui/pages/settings_page.dart';
-import '../features/settings/ui/pages/update_page.dart';
-import '../features/settings/ui/pages/userdata_page.dart';
-import 'translate/tl.dart';
-import 'config/routes.dart';
+import 'package:multigateway/features/ai/ui/pages/McpServers_page.dart';
+import 'package:multigateway/features/ai/ui/pages/profiles_page.dart';
+import 'package:multigateway/features/ai/ui/pages/providers_page.dart';
+import 'package:multigateway/features/ai/ui/pages/speechsevices_page.dart';
+import 'package:multigateway/features/home/ui/pages/chat_screen.dart';
+import 'package:multigateway/features/settings/ui/pages/about_page.dart';
+import 'package:multigateway/features/settings/ui/pages/appearance_page.dart';
+import 'package:multigateway/features/settings/ui/pages/preferences_page.dart';
+import 'package:multigateway/features/settings/ui/pages/settings_page.dart';
+import 'package:multigateway/features/settings/ui/pages/update_page.dart';
+import 'package:multigateway/features/settings/ui/pages/userdata_page.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/app/config/routes.dart';
 
 /// Generate a route based on the route name.
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -36,9 +36,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case AppRoutes.aiSpeechServices:
       return MaterialPageRoute(builder: (_) => const SpeechServicesPage());
     case AppRoutes.aiProfiles:
-      return MaterialPageRoute(builder: (_) => const AIProfilesScreen());
-    case AppRoutes.mcpServers:
-      return MaterialPageRoute(builder: (_) => const MCPServersPage());
+      return MaterialPageRoute(builder: (_) => const ChatProfilesScreen());
+    case AppRoutes.McpServers:
+      return MaterialPageRoute(builder: (_) => const McpServersPage());
     default:
       // Log the undefined route for debugging
       debugPrint(

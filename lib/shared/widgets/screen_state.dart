@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../app/translate/tl.dart';
-import 'empty_state.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/empty_state.dart';
 
 
 /// A utility widget that handles common screen states:

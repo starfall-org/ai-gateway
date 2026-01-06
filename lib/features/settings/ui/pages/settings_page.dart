@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/config/routes.dart';
-import '../../../../app/translate/tl.dart';
-import '../widgets/settings_tile.dart';
+import 'package:multigateway/app/config/routes.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_tile.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

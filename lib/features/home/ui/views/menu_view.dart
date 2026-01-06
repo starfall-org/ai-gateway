@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/widgets/right_drawer.dart';
-import '../../../../app/config/routes.dart';
-import '../widgets/menu_item_tile.dart';
+import 'package:multigateway/shared/widgets/right_drawer.dart';
+import 'package:multigateway/app/config/routes.dart';
+import 'package:multigateway/features/home/ui/widgets/menu_item_tile.dart';
 
 class MenuView extends StatelessWidget {
   const MenuView({super.key});
@@ -89,7 +89,7 @@ class MenuView extends StatelessWidget {
                       icon: Icons.dns_outlined,
                       title: tl('MCP Servers'),
 
-                      route: AppRoutes.mcpServers,
+                      route: AppRoutes.McpServers,
                     ),
                     MenuItemTile(
                       icon: Icons.record_voice_over_outlined,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:llm/llm.dart';
 
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/common_dropdown.dart';
-import '../controllers/edit_provider_controller.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/common_dropdown.dart';
+import 'package:multigateway/features/llm/controllers/edit_provider_controller.dart';
+import 'package:multigateway/shared/widgets/custom_text_field.dart';
 
 class EditModelSheet extends StatefulWidget {
   final AddProviderViewModel viewModel;

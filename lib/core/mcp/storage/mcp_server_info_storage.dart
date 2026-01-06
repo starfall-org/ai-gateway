@@ -1,5 +1,5 @@
-import '../../storage/base.dart';
-import '../models/mcp_server_info.dart';
+import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/mcp/models/mcp_server_info.dart';
 
 class McpServerInfoStorage extends HiveBaseStorage<McpServerInfo> {
   static const String _prefix = 'provider_info';

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/profile/profile.dart';
+import 'package:multigateway/core/profile/profile.dart';
 import 'package:mcp/mcp.dart';
-import '../../../../core/storage/mcpserver_store.dart';
+import 'package:multigateway/core/storage/mcpserver_store.dart';
 
 /// Controller responsible for AI profile and MCP server management
 class ProfileController extends ChangeNotifier {
-  final AIProfileRepository aiProfileRepository;
-  final MCPRepository mcpRepository;
+  final ChatProfileStorage aiProfileRepository;
+  final McpServerStorage McpServerStorage;
 
-  AIProfile? selectedProfile;
-  List<MCPServer> mcpServers = [];
+  ChatProfile? selectedProfile;
+  List<McpServer> McpServers = [];
 
   ProfileController({
     required this.aiProfileRepository,
-    required this.mcpRepository,
+    required this.McpServerStorage,
   });
 
   Future<void> loadSelectedProfile() async {
@@ -23,23 +23,23 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProfile(AIProfile profile) async {
+  Future<void> updateProfile(ChatProfile profile) async {
     selectedProfile = profile;
     await aiProfileRepository.updateProfile(profile);
     notifyListeners();
   }
 
-  Future<void> loadMCPServers() async {
-    mcpServers = mcpRepository.getItems().whereType<MCPServer>().toList();
+  Future<void> loadMcpServers() async {
+    McpServers = McpServerStorage.getItems().whereType<McpServer>().toList();
     notifyListeners();
   }
 
-  Future<List<String>> snapshotEnabledToolNames(AIProfile profile) async {
+  Future<List<String>> snapshotEnabledToolNames(ChatProfile profile) async {
     try {
-      final mcpRepo = await MCPRepository.init();
-      final servers = profile.activeMCPServerIds
+      final mcpRepo = await McpServerStorage.init();
+      final servers = profile.activeMcpServerIds
           .map((id) => mcpRepo.getItem(id))
-          .whereType<MCPServer>()
+          .whereType<McpServer>()
           .toList();
       final names = <String>{};
       for (final s in servers) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../app/translate/tl.dart';
+import 'package:multigateway/app/translate/tl.dart';
 
 enum ItemCardLayout { grid, list }
 

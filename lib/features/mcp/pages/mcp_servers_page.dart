@@ -2,27 +2,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:mcp/mcp.dart';
-import '../../../../core/storage/mcpserver_store.dart';
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/resource_tile.dart';
-import '../../../../shared/widgets/empty_state.dart';
-import '../../../../shared/widgets/confirm_dialog.dart';
-import '../../../../shared/widgets/item_card.dart';
-import '../../../../shared/utils/icon_builder.dart';
-import '../views/edit_mcpserver_screen.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/core/mcp/storage/mcp_server_repository.dart';
+import 'package:multigateway/shared/widgets/app_snackbar.dart';
+import 'package:multigateway/shared/widgets/resource_tile.dart';
+import 'package:multigateway/shared/widgets/empty_state.dart';
+import 'package:multigateway/shared/widgets/confirm_dialog.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
+import 'package:multigateway/shared/utils/icon_builder.dart';
+import 'package:multigateway/features/mcp/ui/edit_mcpserver_screen.dart';
 
-class MCPServersPage extends StatefulWidget {
-  const MCPServersPage({super.key});
+class McpServersPage extends StatefulWidget {
+  const McpServersPage({super.key});
 
   @override
-  State<MCPServersPage> createState() => _MCPServersPageState();
+  State<McpServersPage> createState() => _McpServersPageState();
 }
 
-class _MCPServersPageState extends State<MCPServersPage> {
-  List<MCPServer> _servers = [];
+class _McpServersPageState extends State<McpServersPage> {
+  List<McpServer> _servers = [];
   bool _isLoading = true;
   bool _isGridView = false;
-  late MCPRepository _repository;
+  late McpServerStorage _repository;
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
 
     try {
       // Add timeout to prevent infinite loading
-      _repository = await MCPRepository.init().timeout(
+      _repository = await McpServerStorage.init().timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           throw TimeoutException(
@@ -50,7 +51,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
         },
       );
 
-      final servers = _repository.getMCPServers();
+      final servers = _repository.getMcpServers();
 
       if (mounted) {
         setState(() {
@@ -86,7 +87,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
     }
   }
 
-  String _getServerSubtitle(MCPServer server) {
+  String _getServerSubtitle(McpServer server) {
     final List<String> parts = [];
 
     // Add transport type
@@ -134,7 +135,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const EditMCPServerScreen(),
+                  builder: (context) => const EditMcpServerscreen(),
                 ),
               );
               if (result == true) {
@@ -172,7 +173,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const EditMCPServerScreen(),
+                      builder: (context) => const EditMcpServerscreen(),
                     ),
                   );
                   if (result == true) {
@@ -209,13 +210,13 @@ class _MCPServersPageState extends State<MCPServersPage> {
       if (oldIndex < newIndex) {
         newIndex -= 1;
       }
-      final MCPServer item = _servers.removeAt(oldIndex);
+      final McpServer item = _servers.removeAt(oldIndex);
       _servers.insert(newIndex, item);
     });
     _repository.saveOrder(_servers.map((e) => e.id).toList());
   }
 
-  Widget _buildServerTile(MCPServer server, int index) {
+  Widget _buildServerTile(McpServer server, int index) {
     return ResourceTile(
       key: ValueKey(server.id),
       title: server.name,
@@ -225,7 +226,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditMCPServerScreen(server: server),
+            builder: (context) => EditMcpServerscreen(server: server),
           ),
         );
         if (result == true) {
@@ -237,7 +238,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditMCPServerScreen(server: server),
+            builder: (context) => EditMcpServerscreen(server: server),
           ),
         );
         if (result == true) {
@@ -247,7 +248,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
     );
   }
 
-  Widget _buildServerCard(MCPServer server) {
+  Widget _buildServerCard(McpServer server) {
     return ItemCard(
       icon: buildIcon(server.name),
       title: server.name,
@@ -256,7 +257,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditMCPServerScreen(server: server),
+            builder: (context) => EditMcpServerscreen(server: server),
           ),
         );
         if (result == true) {
@@ -267,7 +268,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EditMCPServerScreen(server: server),
+            builder: (context) => EditMcpServerscreen(server: server),
           ),
         );
         if (result == true) {
@@ -278,7 +279,7 @@ class _MCPServersPageState extends State<MCPServersPage> {
     );
   }
 
-  Future<void> _confirmDelete(MCPServer server) async {
+  Future<void> _confirmDelete(McpServer server) async {
     final confirm = await ConfirmDialog.show(
       context,
       title: tl('Delete'),

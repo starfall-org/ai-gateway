@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:llm/llm.dart';
-import '../../../../shared/utils/icon_builder.dart';
-import '../../../../shared/widgets/item_card.dart';
+import 'package:multigateway/shared/utils/icon_builder.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
 
 class ModelCard extends StatelessWidget {
   final AIModel model;

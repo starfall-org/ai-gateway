@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
-import 'app_routes.dart';
-import 'config/theme.dart';
-import 'storage/appearance.dart';
+import 'package:multigateway/app/app_routes.dart';
+import 'package:multigateway/app/config/theme.dart';
+import 'package:multigateway/app/storage/appearance.dart';
 
 class MultiGatewayApp extends StatelessWidget {
   const MultiGatewayApp({super.key});

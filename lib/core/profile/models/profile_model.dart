@@ -6,33 +6,33 @@ part 'profile_model.g.dart';
 enum ThinkingLevel { none, low, medium, high, auto, custom }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class LlmChatProfile {
+class ChatProfile {
   final String id;
   final String name;
   final String? icon;
   final LlmChatConfig config;
-  final List<ActiveMCPServer> activeMCPServers;
+  final List<ActiveMcpServer> activeMcpServers;
 
-  LlmChatProfile({
+  ChatProfile({
     required this.id,
     required this.name,
     this.icon,
     required this.config,
-    this.activeMCPServers = const [],
+    this.activeMcpServers = const [],
   });
 
-  List<String> get activeMCPServerIds =>
-      activeMCPServers.map((e) => e.id).toList();
+  List<String> get activeMcpServerIds =>
+      activeMcpServers.map((e) => e.id).toList();
 
-  factory LlmChatProfile.fromJson(Map<String, dynamic> json) =>
-      _$LlmChatProfileFromJson(json);
+  factory ChatProfile.fromJson(Map<String, dynamic> json) =>
+      _$ChatProfileFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LlmChatProfileToJson(this);
+  Map<String, dynamic> toJson() => _$ChatProfileToJson(this);
 
   String toJsonString() => json.encode(toJson());
 
-  factory LlmChatProfile.fromJsonString(String jsonString) =>
-      LlmChatProfile.fromJson(json.decode(jsonString));
+  factory ChatProfile.fromJsonString(String jsonString) =>
+      ChatProfile.fromJson(json.decode(jsonString));
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -68,14 +68,14 @@ class LlmChatConfig {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class ActiveMCPServer {
+class ActiveMcpServer {
   final String id;
   final List<String> activeToolIds;
 
-  ActiveMCPServer({required this.id, required this.activeToolIds});
+  ActiveMcpServer({required this.id, required this.activeToolIds});
 
-  factory ActiveMCPServer.fromJson(Map<String, dynamic> json) =>
-      _$ActiveMCPServerFromJson(json);
+  factory ActiveMcpServer.fromJson(Map<String, dynamic> json) =>
+      _$ActiveMcpServerFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ActiveMCPServerToJson(this);
+  Map<String, dynamic> toJson() => _$ActiveMcpServerToJson(this);
 }

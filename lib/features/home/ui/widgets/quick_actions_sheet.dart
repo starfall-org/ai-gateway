@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/profile/profile.dart';
+import 'package:multigateway/core/profile/profile.dart';
 import 'package:mcp/mcp.dart';
-import '../controllers/chat_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/chat_controller.dart';
 
 class QuickActionsSheet extends StatefulWidget {
   final ChatController viewModel;
@@ -27,15 +27,15 @@ class QuickActionsSheet extends StatefulWidget {
 }
 
 class _QuickActionsSheetState extends State<QuickActionsSheet> {
-  late AIProfile _profile;
+  late ChatProfile _profile;
 
   @override
   void initState() {
     super.initState();
     // Ensure we have MCP servers loaded
-    widget.viewModel.loadMCPServers();
+    widget.viewModel.loadMcpServers();
     // Create a local copy or just reference if we update directly via viewModel
-    // Since AIProfile is immutable, we will create modified copies and send to updateProfile
+    // Since ChatProfile is immutable, we will create modified copies and send to updateProfile
     _profile = widget.viewModel.selectedProfile!;
   }
 
@@ -53,22 +53,22 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
     }
 
     // Create new profile with updated tools
-    _profile = AIProfile(
+    _profile = ChatProfile(
       id: _profile.id,
       name: _profile.name,
       config: _profile.config,
       profileConversations: _profile.profileConversations,
       conversationIds: _profile.conversationIds,
-      activeMCPServers: _profile.activeMCPServers,
+      activeMcpServers: _profile.activeMcpServers,
       activeBuiltInTools: current,
       persistChatSelection: _profile.persistChatSelection,
     );
     _updateProfile();
   }
 
-  void _toggleMCPServer(String serverId, bool enabled) {
-    final currentServers = List<ActiveMCPServer>.from(
-      _profile.activeMCPServers,
+  void _toggleMcpServer(String serverId, bool enabled) {
+    final currentServers = List<ActiveMcpServer>.from(
+      _profile.activeMcpServers,
     );
 
     if (enabled) {
@@ -78,28 +78,28 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
         // Find the server definition to get all tool names?
         // Or just add it and let the service handle tool discovery.
         // For simplicity, we add it with empty tools first or we need to know available tools.
-        // The ActiveMCPServer model requires activeToolIds.
+        // The ActiveMcpServer model requires activeToolIds.
         // If we enable a server, we should probably enable its tools.
-        final serverDef = widget.viewModel.mcpServers.firstWhere(
+        final serverDef = widget.viewModel.McpServers.firstWhere(
           (s) => s.id == serverId,
         );
         final allToolNames = serverDef.tools.map((t) => t.name).toList();
 
         currentServers.add(
-          ActiveMCPServer(id: serverId, activeToolIds: allToolNames),
+          ActiveMcpServer(id: serverId, activeToolIds: allToolNames),
         );
       }
     } else {
       currentServers.removeWhere((s) => s.id == serverId);
     }
 
-    _profile = AIProfile(
+    _profile = ChatProfile(
       id: _profile.id,
       name: _profile.name,
       config: _profile.config,
       profileConversations: _profile.profileConversations,
       conversationIds: _profile.conversationIds,
-      activeMCPServers: currentServers,
+      activeMcpServers: currentServers,
       activeBuiltInTools: _profile.activeBuiltInTools,
       persistChatSelection: _profile.persistChatSelection,
     );
@@ -107,8 +107,8 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
   }
 
   void _toggleMCPTool(String serverId, String toolName, bool enabled) {
-    final currentServers = List<ActiveMCPServer>.from(
-      _profile.activeMCPServers,
+    final currentServers = List<ActiveMcpServer>.from(
+      _profile.activeMcpServers,
     );
     final index = currentServers.indexWhere((s) => s.id == serverId);
 
@@ -122,18 +122,18 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
         currentTools.remove(toolName);
       }
 
-      currentServers[index] = ActiveMCPServer(
+      currentServers[index] = ActiveMcpServer(
         id: server.id,
         activeToolIds: currentTools,
       );
 
-      _profile = AIProfile(
+      _profile = ChatProfile(
         id: _profile.id,
         name: _profile.name,
         config: _profile.config,
         profileConversations: _profile.profileConversations,
         conversationIds: _profile.conversationIds,
-        activeMCPServers: currentServers,
+        activeMcpServers: currentServers,
         activeBuiltInTools: _profile.activeBuiltInTools,
         persistChatSelection: _profile.persistChatSelection,
       );
@@ -227,7 +227,7 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
 
                       // Section: MCP Servers
                       _buildSectionHeader('MCP Servers'),
-                      if (widget.viewModel.mcpServers.isEmpty)
+                      if (widget.viewModel.McpServers.isEmpty)
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -241,8 +241,8 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
                           ),
                         ),
 
-                      ...widget.viewModel.mcpServers.map((server) {
-                        return _buildMCPServerTile(server);
+                      ...widget.viewModel.McpServers.map((server) {
+                        return _buildMcpServerTile(server);
                       }),
                     ],
                   );
@@ -291,8 +291,8 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
     );
   }
 
-  Widget _buildMCPServerTile(MCPServer server) {
-    final isActive = _profile.activeMCPServerIds.contains(server.id);
+  Widget _buildMcpServerTile(McpServer server) {
+    final isActive = _profile.activeMcpServerIds.contains(server.id);
 
     return Column(
       children: [
@@ -301,14 +301,14 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
           subtitle: Text(server.httpConfig?.url ?? 'Stdio/Local Server'),
           secondary: const Icon(Icons.dns_outlined),
           value: isActive,
-          onChanged: (val) => _toggleMCPServer(server.id, val),
+          onChanged: (val) => _toggleMcpServer(server.id, val),
         ),
         if (isActive)
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Column(
               children: server.tools.map((tool) {
-                final activeServer = _profile.activeMCPServers.firstWhere(
+                final activeServer = _profile.activeMcpServers.firstWhere(
                   (s) => s.id == server.id,
                 );
                 final isToolEnabled = activeServer.activeToolIds.contains(

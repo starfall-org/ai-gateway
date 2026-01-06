@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:llm/llm.dart';
 import 'package:llm/models/llm_model/base.dart';
-import 'files_action_sheet.dart';
+import 'package:multigateway/features/home/ui/widgets/files_action_sheet.dart';
 
 /// Helper để tạo theme-aware image
 Widget _buildThemeAwareImageForUserInput(BuildContext context, Widget child) {

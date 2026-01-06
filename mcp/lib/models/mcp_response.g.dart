@@ -9,7 +9,7 @@ part of 'mcp_response.dart';
 InitializeResult _$InitializeResultFromJson(Map<String, dynamic> json) =>
     InitializeResult(
       protocolVersion: json['protocol_version'] as String,
-      capabilities: MCPServerCapabilities.fromJson(
+      capabilities: McpServerCapabilities.fromJson(
         json['capabilities'] as Map<String, dynamic>,
       ),
       serverInfo: MCPImplementation.fromJson(

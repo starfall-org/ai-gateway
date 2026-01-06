@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import '../../../../core/profile/profile.dart';
-import '../../../../shared/widgets/empty_state.dart';
-import '../../../../shared/widgets/confirm_dialog.dart';
-import '../../../../shared/widgets/item_card.dart';
-import '../views/edit_profile_screen.dart';
-import '../widgets/view_profile_dialog.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/shared/widgets/empty_state.dart';
+import 'package:multigateway/shared/widgets/confirm_dialog.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
+import 'package:multigateway/features/profiles/ui/edit_profile_screen.dart';
+import 'package:multigateway/features/llm/ui/widgets/view_profile_dialog.dart';
 
-class AIProfilesScreen extends StatefulWidget {
-  const AIProfilesScreen({super.key});
+class ChatProfilesScreen extends StatefulWidget {
+  const ChatProfilesScreen({super.key});
 
   @override
-  State<AIProfilesScreen> createState() => _AIProfilesScreenState();
+  State<ChatProfilesScreen> createState() => _ChatProfilesScreenState();
 }
 
-class _AIProfilesScreenState extends State<AIProfilesScreen> {
-  List<AIProfile> _profiles = [];
+class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
+  List<ChatProfile> _profiles = [];
   bool _isLoading = true;
   bool _isGridView = true;
-  late AIProfileRepository _repository;
+  late ChatProfileStorage _repository;
 
   @override
   void initState() {
@@ -26,7 +27,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
   }
 
   Future<void> _loadProfiles() async {
-    _repository = await AIProfileRepository.init();
+    _repository = await ChatProfileStorage.init();
     if (!mounted) return;
     setState(() {
       _profiles = _repository.getProfiles();
@@ -43,7 +44,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tl('AI Profiles')),
+        title: Text(tl('Chat Profiles')),
         actions: [
           AddAction(
             onPressed: () async {
@@ -168,13 +169,13 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
       if (oldIndex < newIndex) {
         newIndex -= 1;
       }
-      final AIProfile item = _profiles.removeAt(oldIndex);
+      final ChatProfile item = _profiles.removeAt(oldIndex);
       _profiles.insert(newIndex, item);
     });
     _repository.saveOrder(_profiles.map((e) => e.id).toList());
   }
 
-  void _viewProfile(AIProfile profile) async {
+  void _viewProfile(ChatProfile profile) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -186,7 +187,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
     }
   }
 
-  void _editProfile(AIProfile profile) async {
+  void _editProfile(ChatProfile profile) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -198,7 +199,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
     }
   }
 
-  Future<void> _confirmDelete(AIProfile profile) async {
+  Future<void> _confirmDelete(ChatProfile profile) async {
     final confirm = await ConfirmDialog.show(
       context,
       title: 'Delete',
@@ -210,7 +211,7 @@ class _AIProfilesScreenState extends State<AIProfilesScreen> {
       await _deleteProfile(profile.id);
       if (!mounted) return;
       context.showSuccessSnackBar(
-        tl('AI Profile ${profile.name} has been deleted'),
+        tl('Profile ${profile.name} has been deleted'),
       );
     }
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mcp/mcp.dart';
-import '../../../../core/storage/mcpserver_store.dart';
-import '../../../../app/translate/tl.dart';
 
-class EditMCPServerViewModel extends ChangeNotifier {
+import 'package:mcp/mcp.dart';
+import 'package:multigateway/core/core.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/app_snackbar.dart';
+
+class EditMcpServerViewModel extends ChangeNotifier {
   // Repository
-  late MCPRepository _repository;
+  late McpServerStorage _repository;
 
   // Form controllers
   final TextEditingController nameController = TextEditingController();
@@ -24,15 +26,15 @@ class EditMCPServerViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isEditMode => _editingServerId != null;
 
-  EditMCPServerViewModel() {
+  EditMcpServerViewModel() {
     _initRepository();
   }
 
   Future<void> _initRepository() async {
-    _repository = await MCPRepository.init();
+    _repository = await McpServerStorage.init();
   }
 
-  void initialize(MCPServer? server) {
+  void initialize(McpServer? server) {
     if (server != null) {
       _editingServerId = server.id;
       nameController.text = server.name;
@@ -134,7 +136,7 @@ class EditMCPServerViewModel extends ChangeNotifier {
         }
       }
 
-      final server = MCPServer(
+      final server = McpServer(
         id:
             _editingServerId ??
             DateTime.now().millisecondsSinceEpoch.toString(),
@@ -152,12 +154,12 @@ class EditMCPServerViewModel extends ChangeNotifier {
       );
 
       if (isEditMode) {
-        await _repository.updateItem(server);
+        await _repository.updateMcpServer(server);
         if (context.mounted) {
           context.showSuccessSnackBar(tl('MCP server updated successfully'));
         }
       } else {
-        await _repository.addItem(server);
+        await _repository.addMcpServer(server);
         if (context.mounted) {
           context.showSuccessSnackBar(tl('MCP server added successfully'));
         }

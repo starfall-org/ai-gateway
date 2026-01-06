@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../app/models/preferences_setting.dart';
-import '../../../../app/storage/preferences.dart';
+import 'package:multigateway/app/models/preferences_setting.dart';
+import 'package:multigateway/app/storage/preferences.dart';
 
 class PreferencesController extends ChangeNotifier {
   final PreferencesStorage _preferencesSp;

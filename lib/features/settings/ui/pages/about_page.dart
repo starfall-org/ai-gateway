@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/utils/app_version.dart';
+import 'package:multigateway/shared/utils/app_version.dart';
 
 /// Màn hình thông tin về ứng dụng
 class AboutPage extends StatefulWidget {

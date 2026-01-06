@@ -9,7 +9,7 @@ import 'models/mcp_response.dart';
 
 class MCPService {
   /// Fetches the list of tools from an MCP server.
-  Future<List<MCPTool>> fetchTools(MCPServer server) async {
+  Future<List<MCPTool>> fetchTools(McpServer server) async {
     final response = await _sendRequest(
       server,
       (id) => ListToolsRequest(id: id),
@@ -24,7 +24,7 @@ class MCPService {
 
   /// Calls a tool on the MCP server.
   Future<CallToolResult> callTool(
-    MCPServer server,
+    McpServer server,
     String name,
     Map<String, dynamic> arguments,
   ) async {
@@ -40,7 +40,7 @@ class MCPService {
   }
 
   /// Fetches the list of resources from an MCP server.
-  Future<List<MCPResource>> fetchResources(MCPServer server) async {
+  Future<List<MCPResource>> fetchResources(McpServer server) async {
     final response = await _sendRequest(
       server,
       (id) => ListResourcesRequest(id: id),
@@ -55,7 +55,7 @@ class MCPService {
 
   /// Reads a resource from the MCP server.
   Future<List<MCPResourceContent>> readResource(
-    MCPServer server,
+    McpServer server,
     String uri,
   ) async {
     final response = await _sendRequest(
@@ -72,7 +72,7 @@ class MCPService {
 
   /// Internal helper to send a request based on server transport
   Future<MCPResponse> _sendRequest(
-    MCPServer server,
+    McpServer server,
     MCPRequest Function(int id) requestBuilder,
   ) async {
     if (server.httpConfig == null) {

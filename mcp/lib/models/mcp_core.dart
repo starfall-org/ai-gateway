@@ -170,7 +170,7 @@ class MCPPrompt {
 /// MCP Server Capabilities
 /// Describes what features the server supports
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class MCPServerCapabilities {
+class McpServerCapabilities {
   /// Server supports tools
   @JsonKey(defaultValue: false)
   final bool tools;
@@ -187,16 +187,16 @@ class MCPServerCapabilities {
   @JsonKey(defaultValue: false)
   final bool logging;
 
-  const MCPServerCapabilities({
+  const McpServerCapabilities({
     this.tools = false,
     this.resources = false,
     this.prompts = false,
     this.logging = false,
   });
 
-  factory MCPServerCapabilities.fromJson(Map<String, dynamic> json) {
+  factory McpServerCapabilities.fromJson(Map<String, dynamic> json) {
     // Special handling: if key exists, it's true
-    return MCPServerCapabilities(
+    return McpServerCapabilities(
       tools: json.containsKey('tools'),
       resources: json.containsKey('resources'),
       prompts: json.containsKey('prompts'),

@@ -1,42 +1,34 @@
 import 'dart:async';
 import 'package:llm/llm.dart';
 import 'package:mcp/mcp.dart';
-import '../../../../core/profile/profile.dart';
+import 'package:multigateway/core/core.dart';
 
-import '../../../../core/profile/storage/ai_profile_store.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../core/storage/mcpserver_store.dart';
-
-import 'package:llm/models/api/api.dart'; // Ensure this uses package import if possible, or relative if inside llm
-// Wait, ChatService is in app, llm is package.
-// Provider implementations are exported by llm package.
-
-import '../models/message.dart';
+import 'package:llm/models/api/api.dart';
 
 class ChatService {
   // Thu thập MCP tools ưu tiên cache; cập nhật khi dùng.
   static Future<List<AIToolFunction>> _collectMcpTools(
-    AIProfile profile,
+    ChatProfile profile,
   ) async {
-    if (profile.activeMCPServers.isEmpty) {
+    if (profile.activeMcpServers.isEmpty) {
       return const <AIToolFunction>[];
     }
     try {
-      final mcpRepository = await MCPRepository.init();
+      final McpServerStorage = await McpServerStorage.init();
       final mcpService = MCPService();
 
-      final servers = profile.activeMCPServers
-          .map((i) => mcpRepository.getItem(i.id))
-          .whereType<MCPServer>()
+      final servers = profile.activeMcpServers
+          .map((i) => McpServerStorage.getItem(i.id))
+          .whereType<McpServer>()
           .toList();
 
       if (servers.isEmpty) return const <AIToolFunction>[];
 
       final allowedToolsMap = {
-        for (var s in profile.activeMCPServers) s.id: s.activeToolIds.toSet(),
+        for (var s in profile.activeMcpServers) s.id: s.activeToolIds.toSet(),
       };
 
-      List<MCPTool> filterTools(List<MCPServer> serversToFilter) {
+      List<MCPTool> filterTools(List<McpServer> serversToFilter) {
         return serversToFilter.expand((s) {
           final allowedNames = allowedToolsMap[s.id] ?? {};
           return s.tools.where(
@@ -53,7 +45,7 @@ class ChatService {
             try {
               final tools = await mcpService.fetchTools(s);
               final updatedServer = s.copyWith(tools: tools);
-              await mcpRepository.updateItem(updatedServer);
+              await McpServerStorage.updateMcpServer(updatedServer);
               return updatedServer;
             } catch (_) {
               return s;
@@ -66,7 +58,7 @@ class ChatService {
           for (final s in servers) {
             try {
               final tools = await mcpService.fetchTools(s);
-              await mcpRepository.updateItem(s.copyWith(tools: tools));
+              await McpServerStorage.updateMcpServer(s.copyWith(tools: tools));
             } catch (_) {}
           }
         });
@@ -89,7 +81,7 @@ class ChatService {
   static List<AIToolFunction> _collectGeminiBuiltinTools(
     Provider provider,
     String modelName,
-    AIProfile profile,
+    ChatProfile profile,
   ) {
     final lower = modelName.toLowerCase();
     AIModel? selectedModel;
@@ -150,13 +142,13 @@ class ChatService {
   static Stream<String> generateStream({
     required String userText,
     required List<ChatMessage> history,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     List<String>? allowedToolNames,
   }) async* {
     final providerRepo = await LlmProviderInfoStorage.init();
-    final providers = providerRepo.getProviders();
+    final providers = providerRepo.getItems();
     if (providers.isEmpty) {
       throw Exception(
         'No provider configuration found. Please add a provider in Settings.',
@@ -365,7 +357,7 @@ class ChatService {
   static Future<String> generateReply({
     required String userText,
     required List<ChatMessage> history,
-    required AIProfile profile,
+    required ChatProfile profile,
     required String providerName,
     required String modelName,
     List<String>? allowedToolNames,

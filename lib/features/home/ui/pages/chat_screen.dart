@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'dart:io';
 
-import '../../../../app/config/services.dart';
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/app_dialog.dart';
-import '../../../../shared/widgets/empty_state.dart';
-import '../controllers/chat_controller.dart';
-import '../controllers/chat_controller_parts/chat_navigation_interface.dart';
-import '../views/menu_view.dart';
-import '../widgets/chat_messages_display.dart';
-import '../widgets/conversations_drawer.dart';
-import '../widgets/edit_message_sheet.dart';
-import '../widgets/model_picker_sheet.dart';
-import '../widgets/quick_actions_sheet.dart';
-import '../widgets/user_input_area.dart';
+import 'package:multigateway/app/config/services.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/app_dialog.dart';
+import 'package:multigateway/shared/widgets/empty_state.dart';
+import 'package:multigateway/features/home/ui/controllers/chat_controller.dart';
+import 'package:multigateway/features/home/ui/controllers/chat_controller_parts/chat_navigation_interface.dart';
+import 'package:multigateway/features/home/ui/views/menu_view.dart';
+import 'package:multigateway/features/home/ui/widgets/chat_messages_display.dart';
+import 'package:multigateway/features/home/ui/widgets/conversations_drawer.dart';
+import 'package:multigateway/features/home/ui/widgets/edit_message_sheet.dart';
+import 'package:multigateway/features/home/ui/widgets/model_picker_sheet.dart';
+import 'package:multigateway/features/home/ui/widgets/quick_actions_sheet.dart';
+import 'package:multigateway/features/home/ui/widgets/user_input_area.dart';
 
 /// Helper để tạo theme-aware image cho chat screen
 Widget _buildThemeAwareImageForChatScreen(BuildContext context, Widget child) {
@@ -55,7 +55,7 @@ class _ChatPageState extends State<ChatPage>
       aiProfileRepository: services.aiProfileRepository,
       pInfStorage: services.pInfStorage,
       preferencesSp: services.preferencesSp,
-      mcpRepository: services.mcpRepository,
+      McpServerStorage: services.McpServerStorage,
       ttsService: services.ttsService,
     );
     // Call async initialization without blocking initState

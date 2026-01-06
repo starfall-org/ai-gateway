@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/domain.dart';
-import '../../../../core/profile/profile.dart';
-import '../../../ai/ui/pages/profiles_page.dart';
+import 'package:multigateway/features/home/domain/domain.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/features/ai/ui/pages/profiles_page.dart';
 
 class ConversationsDrawer extends StatefulWidget {
   final Function(String) onSessionSelected;
@@ -9,7 +9,7 @@ class ConversationsDrawer extends StatefulWidget {
   final VoidCallback? onAgentChanged;
   final String? selectedProviderName;
   final String? selectedModelName;
-  final AIProfile? selectedProfile;
+  final ChatProfile? selectedProfile;
 
   const ConversationsDrawer({
     super.key,
@@ -333,7 +333,7 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
       onTap: () async {
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const AIProfilesScreen()),
+          MaterialPageRoute(builder: (context) => const ChatProfilesScreen()),
         );
         if (result == true) {
           widget.onAgentChanged?.call();

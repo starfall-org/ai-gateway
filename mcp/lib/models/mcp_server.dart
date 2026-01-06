@@ -12,18 +12,18 @@ part 'mcp_server.g.dart';
 enum MCPTransportType { streamable, sse, stdio }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class MCPServer {
+class McpServer {
   final String id;
   final String name;
   final String? description;
   final MCPTransportType transport;
   final MCPHttpConfig? httpConfig;
-  final MCPServerCapabilities? capabilities;
+  final McpServerCapabilities? capabilities;
   final List<MCPTool> tools;
   final List<MCPResource> resources;
   final List<MCPPrompt> prompts;
 
-  const MCPServer({
+  const McpServer({
     required this.id,
     required this.name,
     this.description,
@@ -35,7 +35,7 @@ class MCPServer {
     this.prompts = const [],
   });
 
-  factory MCPServer.stdio({
+  factory McpServer.stdio({
     String? id,
     required String name,
     String? description,
@@ -44,7 +44,7 @@ class MCPServer {
     Map<String, String>? env,
     String? cwd,
   }) {
-    return MCPServer(
+    return McpServer(
       id: id ?? const Uuid().v4(),
       name: name,
       description: description,
@@ -53,14 +53,14 @@ class MCPServer {
     );
   }
 
-  factory MCPServer.sse({
+  factory McpServer.sse({
     String? id,
     required String name,
     String? description,
     required String url,
     Map<String, String>? headers,
   }) {
-    return MCPServer(
+    return McpServer(
       id: id ?? const Uuid().v4(),
       name: name,
       description: description,
@@ -69,14 +69,14 @@ class MCPServer {
     );
   }
 
-  factory MCPServer.streamable({
+  factory McpServer.streamable({
     String? id,
     required String name,
     String? description,
     required String url,
     Map<String, String>? headers,
   }) {
-    return MCPServer(
+    return McpServer(
       id: id ?? const Uuid().v4(),
       name: name,
       description: description,
@@ -85,18 +85,18 @@ class MCPServer {
     );
   }
 
-  MCPServer copyWith({
+  McpServer copyWith({
     String? id,
     String? name,
     String? description,
     MCPTransportType? transport,
     MCPHttpConfig? httpConfig,
-    MCPServerCapabilities? capabilities,
+    McpServerCapabilities? capabilities,
     List<MCPTool>? tools,
     List<MCPResource>? resources,
     List<MCPPrompt>? prompts,
   }) {
-    return MCPServer(
+    return McpServer(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -109,8 +109,8 @@ class MCPServer {
     );
   }
 
-  factory MCPServer.fromJson(Map<String, dynamic> json) =>
-      _$MCPServerFromJson(json);
+  factory McpServer.fromJson(Map<String, dynamic> json) =>
+      _$McpServerFromJson(json);
 
-  Map<String, dynamic> toJson() => _$MCPServerToJson(this);
+  Map<String, dynamic> toJson() => _$McpServerToJson(this);
 }

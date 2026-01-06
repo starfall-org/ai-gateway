@@ -1,5 +1,5 @@
-import '../../storage/base.dart';
-import '../models/llm_provider_info.dart';
+import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/llm/models/llm_provider_info.dart';
 
 class LlmProviderInfoStorage extends HiveBaseStorage<LlmProviderInfo> {
   static const String _prefix = 'provider_info';

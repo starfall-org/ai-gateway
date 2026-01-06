@@ -4,12 +4,12 @@ import 'package:mcp/mcp.dart';
 void main() {
   group('MCP SSE Server Tests', () {
     late MCPService mcpService;
-    late MCPServer server;
+    late McpServer server;
 
     setUp(() {
       mcpService = MCPService();
       // Using standard Streamable HTTP MCP server
-      server = MCPServer.streamable(
+      server = McpServer.streamable(
         name: 'Context7 MCP',
         description: 'Standard MCP server for testing',
         url: 'https://mcp.context7.com/mcp',

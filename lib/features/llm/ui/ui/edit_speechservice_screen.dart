@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:llm/llm.dart';
-import '../../../../core/speech/speech.dart';
-import '../../../../core/llm/data/provider_info_storage.dart';
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/common_dropdown.dart';
-import '../../../../shared/widgets/custom_text_field.dart';
+import 'package:multigateway/core/speech/speech.dart';
+import 'package:multigateway/core/llm/data/provider_info_storage.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/common_dropdown.dart';
+import 'package:multigateway/shared/widgets/custom_text_field.dart';
 
 class AddTTSProfileScreen extends StatefulWidget {
   const AddTTSProfileScreen({super.key});

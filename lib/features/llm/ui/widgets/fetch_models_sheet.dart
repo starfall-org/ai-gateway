@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:llm/llm.dart';
 
-import '../../../../app/translate/tl.dart';
-import '../../../settings/ui/widgets/settings_card.dart';
-import '../controllers/edit_provider_controller.dart';
-import 'model_card.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_card.dart';
+import 'package:multigateway/features/llm/controllers/edit_provider_controller.dart';
+import 'package:multigateway/features/llm/ui/widgets/model_card.dart';
 
 class FetchModelsSheet extends StatelessWidget {
   final AddProviderViewModel viewModel;

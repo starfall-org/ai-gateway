@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:llm/llm.dart';
 
-import '../../../../app/translate/tl.dart';
-import '../../../../shared/widgets/common_dropdown.dart';
-import '../../../settings/ui/widgets/settings_card.dart';
-import '../../../../shared/widgets/item_card.dart';
+import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/widgets/common_dropdown.dart';
+import 'package:multigateway/features/settings/ui/widgets/settings_card.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
 
 
 class ModelsDrawer extends StatefulWidget {

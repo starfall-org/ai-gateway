@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/profile/profile.dart';
-import '../views/edit_profile_screen.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/features/profiles/ui/edit_profile_screen.dart';
 
 class ViewProfileDialog extends StatelessWidget {
-  final AIProfile profile;
+  final ChatProfile profile;
 
   const ViewProfileDialog({super.key, required this.profile});
 
@@ -188,7 +188,7 @@ class ViewProfileDialog extends StatelessWidget {
               ],
 
               // MCP Servers
-              if (profile.activeMCPServerIds.isNotEmpty) ...[
+              if (profile.activeMcpServerIds.isNotEmpty) ...[
                 _buildSectionHeader(
                   context,
                   'agents.active_mcp_servers',
@@ -198,7 +198,7 @@ class ViewProfileDialog extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: profile.activeMCPServerIds
+                  children: profile.activeMcpServerIds
                       .map(
                         (id) => Chip(
                           label: Text(
@@ -293,7 +293,7 @@ class ViewProfileDialog extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      final repo = await AIProfileRepository.init();
+      final repo = await ChatProfileStorage.init();
       await repo.deleteProfile(profile.id);
       if (context.mounted) {
         Navigator.pop(context, true);
