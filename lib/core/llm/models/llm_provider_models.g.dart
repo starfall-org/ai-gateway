@@ -8,7 +8,7 @@ part of 'llm_provider_models.dart';
 
 LlmProviderModels _$LlmProviderModelsFromJson(Map<String, dynamic> json) =>
     LlmProviderModels(
-      providerId: json['providerId'] as String,
+      id: json['id'] as String,
       basicModels: (json['basicModels'] as List<dynamic>)
           .map((e) =>
               e == null ? null : BasicModel.fromJson(e as Map<String, dynamic>))
@@ -32,7 +32,7 @@ LlmProviderModels _$LlmProviderModelsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$LlmProviderModelsToJson(LlmProviderModels instance) =>
     <String, dynamic>{
-      'providerId': instance.providerId,
+      'id': instance.id,
       'basicModels': instance.basicModels,
       'ollamaModels': instance.ollamaModels,
       'googleAiModels': instance.googleAiModels,

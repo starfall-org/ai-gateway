@@ -8,7 +8,7 @@ part of 'llm_provider_config.dart';
 
 LlmProviderConfig _$LlmProviderConfigFromJson(Map<String, dynamic> json) =>
     LlmProviderConfig(
-      providerId: json['provider_id'] as String,
+      id: json['id'] as String,
       httpProxy: json['http_proxy'] as Map<String, dynamic>?,
       socksProxy: json['socks_proxy'] as Map<String, dynamic>?,
       customChatCompletionUrl: json['custom_chat_completion_url'] as String?,
@@ -18,7 +18,7 @@ LlmProviderConfig _$LlmProviderConfigFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$LlmProviderConfigToJson(LlmProviderConfig instance) =>
     <String, dynamic>{
-      'provider_id': instance.providerId,
+      'id': instance.id,
       'http_proxy': instance.httpProxy,
       'socks_proxy': instance.socksProxy,
       'custom_chat_completion_url': instance.customChatCompletionUrl,
