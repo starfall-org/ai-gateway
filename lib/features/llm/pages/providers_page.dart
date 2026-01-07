@@ -132,22 +132,35 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
                 },
               )
             : _isGridView
-            ? GridView.builder(
+            ? ReorderableListView.builder(
                 padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.5,
-                ),
                 itemCount: _providers.length,
+                onReorder: _onReorder,
+                proxyDecorator: (child, index, animation) {
+                  return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) {
+                      return Material(
+                        elevation: 8,
+                        borderRadius: BorderRadius.circular(12),
+                        child: child,
+                      );
+                    },
+                    child: child,
+                  );
+                },
                 itemBuilder: (context, index) {
                   final provider = _providers[index];
-                  return ProviderCard(
-                    provider: provider,
-                    onTap: () => _navigateToEdit(provider),
-                    onEdit: () => _navigateToEdit(provider),
-                    onDelete: () => _confirmDelete(provider),
+                  return Container(
+                    key: ValueKey(provider.id),
+                    height: 120,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: ProviderCard(
+                      provider: provider,
+                      onTap: () => _navigateToEdit(provider),
+                      onEdit: () => _navigateToEdit(provider),
+                      onDelete: () => _confirmDelete(provider),
+                    ),
                   );
                 },
               )
