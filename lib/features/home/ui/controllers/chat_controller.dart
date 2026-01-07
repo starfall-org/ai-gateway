@@ -25,6 +25,7 @@ class ChatController extends ChangeNotifier {
 
   final ChatNavigationInterface navigator;
   final PreferencesStorage preferencesSp;
+  final SpeechManager speechManager;
 
   // Sub-controllers
   late final SessionController sessionController;
@@ -40,6 +41,7 @@ class ChatController extends ChangeNotifier {
     required LlmProviderInfoStorage llmProviderInfoStorage,
     required this.preferencesSp,
     required McpServerInfoStorage mcpServerStorage,
+    required this.speechManager,
   }) {
     // Initialize sub-controllers
     sessionController = SessionController(conversationRepository: conversationRepository);
@@ -395,6 +397,7 @@ class ChatController extends ChangeNotifier {
 
     textController.dispose();
     scrollController.dispose();
+    speechManager.stop();
     super.dispose();
   }
 }
