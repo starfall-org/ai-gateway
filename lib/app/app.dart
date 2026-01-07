@@ -37,6 +37,22 @@ class MultiGatewayApp extends StatelessWidget {
                   ).copyWith(
                     secondary: Color(settings.colors.secondaryColor),
                     surface: Color(settings.colors.surfaceColor),
+                    // Make surface variants more consistent in dark mode when dynamic color is off
+                    surfaceContainerLowest: settings.superDarkMode 
+                        ? const Color(0xFF000000) 
+                        : const Color(0xFF121212),
+                    surfaceContainerLow: settings.superDarkMode 
+                        ? const Color(0xFF0A0A0A) 
+                        : const Color(0xFF1A1A1A),
+                    surfaceContainer: settings.superDarkMode 
+                        ? const Color(0xFF141414) 
+                        : const Color(0xFF1E1E1E),
+                    surfaceContainerHigh: settings.superDarkMode 
+                        ? const Color(0xFF1E1E1E) 
+                        : const Color(0xFF252525),
+                    surfaceContainerHighest: settings.superDarkMode 
+                        ? const Color(0xFF282828) 
+                        : const Color(0xFF2C2C2C),
                   );
 
             // Apply custom text colors only if they match the current brightness

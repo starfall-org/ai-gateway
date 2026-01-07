@@ -71,20 +71,24 @@ class _AppearancePageState extends State<AppearancePage> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0.5,
         ),
-        body: const SafeArea(
+        body: SafeArea(
           top: false,
           bottom: true,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ThemeModeSelector(),
-                SizedBox(height: 24),
-                AdditionalSettingsSection(),
-              ],
-            ),
-          ),
+          child: _controller.isInitialized
+              ? const SingleChildScrollView(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ThemeModeSelector(),
+                      SizedBox(height: 24),
+                      AdditionalSettingsSection(),
+                    ],
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/models/appearance_setting.dart';
 import 'package:multigateway/app/storage/appearance_storage.dart';
@@ -9,15 +10,30 @@ class AppearanceController extends ChangeNotifier {
   late AppearanceSetting settings;
   bool _isInitialized = false;
 
+  /// Getter để kiểm tra trạng thái khởi tạo
+  bool get isInitialized => _isInitialized;
+
   AppearanceController() {
+    // Initialize with default settings immediately
+    settings = AppearanceSetting.defaults(themeMode: ThemeMode.system);
     _initialize();
   }
 
   Future<void> _initialize() async {
-    _repository = await AppearanceStorage.instance;
-    settings = _repository.currentTheme;
-    _isInitialized = true;
-    notifyListeners();
+    try {
+      _repository = await AppearanceStorage.instance;
+      settings = _repository.currentTheme;
+      _isInitialized = true;
+      notifyListeners();
+    } catch (e) {
+      // Fallback to default settings if initialization fails
+      settings = AppearanceSetting.defaults(themeMode: ThemeMode.system);
+      _isInitialized = true;
+      notifyListeners();
+      if (kDebugMode) {
+        print('AppearanceController initialization error: $e');
+      }
+    }
   }
 
   Future<void> updateSelection(ThemeSelection selection) async {
