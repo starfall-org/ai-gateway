@@ -55,12 +55,15 @@ class _SpeechServicesPageState extends State<SpeechServicesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -69,23 +72,22 @@ class _SpeechServicesPageState extends State<SpeechServicesPage> {
           children: [
             Text(
               tl('TTS Services'),
-              style: TextStyle(
-                color: Theme.of(context).textTheme.titleLarge?.color,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
               tl('Manage speech services'),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ],
         ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0.5,
         actions: [
           IconButton(

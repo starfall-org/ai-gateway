@@ -90,9 +90,40 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(tl('Providers')),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tl('Providers'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              tl('Manage AI providers'),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0.5,
         actions: [
           // Add button
           IconButton(

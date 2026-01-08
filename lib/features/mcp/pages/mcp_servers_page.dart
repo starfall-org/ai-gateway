@@ -108,18 +108,40 @@ class _McpServersPageState extends State<McpServersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(tl('MCP Servers')),
-        elevation: 0,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
-        titleTextStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 20,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tl('MCP Servers'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              tl('Manage MCP servers'),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
         ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0.5,
         actions: [
           // Add button
           IconButton(

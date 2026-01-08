@@ -43,9 +43,40 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(tl('Chat Profiles')),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tl('Chat Profiles'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              tl('Manage chat profiles'),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0.5,
         actions: [
           AddAction(
             onPressed: () async {

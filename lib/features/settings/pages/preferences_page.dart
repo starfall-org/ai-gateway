@@ -55,26 +55,49 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          tl('Preferences'),
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.onSurface,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tl('Preferences'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              tl('General preferences'),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
         ),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0.5,
       ),
       body: SafeArea(
         top: false,
         bottom: true,
         child: ListView(
+          padding: const EdgeInsets.all(16),
           children: [
-            // General settings
             SettingsSectionHeader(tl('General')),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SettingsCard(
               child: Column(
                 children: [
@@ -104,10 +127,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
               ),
             ),
 
-            // Display settings
             const SizedBox(height: 24),
             SettingsSectionHeader(tl('Display')),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SettingsCard(
               child: Column(
                 children: [
@@ -136,10 +158,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
               ),
             ),
 
-            // Developer settings
             const SizedBox(height: 24),
             SettingsSectionHeader(tl('Developer')),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SettingsCard(
               child: SettingsTile(
                 icon: Icons.bug_report_outlined,
@@ -152,10 +173,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
               ),
             ),
 
-            // Language section
             const SizedBox(height: 24),
             SettingsSectionHeader(tl('Languages')),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SettingsCard(
               child: SettingsTile(
                 icon: Icons.language_outlined,
