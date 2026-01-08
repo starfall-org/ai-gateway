@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'videos.g.dart';
 
 // Request Models
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OpenAiVideosRequest {
   final String prompt;
   final String? model;
@@ -26,7 +26,7 @@ class OpenAiVideosRequest {
 }
 
 // Response Models
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OpenAiVideos {
   final String id;
   final String object;
@@ -58,7 +58,7 @@ class OpenAiVideos {
   Map<String, dynamic> toJson() => _$OpenAiVideosToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class VideoError {
   final String code;
   final String message;

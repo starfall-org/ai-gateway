@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/translate/tl.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
 import 'package:multigateway/core/llm/models/llm_provider_info.dart';
+import 'package:multigateway/core/llm/models/llm_provider_models.dart';
 
 class ModelPickerSheet extends StatelessWidget {
   final List<LlmProviderInfo> providers;
-  final Map<String, List<LegacyAiModel>> providerModels;
+  final Map<String, List<LlmModel>> providerModels;
   final Map<String, bool> providerCollapsed;
   final String? selectedProviderName;
   final String? selectedModelName;
@@ -104,7 +104,7 @@ class ModelPickerSheet extends StatelessWidget {
                           ...models.map((model) {
                             final isSelected =
                                 selectedProviderName == provider.name &&
-                                selectedModelName == model.name;
+                                selectedModelName == model.id;
                             return ListTile(
                               contentPadding: const EdgeInsets.only(
                                 left: 56,
@@ -112,7 +112,7 @@ class ModelPickerSheet extends StatelessWidget {
                                 top: 4,
                                 bottom: 4,
                               ),
-                              title: Text(model.name),
+                              title: Text(model.id),
                               trailing: isSelected
                                   ? Icon(
                                       Icons.check,
@@ -122,7 +122,7 @@ class ModelPickerSheet extends StatelessWidget {
                                     )
                                   : null,
                               onTap: () {
-                                onSelectModel(provider.name, model.name);
+                                onSelectModel(provider.name, model.id);
                                 Navigator.pop(context);
                               },
                             );
@@ -156,7 +156,7 @@ class ModelPickerSheet extends StatelessWidget {
   static void show(
     BuildContext context, {
     required List<LlmProviderInfo> providers,
-    required Map<String, List<LegacyAiModel>> providerModels,
+    required Map<String, List<LlmModel>> providerModels,
     required Map<String, bool> providerCollapsed,
     String? selectedProviderName,
     String? selectedModelName,

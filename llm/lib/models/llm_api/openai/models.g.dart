@@ -14,4 +14,7 @@ OpenAiModels _$OpenAiModelsFromJson(Map<String, dynamic> json) => OpenAiModels(
 );
 
 Map<String, dynamic> _$OpenAiModelsToJson(OpenAiModels instance) =>
-    <String, dynamic>{'object': instance.object, 'data': instance.data};
+    <String, dynamic>{
+      'object': instance.object,
+      'data': instance.data.map((e) => e.toJson()).toList(),
+    };

@@ -3,17 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 part 'embed.g.dart';
 
 /// Request model for Ollama /api/embed endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaEmbedRequest {
   final String model;
   final String input;
   final OllamaEmbedOptions? options;
 
-  OllamaEmbedRequest({
-    required this.model,
-    required this.input,
-    this.options,
-  });
+  OllamaEmbedRequest({required this.model, required this.input, this.options});
 
   factory OllamaEmbedRequest.fromJson(Map<String, dynamic> json) =>
       _$OllamaEmbedRequestFromJson(json);
@@ -22,7 +18,7 @@ class OllamaEmbedRequest {
 }
 
 /// Options for embedding generation
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaEmbedOptions {
   final int? numCtx;
   final int? numBatch;
@@ -63,15 +59,12 @@ class OllamaEmbedOptions {
 }
 
 /// Response model for Ollama /api/embed endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaEmbedResponse {
   final String model;
   final List<double> embedding;
 
-  OllamaEmbedResponse({
-    required this.model,
-    required this.embedding,
-  });
+  OllamaEmbedResponse({required this.model, required this.embedding});
 
   factory OllamaEmbedResponse.fromJson(Map<String, dynamic> json) =>
       _$OllamaEmbedResponseFromJson(json);

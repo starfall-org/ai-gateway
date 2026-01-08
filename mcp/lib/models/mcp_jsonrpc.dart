@@ -2,17 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'mcp_jsonrpc.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class MCPRequest {
   final dynamic id;
   final String method;
   final Map<String, dynamic>? params;
 
-  MCPRequest({
-    required this.id,
-    required this.method,
-    this.params,
-  });
+  MCPRequest({required this.id, required this.method, this.params});
 
   factory MCPRequest.fromJson(Map<String, dynamic> json) =>
       _$MCPRequestFromJson(json);
@@ -20,15 +16,12 @@ class MCPRequest {
   Map<String, dynamic> toJson() => _$MCPRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class MCPNotification {
   final String method;
   final Map<String, dynamic>? params;
 
-  MCPNotification({
-    required this.method,
-    this.params,
-  });
+  MCPNotification({required this.method, this.params});
 
   factory MCPNotification.fromJson(Map<String, dynamic> json) =>
       _$MCPNotificationFromJson(json);
@@ -36,17 +29,13 @@ class MCPNotification {
   Map<String, dynamic> toJson() => _$MCPNotificationToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class MCPResponse {
   final dynamic id;
   final dynamic result;
   final MCPError? error;
 
-  MCPResponse({
-    required this.id,
-    this.result,
-    this.error,
-  });
+  MCPResponse({required this.id, this.result, this.error});
 
   factory MCPResponse.fromJson(Map<String, dynamic> json) =>
       _$MCPResponseFromJson(json);
@@ -54,17 +43,13 @@ class MCPResponse {
   Map<String, dynamic> toJson() => _$MCPResponseToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class MCPError {
   final int code;
   final String message;
   final dynamic data;
 
-  MCPError({
-    required this.code,
-    required this.message,
-    this.data,
-  });
+  MCPError({required this.code, required this.message, this.data});
 
   factory MCPError.fromJson(Map<String, dynamic> json) =>
       _$MCPErrorFromJson(json);

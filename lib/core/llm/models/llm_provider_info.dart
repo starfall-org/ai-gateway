@@ -84,15 +84,9 @@ class LlmProviderInfo {
 class Authorization {
   final AuthMethod type;
   final String? key;
-  final String? valuePrefix;
-  final String? otherArgs;
+  final String? value;
 
-  Authorization({
-    required this.type,
-    this.key,
-    this.valuePrefix,
-    this.otherArgs,
-  });
+  Authorization({required this.type, this.key, this.value});
 
   factory Authorization.fromJson(Map<String, dynamic> json) =>
       _$AuthorizationFromJson(json);

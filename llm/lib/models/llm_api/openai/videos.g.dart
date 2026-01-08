@@ -12,7 +12,7 @@ OpenAiVideosRequest _$OpenAiVideosRequestFromJson(Map<String, dynamic> json) =>
       model: json['model'] as String? ?? 'sora-2',
       seconds: json['seconds'] as String? ?? '4',
       size: json['size'] as String? ?? '720x1280',
-      inputReference: json['inputReference'] as String?,
+      inputReference: json['input_reference'] as String?,
     );
 
 Map<String, dynamic> _$OpenAiVideosRequestToJson(
@@ -22,7 +22,7 @@ Map<String, dynamic> _$OpenAiVideosRequestToJson(
   'model': instance.model,
   'seconds': instance.seconds,
   'size': instance.size,
-  'inputReference': instance.inputReference,
+  'input_reference': instance.inputReference,
 };
 
 OpenAiVideos _$OpenAiVideosFromJson(Map<String, dynamic> json) => OpenAiVideos(
@@ -31,7 +31,7 @@ OpenAiVideos _$OpenAiVideosFromJson(Map<String, dynamic> json) => OpenAiVideos(
   model: json['model'] as String,
   status: json['status'] as String,
   progress: (json['progress'] as num).toDouble(),
-  createdAt: (json['createdAt'] as num).toInt(),
+  createdAt: (json['created_at'] as num).toInt(),
   size: json['size'] as String,
   seconds: json['seconds'] as String,
   quality: json['quality'] as String,
@@ -47,11 +47,11 @@ Map<String, dynamic> _$OpenAiVideosToJson(OpenAiVideos instance) =>
       'model': instance.model,
       'status': instance.status,
       'progress': instance.progress,
-      'createdAt': instance.createdAt,
+      'created_at': instance.createdAt,
       'size': instance.size,
       'seconds': instance.seconds,
       'quality': instance.quality,
-      'error': instance.error,
+      'error': instance.error?.toJson(),
     };
 
 VideoError _$VideoErrorFromJson(Map<String, dynamic> json) => VideoError(

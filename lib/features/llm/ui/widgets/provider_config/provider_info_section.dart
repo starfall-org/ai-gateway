@@ -10,10 +10,7 @@ import 'package:multigateway/shared/widgets/custom_text_field.dart';
 class ProviderInfoSection extends StatelessWidget {
   final AddProviderController controller;
 
-  const ProviderInfoSection({
-    super.key,
-    required this.controller,
-  });
+  const ProviderInfoSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +24,7 @@ class ProviderInfoSection extends StatelessWidget {
             return DropdownOption<ProviderType>(
               value: type,
               label: type.name,
-              icon: buildLogoIcon(
-                _getProviderIcon(type, controller),
-                size: 24,
-              ),
+              icon: buildLogoIcon(_getProviderIcon(type, controller), size: 24),
             );
           }).toList(),
           onChanged: (value) {
@@ -40,10 +34,7 @@ class ProviderInfoSection extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        CustomTextField(
-          controller: controller.nameController,
-          label: 'Name',
-        ),
+        CustomTextField(controller: controller.nameController, label: 'Name'),
         const SizedBox(height: 16),
         CustomTextField(
           controller: controller.apiKeyController,

@@ -5,17 +5,13 @@ import 'package:llm/models/llm_api/googleai/generate_content.dart';
 part 'embeddings.g.dart';
 
 // Request Models for embeddings endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiEmbeddingsRequest {
   final GeminiContent? model;
   final List<String>? content;
   final GeminiEmbeddingTaskType? taskType;
 
-  GeminiEmbeddingsRequest({
-    this.model,
-    this.content,
-    this.taskType,
-  });
+  GeminiEmbeddingsRequest({this.model, this.content, this.taskType});
 
   factory GeminiEmbeddingsRequest.fromJson(Map<String, dynamic> json) =>
       _$GeminiEmbeddingsRequestFromJson(json);
@@ -23,7 +19,7 @@ class GeminiEmbeddingsRequest {
   Map<String, dynamic> toJson() => _$GeminiEmbeddingsRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiEmbeddingTaskType {
   final String? type;
 
@@ -35,7 +31,7 @@ class GeminiEmbeddingTaskType {
   Map<String, dynamic> toJson() => _$GeminiEmbeddingTaskTypeToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiEmbeddingContent {
   final List<GeminiPart>? parts;
 
@@ -48,7 +44,7 @@ class GeminiEmbeddingContent {
 }
 
 // Response Models for embeddings endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiEmbeddingsResponse {
   final GeminiEmbeddingValue? embedding;
 
@@ -60,7 +56,7 @@ class GeminiEmbeddingsResponse {
   Map<String, dynamic> toJson() => _$GeminiEmbeddingsResponseToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiEmbeddingValue {
   final List<double>? values;
 
@@ -73,17 +69,13 @@ class GeminiEmbeddingValue {
 }
 
 // Batch Embeddings Request
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiBatchEmbeddingsRequest {
   final GeminiContent? model;
   final List<GeminiEmbeddingContent>? requests;
   final GeminiEmbeddingTaskType? taskType;
 
-  GeminiBatchEmbeddingsRequest({
-    this.model,
-    this.requests,
-    this.taskType,
-  });
+  GeminiBatchEmbeddingsRequest({this.model, this.requests, this.taskType});
 
   factory GeminiBatchEmbeddingsRequest.fromJson(Map<String, dynamic> json) =>
       _$GeminiBatchEmbeddingsRequestFromJson(json);
@@ -92,7 +84,7 @@ class GeminiBatchEmbeddingsRequest {
 }
 
 // Batch Embeddings Response
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class GeminiBatchEmbeddingsResponse {
   final List<GeminiEmbeddingValue>? embeddings;
 

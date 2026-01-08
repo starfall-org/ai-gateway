@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multigateway/app/translate/tl.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
+import 'package:multigateway/core/llm/models/llm_provider_models.dart';
 import 'package:multigateway/features/home/ui/widgets/files_action_sheet.dart';
 import 'package:multigateway/features/home/ui/widgets/input_widgets/attachment_chips.dart';
 
@@ -31,7 +31,7 @@ class UserInputArea extends StatefulWidget {
   final void Function(int index) onRemoveAttachment;
   // Nút mở drawer chọn model
   final VoidCallback onOpenModelPicker;
-  final LegacyAiModel? selectedLegacyAiModel;
+  final LlmModel? selectedLlmModel;
 
   // Trạng thái sinh câu trả lời để disable input/nút gửi
   final bool isGenerating;
@@ -48,7 +48,7 @@ class UserInputArea extends StatefulWidget {
     this.onPickFromGallery,
     required this.onRemoveAttachment,
     required this.onOpenModelPicker,
-    this.selectedLegacyAiModel,
+    this.selectedLlmModel,
     this.isGenerating = false,
     this.onOpenMenu,
   });
@@ -226,14 +226,14 @@ class _UserInputAreaState extends State<UserInputArea> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.selectedLegacyAiModel != null) ...[
-                              if (widget.selectedLegacyAiModel!.icon != null)
+                            if (widget.selectedLlmModel != null) ...[
+                              if (widget.selectedLlmModel!.icon != null)
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: _buildThemeAwareImageForUserInput(
                                     context,
                                     Image.asset(
-                                      widget.selectedLegacyAiModel!.icon!,
+                                      widget.selectedLlmModel!.icon!,
                                       width: 20,
                                       height: 20,
                                       errorBuilder:

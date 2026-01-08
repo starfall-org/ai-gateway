@@ -3,13 +3,12 @@ import 'package:llm/models/llm_model/basic_model.dart';
 import 'package:llm/models/llm_model/github_model.dart';
 import 'package:llm/models/llm_model/googleai_model.dart';
 import 'package:llm/models/llm_model/ollama_model.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
+import 'package:multigateway/core/llm/models/llm_provider_models.dart';
 import 'package:multigateway/shared/utils/icon_builder.dart';
 import 'package:multigateway/shared/widgets/item_card.dart';
 
 class ModelCard extends StatelessWidget {
-  final dynamic
-  model; // Can be BasicModel, OllamaModel, GoogleAiModel, or LegacyAiModel
+  final LlmModel model;
   final VoidCallback? onTap;
   final Widget? trailing;
 
@@ -17,315 +16,145 @@ class ModelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (model is BasicModel) {
-      return _BasicModelCard(
-        model: model as BasicModel,
-        onTap: onTap,
-        trailing: trailing,
-      );
-    } else if (model is GitHubModel) {
-      return _GitHubModelCard(
-        model: model as GitHubModel,
-        onTap: onTap,
-        trailing: trailing,
-      );
-    } else if (model is OllamaModel) {
-      return _OllamaModelCard(
-        model: model as OllamaModel,
-        onTap: onTap,
-        trailing: trailing,
-      );
-    } else if (model is GoogleAiModel) {
-      return _GoogleAiModelCard(
-        model: model as GoogleAiModel,
-        onTap: onTap,
-        trailing: trailing,
-      );
-    } else if (model is LegacyAiModel) {
-      return _LegacyModelCard(
-        model: model as LegacyAiModel,
-        onTap: onTap,
-        trailing: trailing,
-      );
-    } else {
-      return _UnknownModelCard(onTap: onTap, trailing: trailing);
-    }
-  }
-}
-
-// ============================================================================
-// Private Widget Classes
-// ============================================================================
-
-/// BasicModel Card (OpenAI, Anthropic) - Simple display
-class _BasicModelCard extends StatelessWidget {
-  final BasicModel model;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _BasicModelCard({required this.model, this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
     return ItemCard(
       layout: ItemCardLayout.list,
       title: model.displayName,
-      subtitle: 'by ${model.ownedBy}',
+      subtitle: _buildSubtitle(),
       icon: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: buildIcon(model.id),
+        child: model.icon != null
+          ? buildIcon(model.icon!)
+          : buildIcon(model.id),
       ),
-      leading: _ModelCardHelpers.buildTag(
-        context,
-        const Icon(Icons.token, size: 16),
-        Theme.of(context).colorScheme.primary,
-      ),
+      subtitleWidget: _buildOriginSpecificInfo(context),
+      leading: _buildTypeTag(context),
       trailing: trailing,
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );
   }
-}
 
-/// GitHubModel Card - Show publisher, summary, and license
-class _GitHubModelCard extends StatelessWidget {
-  final GitHubModel model;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _GitHubModelCard({required this.model, this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    final tags = <Widget>[];
-
-    return ItemCard(
-      layout: ItemCardLayout.list,
-      title: model.name,
-      subtitle: model.id,
-      icon: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: buildIcon(model.name),
-      ),
-      subtitleWidget: tags.isNotEmpty
-          ? Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Wrap(spacing: 4, runSpacing: 4, children: tags),
-            )
-          : null,
-      leading: _ModelCardHelpers.buildTag(
-        context,
-        const Icon(Icons.token, size: 16),
-        Theme.of(context).colorScheme.primary,
-      ),
-      trailing: trailing,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    );
-  }
-}
-
-/// OllamaModel Card - Show parameter size and quantization
-class _OllamaModelCard extends StatelessWidget {
-  final OllamaModel model;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _OllamaModelCard({required this.model, this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    final tags = <Widget>[
-      _ModelCardHelpers.buildTextTag(
-        context,
-        model.parameterSize,
-        Theme.of(context).colorScheme.tertiary,
-      ),
-      _ModelCardHelpers.buildTextTag(
-        context,
-        model.quantizationLevel,
-        Theme.of(context).colorScheme.secondary,
-      ),
-    ];
-
-    return ItemCard(
-      layout: ItemCardLayout.list,
-      title: model.name,
-      subtitle: 'Model: ${model.model}',
-      icon: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: buildIcon(model.name),
-      ),
-      subtitleWidget: Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: Wrap(spacing: 4, runSpacing: 4, children: tags),
-      ),
-      leading: _ModelCardHelpers.buildTag(
-        context,
-        const Icon(Icons.token, size: 16),
-        Theme.of(context).colorScheme.primary,
-      ),
-      trailing: trailing,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    );
-  }
-}
-
-/// GoogleAiModel Card - Show generation methods, token limits, thinking capability
-class _GoogleAiModelCard extends StatelessWidget {
-  final GoogleAiModel model;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _GoogleAiModelCard({required this.model, this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    final tags = <Widget>[];
-
-    // Thinking capability
-    if (model.thinking) {
-      tags.add(
-        _ModelCardHelpers.buildTextTag(
-          context,
-          'Thinking',
-          Theme.of(context).colorScheme.primary,
-        ),
-      );
+  String _buildSubtitle() {
+    if (model.origin is BasicModel) {
+      final basicModel = model.origin as BasicModel;
+      return 'by ${basicModel.ownedBy}';
+    } else if (model.origin is GitHubModel) {
+      final githubModel = model.origin as GitHubModel;
+      return githubModel.id;
+    } else if (model.origin is OllamaModel) {
+      final ollamaModel = model.origin as OllamaModel;
+      return 'Model: ${ollamaModel.model}';
+    } else if (model.origin is GoogleAiModel) {
+      final googleModel = model.origin as GoogleAiModel;
+      return 'Top-K: ${googleModel.topK}, Top-P: ${googleModel.topP}';
     }
+    return model.id;
+  }
 
-    // Supported generation methods
-    for (var method in model.supportedGenerationMethods) {
-      tags.add(
+  Widget? _buildOriginSpecificInfo(BuildContext context) {
+    final tags = <Widget>[];
+
+    if (model.origin is OllamaModel) {
+      final ollamaModel = model.origin as OllamaModel;
+      tags.addAll([
         _ModelCardHelpers.buildTextTag(
           context,
-          method,
+          ollamaModel.parameterSize,
+          Theme.of(context).colorScheme.tertiary,
+        ),
+        _ModelCardHelpers.buildTextTag(
+          context,
+          ollamaModel.quantizationLevel,
           Theme.of(context).colorScheme.secondary,
         ),
-      );
+      ]);
+    } else if (model.origin is GoogleAiModel) {
+      final googleModel = model.origin as GoogleAiModel;
+      
+      // Thinking capability
+      if (googleModel.thinking) {
+        tags.add(
+          _ModelCardHelpers.buildTextTag(
+            context,
+            'Thinking',
+            Theme.of(context).colorScheme.primary,
+          ),
+        );
+      }
+
+      // Supported generation methods
+      for (var method in googleModel.supportedGenerationMethods) {
+        tags.add(
+          _ModelCardHelpers.buildTextTag(
+            context,
+            method,
+            Theme.of(context).colorScheme.secondary,
+          ),
+        );
+      }
+
+      // Token limits
+      tags.addAll([
+        _ModelCardHelpers.buildTextTag(
+          context,
+          'In: ${_ModelCardHelpers.formatNumber(googleModel.inputTokenLimit)}',
+          Theme.of(context).colorScheme.tertiary,
+        ),
+        _ModelCardHelpers.buildTextTag(
+          context,
+          'Out: ${_ModelCardHelpers.formatNumber(googleModel.outputTokenLimit)}',
+          Theme.of(context).colorScheme.tertiary,
+        ),
+        _ModelCardHelpers.buildTextTag(
+          context,
+          'T: ${googleModel.temperature}-${googleModel.maxTemperature}',
+          Theme.of(context).colorScheme.tertiary,
+        ),
+      ]);
     }
 
-    // Token limits
-    tags.add(
-      _ModelCardHelpers.buildTextTag(
-        context,
-        'In: ${_ModelCardHelpers.formatNumber(model.inputTokenLimit)}',
-        Theme.of(context).colorScheme.tertiary,
-      ),
-    );
+    return tags.isNotEmpty
+        ? Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Wrap(spacing: 4, runSpacing: 4, children: tags),
+          )
+        : null;
+  }
 
-    tags.add(
-      _ModelCardHelpers.buildTextTag(
-        context,
-        'Out: ${_ModelCardHelpers.formatNumber(model.outputTokenLimit)}',
-        Theme.of(context).colorScheme.tertiary,
-      ),
-    );
-
-    // Temperature info
-    tags.add(
-      _ModelCardHelpers.buildTextTag(
-        context,
-        'T: ${model.temperature}-${model.maxTemperature}',
-        Theme.of(context).colorScheme.tertiary,
-      ),
-    );
-
-    return ItemCard(
-      layout: ItemCardLayout.list,
-      title: model.displayName,
-      subtitle: 'Top-K: ${model.topK}, Top-P: ${model.topP}',
-      icon: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: buildIcon(model.name),
-      ),
-      subtitleWidget: Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: Wrap(spacing: 4, runSpacing: 4, children: tags),
-      ),
-      leading: _ModelCardHelpers.buildTag(
-        context,
-        const Icon(Icons.token, size: 16),
-        Theme.of(context).colorScheme.primary,
-      ),
-      trailing: trailing,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  Widget _buildTypeTag(BuildContext context) {
+    IconData iconData;
+    Color color = Theme.of(context).colorScheme.primary;
+    
+    switch (model.type) {
+      case LlmModelType.chat:
+        iconData = Icons.chat;
+        break;
+      case LlmModelType.image:
+        iconData = Icons.image;
+        color = Theme.of(context).colorScheme.secondary;
+        break;
+      case LlmModelType.audio:
+        iconData = Icons.audiotrack;
+        color = Theme.of(context).colorScheme.tertiary;
+        break;
+      case LlmModelType.video:
+        iconData = Icons.videocam;
+        color = Theme.of(context).colorScheme.error;
+        break;
+      case LlmModelType.embed:
+        iconData = Icons.data_array;
+        color = Theme.of(context).colorScheme.outline;
+        break;
+    }
+    
+    return _ModelCardHelpers.buildTag(
+      context,
+      Icon(iconData, size: 16),
+      color,
     );
   }
 }
 
-/// Legacy LegacyAiModel Card
-class _LegacyModelCard extends StatelessWidget {
-  final LegacyAiModel model;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _LegacyModelCard({required this.model, this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    return ItemCard(
-      layout: ItemCardLayout.list,
-      title: model.displayName,
-      icon: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: buildIcon(model.name),
-      ),
-      subtitleWidget: model.parameters != null
-          ? Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: [
-                  _ModelCardHelpers.buildTextTag(
-                    context,
-                    _ModelCardHelpers.formatParameters(model.parameters!),
-                    Theme.of(context).colorScheme.tertiary,
-                  ),
-                ],
-              ),
-            )
-          : null,
-      leading: _ModelCardHelpers.buildTag(
-        context,
-        const Icon(Icons.token, size: 16),
-        Theme.of(context).colorScheme.primary,
-      ),
-      trailing: trailing,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    );
-  }
-}
-
-/// Unknown model type card
-class _UnknownModelCard extends StatelessWidget {
-  final VoidCallback? onTap;
-  final Widget? trailing;
-
-  const _UnknownModelCard({this.onTap, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    return ItemCard(
-      layout: ItemCardLayout.list,
-      title: 'Unknown Model',
-      icon: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.errorContainer,
-        child: Icon(
-          Icons.error_outline,
-          color: Theme.of(context).colorScheme.onErrorContainer,
-        ),
-      ),
-      trailing: trailing,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    );
-  }
-}
 
 // ============================================================================
 // Helper Class

@@ -39,16 +39,14 @@ Authorization _$AuthorizationFromJson(Map<String, dynamic> json) =>
     Authorization(
       type: $enumDecode(_$AuthMethodEnumMap, json['type']),
       key: json['key'] as String?,
-      valuePrefix: json['value_prefix'] as String?,
-      otherArgs: json['other_args'] as String?,
+      value: json['value'] as String?,
     );
 
 Map<String, dynamic> _$AuthorizationToJson(Authorization instance) =>
     <String, dynamic>{
       'type': _$AuthMethodEnumMap[instance.type]!,
       'key': instance.key,
-      'value_prefix': instance.valuePrefix,
-      'other_args': instance.otherArgs,
+      'value': instance.value,
     };
 
 const _$AuthMethodEnumMap = {

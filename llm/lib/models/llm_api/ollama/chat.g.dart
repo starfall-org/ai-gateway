@@ -25,11 +25,11 @@ OllamaChatRequest _$OllamaChatRequestFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$OllamaChatRequestToJson(OllamaChatRequest instance) =>
     <String, dynamic>{
       'model': instance.model,
-      'messages': instance.messages,
+      'messages': instance.messages.map((e) => e.toJson()).toList(),
       'format': instance.format,
-      'options': instance.options,
+      'options': instance.options?.toJson(),
       'stream': instance.stream,
-      'tools': instance.tools,
+      'tools': instance.tools?.map((e) => e.toJson()).toList(),
     };
 
 OllamaMessage _$OllamaMessageFromJson(Map<String, dynamic> json) =>
@@ -39,17 +39,17 @@ OllamaMessage _$OllamaMessageFromJson(Map<String, dynamic> json) =>
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => OllamaImage.fromJson(e as Map<String, dynamic>))
           .toList(),
-      toolCalls: json['toolCalls'] == null
+      toolCalls: json['tool_calls'] == null
           ? null
-          : OllamaToolCall.fromJson(json['toolCalls'] as Map<String, dynamic>),
+          : OllamaToolCall.fromJson(json['tool_calls'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$OllamaMessageToJson(OllamaMessage instance) =>
     <String, dynamic>{
       'role': instance.role,
       'content': instance.content,
-      'images': instance.images,
-      'toolCalls': instance.toolCalls,
+      'images': instance.images?.map((e) => e.toJson()).toList(),
+      'tool_calls': instance.toolCalls?.toJson(),
     };
 
 OllamaImage _$OllamaImageFromJson(Map<String, dynamic> json) =>
@@ -64,7 +64,10 @@ OllamaTool _$OllamaToolFromJson(Map<String, dynamic> json) => OllamaTool(
 );
 
 Map<String, dynamic> _$OllamaToolToJson(OllamaTool instance) =>
-    <String, dynamic>{'function': instance.function, 'type': instance.type};
+    <String, dynamic>{
+      'function': instance.function.toJson(),
+      'type': instance.type,
+    };
 
 OllamaFunction _$OllamaFunctionFromJson(Map<String, dynamic> json) =>
     OllamaFunction(
@@ -88,7 +91,7 @@ OllamaToolCall _$OllamaToolCallFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$OllamaToolCallToJson(OllamaToolCall instance) =>
-    <String, dynamic>{'function': instance.function};
+    <String, dynamic>{'function': instance.function.toJson()};
 
 OllamaToolCallFunction _$OllamaToolCallFunctionFromJson(
   Map<String, dynamic> json,
@@ -103,128 +106,128 @@ Map<String, dynamic> _$OllamaToolCallFunctionToJson(
 
 OllamaOptions _$OllamaOptionsFromJson(Map<String, dynamic> json) =>
     OllamaOptions(
-      numCtx: (json['numCtx'] as num?)?.toInt(),
-      numBatch: (json['numBatch'] as num?)?.toInt(),
+      numCtx: (json['num_ctx'] as num?)?.toInt(),
+      numBatch: (json['num_batch'] as num?)?.toInt(),
       temperature: (json['temperature'] as num?)?.toDouble(),
-      topK: (json['topK'] as num?)?.toInt(),
-      topP: (json['topP'] as num?)?.toDouble(),
-      numGqa: (json['numGqa'] as num?)?.toInt(),
-      numGpu: (json['numGpu'] as num?)?.toInt(),
-      numThread: (json['numThread'] as num?)?.toInt(),
+      topK: (json['top_k'] as num?)?.toInt(),
+      topP: (json['top_p'] as num?)?.toDouble(),
+      numGqa: (json['num_gqa'] as num?)?.toInt(),
+      numGpu: (json['num_gpu'] as num?)?.toInt(),
+      numThread: (json['num_thread'] as num?)?.toInt(),
       seed: (json['seed'] as num?)?.toInt(),
-      useMmap: json['useMmap'] as bool?,
-      useMlock: json['useMlock'] as bool?,
-      repeatLastN: (json['repeatLastN'] as num?)?.toDouble(),
-      repeatPenalty: (json['repeatPenalty'] as num?)?.toDouble(),
-      presencePenalty: (json['presencePenalty'] as num?)?.toDouble(),
-      frequencyPenalty: (json['frequencyPenalty'] as num?)?.toDouble(),
-      dryMultiplier: (json['dryMultiplier'] as num?)?.toDouble(),
-      dryBase: (json['dryBase'] as num?)?.toDouble(),
-      dryAllowedLength: (json['dryAllowedLength'] as num?)?.toInt(),
-      drySpecialTokens: (json['drySpecialTokens'] as List<dynamic>?)
+      useMmap: json['use_mmap'] as bool?,
+      useMlock: json['use_mlock'] as bool?,
+      repeatLastN: (json['repeat_last_n'] as num?)?.toDouble(),
+      repeatPenalty: (json['repeat_penalty'] as num?)?.toDouble(),
+      presencePenalty: (json['presence_penalty'] as num?)?.toDouble(),
+      frequencyPenalty: (json['frequency_penalty'] as num?)?.toDouble(),
+      dryMultiplier: (json['dry_multiplier'] as num?)?.toDouble(),
+      dryBase: (json['dry_base'] as num?)?.toDouble(),
+      dryAllowedLength: (json['dry_allowed_length'] as num?)?.toInt(),
+      drySpecialTokens: (json['dry_special_tokens'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      numPredict: (json['numPredict'] as num?)?.toInt(),
+      numPredict: (json['num_predict'] as num?)?.toInt(),
       stop: (json['stop'] as num?)?.toInt(),
-      tfsZ: (json['tfsZ'] as List<dynamic>?)
+      tfsZ: (json['tfs_z'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
-      typicalP: (json['typicalP'] as num?)?.toInt(),
-      penaltyLastN: (json['penaltyLastN'] as num?)?.toInt(),
+      typicalP: (json['typical_p'] as num?)?.toInt(),
+      penaltyLastN: (json['penalty_last_n'] as num?)?.toInt(),
       mirostat: (json['mirostat'] as num?)?.toInt(),
-      mirostatTau: (json['mirostatTau'] as num?)?.toDouble(),
-      mirostatEta: (json['mirostatEta'] as num?)?.toDouble(),
-      penalizeNewline: (json['penalizeNewline'] as num?)?.toInt(),
+      mirostatTau: (json['mirostat_tau'] as num?)?.toDouble(),
+      mirostatEta: (json['mirostat_eta'] as num?)?.toDouble(),
+      penalizeNewline: (json['penalize_newline'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$OllamaOptionsToJson(OllamaOptions instance) =>
     <String, dynamic>{
-      'numCtx': instance.numCtx,
-      'numBatch': instance.numBatch,
+      'num_ctx': instance.numCtx,
+      'num_batch': instance.numBatch,
       'temperature': instance.temperature,
-      'topK': instance.topK,
-      'topP': instance.topP,
-      'numGqa': instance.numGqa,
-      'numGpu': instance.numGpu,
-      'numThread': instance.numThread,
+      'top_k': instance.topK,
+      'top_p': instance.topP,
+      'num_gqa': instance.numGqa,
+      'num_gpu': instance.numGpu,
+      'num_thread': instance.numThread,
       'seed': instance.seed,
-      'useMmap': instance.useMmap,
-      'useMlock': instance.useMlock,
-      'repeatLastN': instance.repeatLastN,
-      'repeatPenalty': instance.repeatPenalty,
-      'presencePenalty': instance.presencePenalty,
-      'frequencyPenalty': instance.frequencyPenalty,
-      'dryMultiplier': instance.dryMultiplier,
-      'dryBase': instance.dryBase,
-      'dryAllowedLength': instance.dryAllowedLength,
-      'drySpecialTokens': instance.drySpecialTokens,
-      'numPredict': instance.numPredict,
+      'use_mmap': instance.useMmap,
+      'use_mlock': instance.useMlock,
+      'repeat_last_n': instance.repeatLastN,
+      'repeat_penalty': instance.repeatPenalty,
+      'presence_penalty': instance.presencePenalty,
+      'frequency_penalty': instance.frequencyPenalty,
+      'dry_multiplier': instance.dryMultiplier,
+      'dry_base': instance.dryBase,
+      'dry_allowed_length': instance.dryAllowedLength,
+      'dry_special_tokens': instance.drySpecialTokens,
+      'num_predict': instance.numPredict,
       'stop': instance.stop,
-      'tfsZ': instance.tfsZ,
-      'typicalP': instance.typicalP,
-      'penaltyLastN': instance.penaltyLastN,
+      'tfs_z': instance.tfsZ,
+      'typical_p': instance.typicalP,
+      'penalty_last_n': instance.penaltyLastN,
       'mirostat': instance.mirostat,
-      'mirostatTau': instance.mirostatTau,
-      'mirostatEta': instance.mirostatEta,
-      'penalizeNewline': instance.penalizeNewline,
+      'mirostat_tau': instance.mirostatTau,
+      'mirostat_eta': instance.mirostatEta,
+      'penalize_newline': instance.penalizeNewline,
     };
 
 OllamaChatResponse _$OllamaChatResponseFromJson(Map<String, dynamic> json) =>
     OllamaChatResponse(
       model: json['model'] as String,
-      createdAt: json['createdAt'] as String,
+      createdAt: json['created_at'] as String,
       message: OllamaMessage.fromJson(json['message'] as Map<String, dynamic>),
       done: json['done'] as bool,
-      totalDuration: (json['totalDuration'] as num?)?.toInt(),
-      loadDuration: (json['loadDuration'] as num?)?.toInt(),
-      promptEvalCount: (json['promptEvalCount'] as num?)?.toInt(),
-      promptEvalDuration: (json['promptEvalDuration'] as num?)?.toInt(),
-      evalCount: (json['evalCount'] as num?)?.toInt(),
-      evalDuration: (json['evalDuration'] as num?)?.toInt(),
+      totalDuration: (json['total_duration'] as num?)?.toInt(),
+      loadDuration: (json['load_duration'] as num?)?.toInt(),
+      promptEvalCount: (json['prompt_eval_count'] as num?)?.toInt(),
+      promptEvalDuration: (json['prompt_eval_duration'] as num?)?.toInt(),
+      evalCount: (json['eval_count'] as num?)?.toInt(),
+      evalDuration: (json['eval_duration'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$OllamaChatResponseToJson(OllamaChatResponse instance) =>
     <String, dynamic>{
       'model': instance.model,
-      'createdAt': instance.createdAt,
-      'message': instance.message,
+      'created_at': instance.createdAt,
+      'message': instance.message.toJson(),
       'done': instance.done,
-      'totalDuration': instance.totalDuration,
-      'loadDuration': instance.loadDuration,
-      'promptEvalCount': instance.promptEvalCount,
-      'promptEvalDuration': instance.promptEvalDuration,
-      'evalCount': instance.evalCount,
-      'evalDuration': instance.evalDuration,
+      'total_duration': instance.totalDuration,
+      'load_duration': instance.loadDuration,
+      'prompt_eval_count': instance.promptEvalCount,
+      'prompt_eval_duration': instance.promptEvalDuration,
+      'eval_count': instance.evalCount,
+      'eval_duration': instance.evalDuration,
     };
 
 OllamaChatStreamResponse _$OllamaChatStreamResponseFromJson(
   Map<String, dynamic> json,
 ) => OllamaChatStreamResponse(
   model: json['model'] as String?,
-  createdAt: json['createdAt'] as String?,
+  createdAt: json['created_at'] as String?,
   message: json['message'] == null
       ? null
       : OllamaMessage.fromJson(json['message'] as Map<String, dynamic>),
   done: json['done'] as bool?,
-  totalDuration: (json['totalDuration'] as num?)?.toInt(),
-  loadDuration: (json['loadDuration'] as num?)?.toInt(),
-  promptEvalCount: (json['promptEvalCount'] as num?)?.toInt(),
-  promptEvalDuration: (json['promptEvalDuration'] as num?)?.toInt(),
-  evalCount: (json['evalCount'] as num?)?.toInt(),
-  evalDuration: (json['evalDuration'] as num?)?.toInt(),
+  totalDuration: (json['total_duration'] as num?)?.toInt(),
+  loadDuration: (json['load_duration'] as num?)?.toInt(),
+  promptEvalCount: (json['prompt_eval_count'] as num?)?.toInt(),
+  promptEvalDuration: (json['prompt_eval_duration'] as num?)?.toInt(),
+  evalCount: (json['eval_count'] as num?)?.toInt(),
+  evalDuration: (json['eval_duration'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$OllamaChatStreamResponseToJson(
   OllamaChatStreamResponse instance,
 ) => <String, dynamic>{
   'model': instance.model,
-  'createdAt': instance.createdAt,
-  'message': instance.message,
+  'created_at': instance.createdAt,
+  'message': instance.message?.toJson(),
   'done': instance.done,
-  'totalDuration': instance.totalDuration,
-  'loadDuration': instance.loadDuration,
-  'promptEvalCount': instance.promptEvalCount,
-  'promptEvalDuration': instance.promptEvalDuration,
-  'evalCount': instance.evalCount,
-  'evalDuration': instance.evalDuration,
+  'total_duration': instance.totalDuration,
+  'load_duration': instance.loadDuration,
+  'prompt_eval_count': instance.promptEvalCount,
+  'prompt_eval_duration': instance.promptEvalDuration,
+  'eval_count': instance.evalCount,
+  'eval_duration': instance.evalDuration,
 };

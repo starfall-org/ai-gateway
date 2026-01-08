@@ -9,32 +9,38 @@ part of 'llm_provider_models.dart';
 LlmProviderModels _$LlmProviderModelsFromJson(Map<String, dynamic> json) =>
     LlmProviderModels(
       id: json['id'] as String,
-      basicModels: (json['basicModels'] as List<dynamic>)
+      models: (json['models'] as List<dynamic>)
           .map((e) =>
-              e == null ? null : BasicModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      ollamaModels: (json['ollamaModels'] as List<dynamic>)
-          .map((e) => e == null
-              ? null
-              : OllamaModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      googleAiModels: (json['googleAiModels'] as List<dynamic>)
-          .map((e) => e == null
-              ? null
-              : GoogleAiModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      githubModels: (json['githubModels'] as List<dynamic>)
-          .map((e) => e == null
-              ? null
-              : GitHubModel.fromJson(e as Map<String, dynamic>))
+              e == null ? null : LlmModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$LlmProviderModelsToJson(LlmProviderModels instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'basicModels': instance.basicModels,
-      'ollamaModels': instance.ollamaModels,
-      'googleAiModels': instance.googleAiModels,
-      'githubModels': instance.githubModels,
+      'models': instance.models.map((e) => e?.toJson()).toList(),
     };
+
+LlmModel _$LlmModelFromJson(Map<String, dynamic> json) => LlmModel(
+      id: json['id'] as String,
+      icon: json['icon'] as String?,
+      displayName: json['display_name'] as String,
+      type: $enumDecode(_$LlmModelTypeEnumMap, json['type']),
+      origin: json['origin'],
+    );
+
+Map<String, dynamic> _$LlmModelToJson(LlmModel instance) => <String, dynamic>{
+      'id': instance.id,
+      'icon': instance.icon,
+      'display_name': instance.displayName,
+      'type': _$LlmModelTypeEnumMap[instance.type]!,
+      'origin': instance.origin,
+    };
+
+const _$LlmModelTypeEnumMap = {
+  LlmModelType.chat: 'chat',
+  LlmModelType.image: 'image',
+  LlmModelType.audio: 'audio',
+  LlmModelType.video: 'video',
+  LlmModelType.embed: 'embed',
+};

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
 import 'package:multigateway/core/llm/models/llm_provider_info.dart';
+import 'package:multigateway/core/llm/models/llm_provider_models.dart';
 import 'package:multigateway/core/llm/storage/llm_provider_info_storage.dart';
 import 'package:multigateway/core/llm/storage/llm_provider_models_storage.dart';
 
@@ -13,7 +13,7 @@ class ModelSelectionController extends ChangeNotifier {
 
   StreamSubscription? _providerSubscription;
   List<LlmProviderInfo> providers = [];
-  Map<String, List<LegacyAiModel>> providerModels = {};
+  Map<String, List<LlmModel>> providerModels = {};
 
   /// DEPRECATED: Use LlmProviderInfoStorage,
   final Map<String, bool> providerCollapsed = {}; // true = collapsed
@@ -29,7 +29,7 @@ class ModelSelectionController extends ChangeNotifier {
     });
   }
 
-  LegacyAiModel? get selectedLegacyAiModel {
+  LlmModel? get selectedLlmModel {
     if (selectedProviderName == null || selectedModelName == null) return null;
     try {
       final provider = providers.firstWhere(
@@ -37,7 +37,7 @@ class ModelSelectionController extends ChangeNotifier {
       );
       final models = providerModels[provider.id];
       if (models == null) return null;
-      return models.firstWhere((m) => m.name == selectedModelName);
+      return models.firstWhere((m) => m.id == selectedModelName);
     } catch (e) {
       return null;
     }
@@ -51,7 +51,7 @@ class ModelSelectionController extends ChangeNotifier {
       providerCollapsed.putIfAbsent(p.name, () => false);
       final modelsObj = pModStorage.getItem(p.id);
       if (modelsObj != null) {
-        providerModels[p.id] = modelsObj.toAiModels();
+        providerModels[p.id] = modelsObj.models.whereType<LlmModel>().toList();
       } else {
         providerModels[p.id] = [];
       }

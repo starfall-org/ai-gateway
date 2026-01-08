@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'image_generations.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OpenAiImagesGenerations {
   final int created;
   final List<ImageData> data;
@@ -15,7 +15,7 @@ class OpenAiImagesGenerations {
   Map<String, dynamic> toJson() => _$OpenAiImagesGenerationsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class ImageData {
   final String? b64Json;
   final String? url;
@@ -29,7 +29,7 @@ class ImageData {
   Map<String, dynamic> toJson() => _$ImageDataToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OpenAiImagesGenerationsRequest {
   final String prompt;
   final String model;

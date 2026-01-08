@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'chat.g.dart';
 
 /// Request model for Ollama /api/chat endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaChatRequest {
   final String model;
   final List<OllamaMessage> messages;
@@ -28,7 +28,7 @@ class OllamaChatRequest {
 }
 
 /// Message in Ollama chat
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaMessage {
   final String role;
   final dynamic content;
@@ -49,7 +49,7 @@ class OllamaMessage {
 }
 
 /// Image content in message
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaImage {
   final String data;
 
@@ -62,15 +62,12 @@ class OllamaImage {
 }
 
 /// Tool definition for Ollama
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaTool {
   final OllamaFunction function;
   final String type;
 
-  OllamaTool({
-    required this.function,
-    this.type = 'function',
-  });
+  OllamaTool({required this.function, this.type = 'function'});
 
   factory OllamaTool.fromJson(Map<String, dynamic> json) =>
       _$OllamaToolFromJson(json);
@@ -79,17 +76,13 @@ class OllamaTool {
 }
 
 /// Function definition
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaFunction {
   final String name;
   final String? description;
   final Map<String, dynamic>? parameters;
 
-  OllamaFunction({
-    required this.name,
-    this.description,
-    this.parameters,
-  });
+  OllamaFunction({required this.name, this.description, this.parameters});
 
   factory OllamaFunction.fromJson(Map<String, dynamic> json) =>
       _$OllamaFunctionFromJson(json);
@@ -98,7 +91,7 @@ class OllamaFunction {
 }
 
 /// Tool call in message
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaToolCall {
   final OllamaToolCallFunction function;
 
@@ -111,15 +104,12 @@ class OllamaToolCall {
 }
 
 /// Function call details
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaToolCallFunction {
   final String name;
   final Map<String, dynamic> arguments;
 
-  OllamaToolCallFunction({
-    required this.name,
-    required this.arguments,
-  });
+  OllamaToolCallFunction({required this.name, required this.arguments});
 
   factory OllamaToolCallFunction.fromJson(Map<String, dynamic> json) =>
       _$OllamaToolCallFunctionFromJson(json);
@@ -128,7 +118,7 @@ class OllamaToolCallFunction {
 }
 
 /// Options for Ollama generation
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaOptions {
   final int? numCtx;
   final int? numBatch;
@@ -197,7 +187,7 @@ class OllamaOptions {
 }
 
 /// Response model for Ollama /api/chat endpoint (non-streaming)
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaChatResponse {
   final String model;
   final String createdAt;
@@ -230,7 +220,7 @@ class OllamaChatResponse {
 }
 
 /// Response model for Ollama /api/chat endpoint (streaming)
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaChatStreamResponse {
   final String? model;
   final String? createdAt;

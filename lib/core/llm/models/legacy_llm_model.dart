@@ -2,6 +2,8 @@
 
 enum ModelType { chat, image, video, audio, embed, rerank }
 
+
+@Deprecated('Use LlmModel instead')
 class LegacyAiModel {
   final String name;
   final String displayName;

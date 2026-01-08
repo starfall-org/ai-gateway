@@ -15,19 +15,19 @@ GeminiEmbeddingsRequest _$GeminiEmbeddingsRequestFromJson(
   content: (json['content'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
-  taskType: json['taskType'] == null
+  taskType: json['task_type'] == null
       ? null
       : GeminiEmbeddingTaskType.fromJson(
-          json['taskType'] as Map<String, dynamic>,
+          json['task_type'] as Map<String, dynamic>,
         ),
 );
 
 Map<String, dynamic> _$GeminiEmbeddingsRequestToJson(
   GeminiEmbeddingsRequest instance,
 ) => <String, dynamic>{
-  'model': instance.model,
+  'model': instance.model?.toJson(),
   'content': instance.content,
-  'taskType': instance.taskType,
+  'task_type': instance.taskType?.toJson(),
 };
 
 GeminiEmbeddingTaskType _$GeminiEmbeddingTaskTypeFromJson(
@@ -48,7 +48,9 @@ GeminiEmbeddingContent _$GeminiEmbeddingContentFromJson(
 
 Map<String, dynamic> _$GeminiEmbeddingContentToJson(
   GeminiEmbeddingContent instance,
-) => <String, dynamic>{'parts': instance.parts};
+) => <String, dynamic>{
+  'parts': instance.parts?.map((e) => e.toJson()).toList(),
+};
 
 GeminiEmbeddingsResponse _$GeminiEmbeddingsResponseFromJson(
   Map<String, dynamic> json,
@@ -62,7 +64,7 @@ GeminiEmbeddingsResponse _$GeminiEmbeddingsResponseFromJson(
 
 Map<String, dynamic> _$GeminiEmbeddingsResponseToJson(
   GeminiEmbeddingsResponse instance,
-) => <String, dynamic>{'embedding': instance.embedding};
+) => <String, dynamic>{'embedding': instance.embedding?.toJson()};
 
 GeminiEmbeddingValue _$GeminiEmbeddingValueFromJson(
   Map<String, dynamic> json,
@@ -85,19 +87,19 @@ GeminiBatchEmbeddingsRequest _$GeminiBatchEmbeddingsRequestFromJson(
   requests: (json['requests'] as List<dynamic>?)
       ?.map((e) => GeminiEmbeddingContent.fromJson(e as Map<String, dynamic>))
       .toList(),
-  taskType: json['taskType'] == null
+  taskType: json['task_type'] == null
       ? null
       : GeminiEmbeddingTaskType.fromJson(
-          json['taskType'] as Map<String, dynamic>,
+          json['task_type'] as Map<String, dynamic>,
         ),
 );
 
 Map<String, dynamic> _$GeminiBatchEmbeddingsRequestToJson(
   GeminiBatchEmbeddingsRequest instance,
 ) => <String, dynamic>{
-  'model': instance.model,
-  'requests': instance.requests,
-  'taskType': instance.taskType,
+  'model': instance.model?.toJson(),
+  'requests': instance.requests?.map((e) => e.toJson()).toList(),
+  'task_type': instance.taskType?.toJson(),
 };
 
 GeminiBatchEmbeddingsResponse _$GeminiBatchEmbeddingsResponseFromJson(
@@ -110,4 +112,6 @@ GeminiBatchEmbeddingsResponse _$GeminiBatchEmbeddingsResponseFromJson(
 
 Map<String, dynamic> _$GeminiBatchEmbeddingsResponseToJson(
   GeminiBatchEmbeddingsResponse instance,
-) => <String, dynamic>{'embeddings': instance.embeddings};
+) => <String, dynamic>{
+  'embeddings': instance.embeddings?.map((e) => e.toJson()).toList(),
+};

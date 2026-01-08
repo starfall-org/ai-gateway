@@ -5,9 +5,9 @@ import 'package:llm/models/llm_api/anthropic/messages.dart';
 import 'package:llm/models/llm_api/googleai/generate_content.dart';
 import 'package:llm/models/llm_api/ollama/chat.dart';
 import 'package:llm/models/llm_api/openai/chat_completions.dart' as openai;
+import 'package:llm/models/llm_model/googleai_model.dart';
 import 'package:mcp/mcp.dart';
 import 'package:multigateway/core/core.dart' hide McpTool;
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
 
 class ChatService {
   // Thu thập MCP tools ưu tiên cache; cập nhật khi dùng.
@@ -81,11 +81,11 @@ class ChatService {
   ) {
     if (providerModels == null) return const <GeminiTool>[];
 
-    final aiModels = providerModels.toAiModels();
+    final models = providerModels.models.whereType<LlmModel>().toList();
     final lower = modelName.toLowerCase();
-    LegacyAiModel? selectedModel;
-    for (final m in aiModels) {
-      if (m.name.toLowerCase() == lower) {
+    LlmModel? selectedModel;
+    for (final m in models) {
+      if (m.id.toLowerCase() == lower) {
         selectedModel = m;
         break;
       }
@@ -95,10 +95,16 @@ class ChatService {
     bool supportsCode = lower.contains('gemini');
     bool supportsUrlContext = lower.contains('gemini');
 
-    if (selectedModel != null && selectedModel.builtInTools != null) {
-      supportsSearch = selectedModel.builtInTools!.googleSearch;
-      supportsCode = selectedModel.builtInTools!.codeExecution;
-      supportsUrlContext = selectedModel.builtInTools!.urlContext;
+    if (selectedModel != null && selectedModel.origin is GoogleAiModel) {
+      // For GoogleAi models, we determine built-in tool support based on model name
+      // This logic mirrors what was in LegacyAiModel.fromJson
+      final isProOrFlash =
+          lower.contains('pro') ||
+          lower.contains('flash') ||
+          lower.contains('2.0');
+      supportsSearch = isProOrFlash;
+      supportsCode = isProOrFlash;
+      supportsUrlContext = true; // All Gemini models support URL context
     }
 
     final builtin = <GeminiTool>[];

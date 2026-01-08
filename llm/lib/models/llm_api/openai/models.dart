@@ -4,7 +4,7 @@ import 'package:llm/models/llm_model/basic_model.dart';
 
 part 'models.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OpenAiModels {
   final String object;
   final List<BasicModel> data;

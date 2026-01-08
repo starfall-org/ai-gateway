@@ -64,7 +64,7 @@ class ChatBody extends StatelessWidget {
             isGenerating: controller.isGenerating,
             onOpenModelPicker: () => _openModelPicker(context, controller),
             onOpenMenu: () => QuickActionsSheet.show(context, controller),
-            selectedLegacyAiModel: controller.selectedLegacyAiModel,
+            selectedLlmModel: controller.selectedLlmModel,
           ),
         ),
       ],

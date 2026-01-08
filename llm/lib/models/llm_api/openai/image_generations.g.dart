@@ -17,18 +17,21 @@ OpenAiImagesGenerations _$OpenAiImagesGenerationsFromJson(
 
 Map<String, dynamic> _$OpenAiImagesGenerationsToJson(
   OpenAiImagesGenerations instance,
-) => <String, dynamic>{'created': instance.created, 'data': instance.data};
+) => <String, dynamic>{
+  'created': instance.created,
+  'data': instance.data.map((e) => e.toJson()).toList(),
+};
 
 ImageData _$ImageDataFromJson(Map<String, dynamic> json) => ImageData(
-  b64Json: json['b64Json'] as String?,
+  b64Json: json['b64_json'] as String?,
   url: json['url'] as String?,
-  revisedPrompt: json['revisedPrompt'] as String?,
+  revisedPrompt: json['revised_prompt'] as String?,
 );
 
 Map<String, dynamic> _$ImageDataToJson(ImageData instance) => <String, dynamic>{
-  'b64Json': instance.b64Json,
+  'b64_json': instance.b64Json,
   'url': instance.url,
-  'revisedPrompt': instance.revisedPrompt,
+  'revised_prompt': instance.revisedPrompt,
 };
 
 OpenAiImagesGenerationsRequest _$OpenAiImagesGenerationsRequestFromJson(
@@ -39,7 +42,7 @@ OpenAiImagesGenerationsRequest _$OpenAiImagesGenerationsRequestFromJson(
   n: (json['n'] as num?)?.toInt(),
   size: json['size'] as String?,
   quality: json['quality'] as String?,
-  responseFormat: json['responseFormat'] as String?,
+  responseFormat: json['response_format'] as String?,
   style: json['style'] as String?,
   user: json['user'] as String?,
 );
@@ -52,7 +55,7 @@ Map<String, dynamic> _$OpenAiImagesGenerationsRequestToJson(
   'n': instance.n,
   'size': instance.size,
   'quality': instance.quality,
-  'responseFormat': instance.responseFormat,
+  'response_format': instance.responseFormat,
   'style': instance.style,
   'user': instance.user,
 };

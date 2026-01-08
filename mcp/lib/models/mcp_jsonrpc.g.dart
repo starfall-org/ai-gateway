@@ -40,7 +40,7 @@ Map<String, dynamic> _$MCPResponseToJson(MCPResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
       'result': instance.result,
-      'error': instance.error,
+      'error': instance.error?.toJson(),
     };
 
 MCPError _$MCPErrorFromJson(Map<String, dynamic> json) => MCPError(

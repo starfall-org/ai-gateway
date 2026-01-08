@@ -79,8 +79,8 @@ class ChatController extends ChangeNotifier {
   String? get selectedProviderName =>
       modelSelectionController.selectedProviderName;
   String? get selectedModelName => modelSelectionController.selectedModelName;
-  dynamic get selectedLegacyAiModel =>
-      modelSelectionController.selectedLegacyAiModel;
+  dynamic get selectedLlmModel =>
+      modelSelectionController.selectedLlmModel;
 
   Future<void> initChat() => sessionController.initChat();
   Future<void> createNewSession() => sessionController.createNewSession();

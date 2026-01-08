@@ -5,7 +5,6 @@ import 'package:llm/models/llm_model/googleai_model.dart';
 import 'package:llm/models/llm_model/ollama_model.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/core.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
 import 'package:multigateway/features/llm/domain/tools/fetch_models.dart'
     as fetch_tools;
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
@@ -78,7 +77,11 @@ class AddProviderController extends ChangeNotifier {
       }
 
       if (providerModels != null) {
-        selectedModels = providerModels.toAiModels();
+        // Extract models from LlmProviderModels and convert to their origin types
+        selectedModels = providerModels.models
+            .where((model) => model != null)
+            .map((model) => model!.origin)
+            .toList();
       }
     } else {
       baseUrlController.text = 'https://api.openai.com/v1';
@@ -137,12 +140,12 @@ class AddProviderController extends ChangeNotifier {
     }
   }
 
-  // Model Management - Works with any model type (BasicModel, OllamaModel, GoogleAiModel)
+  
   String _getModelName(dynamic model) {
     if (model is BasicModel) return model.id;
     if (model is OllamaModel) return model.name;
     if (model is GoogleAiModel) return model.name;
-    if (model is LegacyAiModel) return model.name;
+    if (model is GitHubModel) return model.name;
     return 'unknown';
   }
 
@@ -271,35 +274,44 @@ class AddProviderController extends ChangeNotifier {
           : openLegacyAiModelsRouteOrUrlController.text.trim(),
     );
 
-    // Filter models into categories based on their actual types
-    final basicModels = <BasicModel>[];
-    final ollamaModels = <OllamaModel>[];
-    final googleAiModels = <GoogleAiModel>[];
-    final githubModels = <GitHubModel>[];
-
+    // Convert selected models to LlmModel format
+    final llmModels = <LlmModel>[];
+    
     for (var m in selectedModels) {
       if (m is BasicModel) {
-        basicModels.add(m);
+        llmModels.add(LlmModel(
+          id: m.id,
+          displayName: m.displayName,
+          type: LlmModelType.chat,
+          origin: m,
+        ));
       } else if (m is OllamaModel) {
-        ollamaModels.add(m);
+        llmModels.add(LlmModel(
+          id: m.name,
+          displayName: m.name,
+          type: LlmModelType.chat,
+          origin: m,
+        ));
       } else if (m is GoogleAiModel) {
-        googleAiModels.add(m);
+        llmModels.add(LlmModel(
+          id: m.name,
+          displayName: m.displayName,
+          type: LlmModelType.chat,
+          origin: m,
+        ));
       } else if (m is GitHubModel) {
-        githubModels.add(m);
-      } else if (m is LegacyAiModel) {
-        // Convert legacy LegacyAiModel to BasicModel
-        basicModels.add(
-          BasicModel(id: m.name, displayName: m.displayName, ownedBy: 'user'),
-        );
+        llmModels.add(LlmModel(
+          id: m.name,
+          displayName: m.name,
+          type: LlmModelType.chat,
+          origin: m,
+        ));
       }
     }
 
     final providerModels = LlmProviderModels(
       id: id,
-      basicModels: basicModels,
-      ollamaModels: ollamaModels,
-      googleAiModels: googleAiModels,
-      githubModels: githubModels,
+      models: llmModels,
     );
 
     final infoStorage = await LlmProviderInfoStorage.init();

@@ -171,7 +171,7 @@ class _QuickActionsSheetState extends State<QuickActionsSheet> {
                     _profile = widget.controller.selectedProfile!;
                   }
 
-                  final model = widget.controller.selectedLegacyAiModel;
+                  final model = widget.controller.selectedLlmModel;
                   final tools = model?.builtInTools;
 
                   return ListView(

@@ -14,11 +14,13 @@ OllamaTagsResponse _$OllamaTagsResponseFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$OllamaTagsResponseToJson(OllamaTagsResponse instance) =>
-    <String, dynamic>{'models': instance.models};
+    <String, dynamic>{
+      'models': instance.models.map((e) => e.toJson()).toList(),
+    };
 
 OllamaModel _$OllamaModelFromJson(Map<String, dynamic> json) => OllamaModel(
   name: json['name'] as String,
-  modifiedAt: json['modifiedAt'] as String?,
+  modifiedAt: json['modified_at'] as String?,
   size: (json['size'] as num?)?.toInt(),
   details: json['details'] == null
       ? null
@@ -28,9 +30,9 @@ OllamaModel _$OllamaModelFromJson(Map<String, dynamic> json) => OllamaModel(
 Map<String, dynamic> _$OllamaModelToJson(OllamaModel instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'modifiedAt': instance.modifiedAt,
+      'modified_at': instance.modifiedAt,
       'size': instance.size,
-      'details': instance.details,
+      'details': instance.details?.toJson(),
     };
 
 OllamaModelDetails _$OllamaModelDetailsFromJson(Map<String, dynamic> json) =>
@@ -40,9 +42,9 @@ OllamaModelDetails _$OllamaModelDetailsFromJson(Map<String, dynamic> json) =>
       families: (json['families'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      parameterSize: json['parameterSize'] as String?,
-      quantizationLevel: json['quantizationLevel'] as String?,
-      parentId: json['parentId'] as String?,
+      parameterSize: json['parameter_size'] as String?,
+      quantizationLevel: json['quantization_level'] as String?,
+      parentId: json['parent_id'] as String?,
     );
 
 Map<String, dynamic> _$OllamaModelDetailsToJson(OllamaModelDetails instance) =>
@@ -50,7 +52,7 @@ Map<String, dynamic> _$OllamaModelDetailsToJson(OllamaModelDetails instance) =>
       'format': instance.format,
       'family': instance.family,
       'families': instance.families,
-      'parameterSize': instance.parameterSize,
-      'quantizationLevel': instance.quantizationLevel,
-      'parentId': instance.parentId,
+      'parameter_size': instance.parameterSize,
+      'quantization_level': instance.quantizationLevel,
+      'parent_id': instance.parentId,
     };

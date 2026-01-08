@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:llm/models/llm_model/basic_model.dart';
+import 'package:llm/models/llm_model/github_model.dart';
 import 'package:llm/models/llm_model/googleai_model.dart';
 import 'package:llm/models/llm_model/ollama_model.dart';
 import 'package:multigateway/app/translate/tl.dart';
-import 'package:multigateway/core/llm/models/legacy_llm_model.dart';
 import 'package:multigateway/features/settings/ui/widgets/settings_card.dart';
 import 'package:multigateway/shared/widgets/common_dropdown.dart';
 import 'package:multigateway/shared/widgets/item_card.dart';
@@ -44,7 +44,7 @@ class _ModelsDrawerState extends State<ModelsDrawer> {
     if (model is BasicModel) return model.id;
     if (model is OllamaModel) return model.name;
     if (model is GoogleAiModel) return model.name;
-    if (model is LegacyAiModel) return model.name;
+    if (model is GitHubModel) return model.id;
     return 'unknown';
   }
 

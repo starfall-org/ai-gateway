@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'tags.g.dart';
 
 /// Response model for Ollama /api/tags endpoint
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaTagsResponse {
   final List<OllamaModel> models;
 
@@ -16,19 +16,14 @@ class OllamaTagsResponse {
 }
 
 /// Model information from Ollama tags response
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaModel {
   final String name;
   final String? modifiedAt;
   final int? size;
   final OllamaModelDetails? details;
 
-  OllamaModel({
-    required this.name,
-    this.modifiedAt,
-    this.size,
-    this.details,
-  });
+  OllamaModel({required this.name, this.modifiedAt, this.size, this.details});
 
   factory OllamaModel.fromJson(Map<String, dynamic> json) =>
       _$OllamaModelFromJson(json);
@@ -37,7 +32,7 @@ class OllamaModel {
 }
 
 /// Detailed information about a model
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class OllamaModelDetails {
   final String? format;
   final String? family;
