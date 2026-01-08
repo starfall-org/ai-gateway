@@ -41,8 +41,6 @@ class AddProviderController extends ChangeNotifier {
   AuthMethod selectedAuthMethod = AuthMethod.bearerToken;
   final TextEditingController customHeaderKeyController =
       TextEditingController();
-  bool vertexAI = false;
-  bool azureAI = false;
   bool responsesApi = false;
 
   // Headers
@@ -79,17 +77,6 @@ class AddProviderController extends ChangeNotifier {
             providerConfig.customListModelsUrl ?? '';
       }
 
-      // Special handling based on type/URL
-      if (providerInfo.type == ProviderType.openai) {
-        if (providerInfo.baseUrl.contains('azure')) {
-          azureAI = true;
-        }
-      } else if (providerInfo.type == ProviderType.googleai) {
-        if (providerInfo.baseUrl.contains('googleapis.com')) {
-          vertexAI = false;
-        }
-      }
-
       if (providerModels != null) {
         selectedModels = providerModels.toAiModels();
       }
@@ -119,16 +106,6 @@ class AddProviderController extends ChangeNotifier {
         selectedAuthMethod = AuthMethod.queryParam;
         break;
     }
-    notifyListeners();
-  }
-
-  void updateVertexAI(bool value) {
-    vertexAI = value;
-    notifyListeners();
-  }
-
-  void updateAzureAI(bool value) {
-    azureAI = value;
     notifyListeners();
   }
 
@@ -351,3 +328,4 @@ class AddProviderController extends ChangeNotifier {
     super.dispose();
   }
 }
+

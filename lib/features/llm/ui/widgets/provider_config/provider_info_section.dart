@@ -39,28 +39,6 @@ class ProviderInfoSection extends StatelessWidget {
             }
           },
         ),
-        if (controller.selectedType == ProviderType.openai)
-          CheckboxListTile(
-            title: Text(tl('Azure AI')),
-            value: controller.azureAI,
-            onChanged: (value) {
-              if (value != null) {
-                controller.updateAzureAI(value);
-              }
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-        if (controller.selectedType == ProviderType.googleai)
-          CheckboxListTile(
-            title: Text(tl('Vertex AI')),
-            value: controller.vertexAI,
-            onChanged: (value) {
-              if (value != null) {
-                controller.updateVertexAI(value);
-              }
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: controller.nameController,
@@ -94,9 +72,6 @@ class ProviderInfoSection extends StatelessWidget {
   }
 
   String _getProviderIcon(ProviderType type, AddProviderController controller) {
-    if (controller.vertexAI) return 'vertex-color';
-    if (controller.azureAI) return 'azure-color';
-    
     switch (type) {
       case ProviderType.openai:
         return 'openai';

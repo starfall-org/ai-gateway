@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/llm/models/llm_provider_info.dart';
 import 'package:multigateway/core/llm/storage/llm_provider_info_storage.dart';
@@ -10,6 +11,7 @@ import 'package:multigateway/features/llm/ui/widgets/provider_tile.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
 import 'package:multigateway/shared/widgets/confirm_dialog.dart';
 import 'package:multigateway/shared/widgets/empty_state.dart';
+import 'package:multigateway/shared/widgets/item_card.dart';
 
 class AiProvidersPage extends StatefulWidget {
   const AiProvidersPage({super.key});
@@ -132,37 +134,29 @@ class _AiProvidersPageState extends State<AiProvidersPage> {
                 },
               )
             : _isGridView
-            ? ReorderableListView.builder(
+            ? ReorderableGridView(
                 padding: const EdgeInsets.all(16),
-                itemCount: _providers.length,
-                onReorder: _onReorder,
-                proxyDecorator: (child, index, animation) {
-                  return AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) {
-                      return Material(
-                        elevation: 8,
-                        borderRadius: BorderRadius.circular(12),
-                        child: child,
-                      );
-                    },
-                    child: child,
-                  );
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.0,
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    final item = _providers.removeAt(oldIndex);
+                    _providers.insert(newIndex, item);
+                  });
+                  _repository.saveOrder(_providers.map((e) => e.id).toList());
                 },
-                itemBuilder: (context, index) {
-                  final provider = _providers[index];
-                  return Container(
+                children: _providers.map((provider) {
+                  return ProviderCard(
                     key: ValueKey(provider.id),
-                    height: 120,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: ProviderCard(
-                      provider: provider,
-                      onTap: () => _navigateToEdit(provider),
-                      onEdit: () => _navigateToEdit(provider),
-                      onDelete: () => _confirmDelete(provider),
-                    ),
+                    provider: provider,
+                    layout: ItemCardLayout.grid,
+                    onTap: () => _navigateToEdit(provider),
+                    onEdit: () => _navigateToEdit(provider),
+                    onDelete: () => _confirmDelete(provider),
                   );
-                },
+                }).toList(),
               )
             : ReorderableListView.builder(
                 itemCount: _providers.length,

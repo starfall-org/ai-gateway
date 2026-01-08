@@ -30,11 +30,7 @@ class ProviderEditTab extends StatelessWidget {
               value: type,
               label: type.name,
               icon: buildLogoIcon(
-                controller.vertexAI
-                    ? 'vertex-color'
-                    : controller.azureAI
-                    ? 'azure-color'
-                    : type == ProviderType.openai
+                type == ProviderType.openai
                     ? 'openai'
                     : type == ProviderType.googleai
                     ? 'aistudio'
@@ -52,28 +48,6 @@ class ProviderEditTab extends StatelessWidget {
             }
           },
         ),
-        if (controller.selectedType == ProviderType.openai)
-          CheckboxListTile(
-            title: Text(tl('Azure AI')),
-            value: controller.azureAI,
-            onChanged: (value) {
-              if (value != null) {
-                controller.updateAzureAI(value);
-              }
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
-        if (controller.selectedType == ProviderType.googleai)
-          CheckboxListTile(
-            title: Text(tl('Vertex AI')),
-            value: controller.vertexAI,
-            onChanged: (value) {
-              if (value != null) {
-                controller.updateVertexAI(value);
-              }
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-          ),
         const SizedBox(height: 16),
         CustomTextField(controller: controller.nameController, label: 'Name'),
         const SizedBox(height: 16),
@@ -102,4 +76,4 @@ class ProviderEditTab extends StatelessWidget {
       ],
     );
   }
-}
+}     
