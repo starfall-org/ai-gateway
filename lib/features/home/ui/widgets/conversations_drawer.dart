@@ -77,36 +77,45 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
     _loadHistory();
   }
 
+  Future<void> _renameSession(String id, String newTitle) async {
+    final session = _sessions.firstWhere((s) => s.id == id);
+    final updatedSession = session.copyWith(
+      title: newTitle,
+      updatedAt: DateTime.now(),
+    );
+    await _chatRepository!.updateItem(updatedSession);
+    _loadHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AppSidebar(
       backgroundColor: colorScheme.surface,
-      child: SafeArea(
-        child: Column(
-          children: [
-            drawer_widgets.DrawerHeader(searchController: _searchController),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                children: [
-                  NewChatButton(onPressed: widget.onNewChat),
-                  const SizedBox(height: 24),
-                  HistoryList(
-                    sessions: _filteredSessions,
-                    onSessionSelected: widget.onSessionSelected,
-                    onDeleteSession: _deleteSession,
-                  ),
-                ],
-              ),
+      child: Column(
+        children: [
+          drawer_widgets.DrawerHeader(searchController: _searchController),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              children: [
+                NewChatButton(onPressed: widget.onNewChat),
+                const SizedBox(height: 24),
+                HistoryList(
+                  sessions: _filteredSessions,
+                  onSessionSelected: widget.onSessionSelected,
+                  onDeleteSession: _deleteSession,
+                  onRenameSession: _renameSession,
+                ),
+              ],
             ),
-            DrawerFooter(
-              selectedProfile: widget.selectedProfile,
-              onAgentChanged: widget.onAgentChanged,
-            ),
-          ],
-        ),
+          ),
+          DrawerFooter(
+            selectedProfile: widget.selectedProfile,
+            onAgentChanged: widget.onAgentChanged,
+          ),
+        ],
       ),
     );
   }

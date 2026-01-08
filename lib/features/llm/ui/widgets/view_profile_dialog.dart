@@ -16,7 +16,7 @@ class ViewProfileDialog extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
-            tooltip: tl('agents.edit'),
+            tooltip: tl('Edit'),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
@@ -29,7 +29,7 @@ class ViewProfileDialog extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete_outline),
             color: Theme.of(context).colorScheme.error,
-            tooltip: tl('agents.delete'),
+            tooltip: tl('Delete'),
             onPressed: () => _confirmDelete(context),
           ),
         ],
@@ -245,7 +245,7 @@ class ViewProfileDialog extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(tl('agents.delete')),
+        title: Text(tl('Delete')),
         content: Text(tl('Are you sure you want to delete ${profile.name}?')),
         actions: [
           TextButton(
@@ -258,7 +258,7 @@ class ViewProfileDialog extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.error,
               foregroundColor: Theme.of(context).colorScheme.onError,
             ),
-            child: Text(tl('agents.delete')),
+            child: Text(tl('Delete')),
           ),
         ],
       ),

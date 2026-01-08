@@ -7,12 +7,14 @@ class HistoryList extends StatelessWidget {
   final List<Conversation> sessions;
   final Function(String) onSessionSelected;
   final Function(String) onDeleteSession;
+  final Function(String, String) onRenameSession;
 
   const HistoryList({
     super.key,
     required this.sessions,
     required this.onSessionSelected,
     required this.onDeleteSession,
+    required this.onRenameSession,
   });
 
   @override
@@ -52,6 +54,7 @@ class HistoryList extends StatelessWidget {
               session: session,
               onTap: () => onSessionSelected(session.id),
               onDelete: () => onDeleteSession(session.id),
+              onRename: (newTitle) => onRenameSession(session.id, newTitle),
             ),
           ),
       ],
@@ -60,75 +63,171 @@ class HistoryList extends StatelessWidget {
 }
 
 /// Item trong history list
-class _HistoryItem extends StatelessWidget {
+class _HistoryItem extends StatefulWidget {
   final Conversation session;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final Function(String) onRename;
 
   const _HistoryItem({
     required this.session,
     required this.onTap,
     required this.onDelete,
+    required this.onRename,
   });
+
+  @override
+  State<_HistoryItem> createState() => _HistoryItemState();
+}
+
+class _HistoryItemState extends State<_HistoryItem> {
+
+  void _showContextMenu(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final Offset position = button.localToGlobal(Offset.zero, ancestor: overlay);
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy + button.size.height,
+        position.dx + button.size.width,
+        position.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          onTap: () {
+            // PopupMenuItem tự động đóng menu trước khi gọi onTap
+            // Sử dụng SchedulerBinding để đảm bảo menu đã đóng hoàn toàn
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _showRenameDialog(context);
+              }
+            });
+          },
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 18, color: colorScheme.onSurface),
+              const SizedBox(width: 12),
+              Text(tl('Rename')),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                widget.onDelete();
+              }
+            });
+          },
+          child: Row(
+            children: [
+              Icon(Icons.delete, size: 18, color: colorScheme.error),
+              const SizedBox(width: 12),
+              Text(tl('Delete'), style: TextStyle(color: colorScheme.error)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showRenameDialog(BuildContext context) {
+    final TextEditingController controller =
+        TextEditingController(text: widget.session.title);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(tl('Rename conversation')),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: tl('Enter new name'),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) {
+              widget.onRename(value.trim());
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(tl('Cancel')),
+          ),
+          FilledButton(
+            onPressed: () {
+              final newTitle = controller.text.trim();
+              if (newTitle.isNotEmpty) {
+                widget.onRename(newTitle);
+                Navigator.of(context).pop();
+              }
+            },
+            child: Text(tl('Rename')),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Dismissible(
-      key: Key(session.id),
-      background: Container(
-        color: colorScheme.error,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        child: Icon(Icons.delete, color: colorScheme.onError, size: 20),
-      ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) => onDelete(),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Icon(
-                Icons.history,
-                size: 20,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      session.title,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+    return InkWell(
+      onTap: widget.onTap,
+      onLongPress: () => _showContextMenu(context),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(
+              Icons.history,
+              size: 20,
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.session.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSurface,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _formatTimeAgo(session.updatedAt),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.7,
-                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatTimeAgo(widget.session.updatedAt),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
