@@ -7,6 +7,7 @@ import 'package:multigateway/features/home/ui/widgets/drawer_widgets/drawer_head
     as drawer_widgets;
 import 'package:multigateway/features/home/ui/widgets/drawer_widgets/history_list.dart';
 import 'package:multigateway/features/home/ui/widgets/drawer_widgets/new_chat_button.dart';
+import 'package:multigateway/shared/widgets/app_sidebar.dart';
 
 /// Drawer hiển thị danh sách conversations
 class ConversationsDrawer extends StatefulWidget {
@@ -80,7 +81,7 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Drawer(
+    return AppSidebar(
       backgroundColor: colorScheme.surface,
       child: SafeArea(
         child: Column(
