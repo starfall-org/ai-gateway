@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:multigateway/app/config/routes.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/features/home/presentation/home_page.dart';
-import 'package:multigateway/features/llm/pages/providers_page.dart';
-import 'package:multigateway/features/mcp/pages/mcp_servers_page.dart';
-import 'package:multigateway/features/profiles/pages/profiles_page.dart';
-import 'package:multigateway/features/settings/pages/about_page.dart';
-import 'package:multigateway/features/settings/pages/appearance_page.dart';
-import 'package:multigateway/features/settings/pages/preferences_page.dart';
-import 'package:multigateway/features/settings/pages/settings_page.dart';
-import 'package:multigateway/features/settings/pages/update_page.dart';
-import 'package:multigateway/features/settings/pages/userdata_page.dart';
-import 'package:multigateway/features/speech/pages/speech_sevices_page.dart';
+import 'package:multigateway/features/llm/presentation/providers_page.dart';
+import 'package:multigateway/features/mcp/presentation/mcp_servers_page.dart';
+import 'package:multigateway/features/profiles/presentation/profiles_page.dart';
+import 'package:multigateway/features/settings/presentation/about_page.dart';
+import 'package:multigateway/features/settings/presentation/appearance_page.dart';
+import 'package:multigateway/features/settings/presentation/preferences_page.dart';
+import 'package:multigateway/features/settings/presentation/settings_page.dart';
+import 'package:multigateway/features/settings/presentation/update_page.dart';
+import 'package:multigateway/features/settings/presentation/userdata_page.dart';
+import 'package:multigateway/features/speech/presentation/speech_sevices_page.dart';
 
 /// Generate a route based on the route name.
 Route<dynamic> generateRoute(RouteSettings settings) {

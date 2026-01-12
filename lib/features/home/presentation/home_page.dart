@@ -6,13 +6,13 @@ import 'package:multigateway/core/llm/storage/llm_provider_models_storage.dart';
 import 'package:multigateway/core/mcp/storage/mcp_server_info_storage.dart';
 import 'package:multigateway/core/profile/storage/chat_profile_storage.dart';
 import 'package:multigateway/core/speech/speech.dart';
-import 'package:multigateway/features/home/controllers/home_controller.dart';
-import 'package:multigateway/features/home/ui/menu_view.dart';
-import 'package:multigateway/features/home/ui/widgets/chat_controller_provider.dart';
-import 'package:multigateway/features/home/ui/widgets/chat_screen_widgets/chat_app_bar.dart';
-import 'package:multigateway/features/home/ui/widgets/chat_screen_widgets/chat_body.dart';
-import 'package:multigateway/features/home/ui/widgets/conversations_drawer.dart';
-import 'package:multigateway/features/home/ui/widgets/edit_message_sheet.dart';
+import 'package:multigateway/features/home/presentation/controllers/home_controller.dart';
+import 'package:multigateway/features/home/presentation/ui/menu_view.dart';
+import 'package:multigateway/features/home/presentation/widgets/chat_controller_provider.dart';
+import 'package:multigateway/features/home/presentation/widgets/chat_screen_widgets/chat_app_bar.dart';
+import 'package:multigateway/features/home/presentation/widgets/chat_screen_widgets/chat_body.dart';
+import 'package:multigateway/features/home/presentation/widgets/conversations_drawer.dart';
+import 'package:multigateway/features/home/presentation/widgets/edit_message_sheet.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
 
 /// Màn hình chat chính cho ứng dụng
