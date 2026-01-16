@@ -10,10 +10,7 @@ import 'package:multigateway/features/llm/presentation/widgets/model_card.dart';
 class ModelsManagementSection extends StatelessWidget {
   final AddProviderController controller;
 
-  const ModelsManagementSection({
-    super.key,
-    required this.controller,
-  });
+  const ModelsManagementSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +24,9 @@ class ModelsManagementSection extends StatelessWidget {
             children: [
               Text(
                 tl('Models'),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -57,9 +54,9 @@ class ModelsManagementSection extends StatelessWidget {
                         Icon(
                           Icons.model_training,
                           size: 64,
-                          color: Theme.of(context)
-                              .disabledColor
-                              .withValues(alpha: 0.4),
+                          color: Theme.of(
+                            context,
+                          ).disabledColor.withValues(alpha: 0.4),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -112,14 +109,11 @@ class ModelsManagementSection extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => FetchModelsSheet(
-        controller: controller,
-        onShowCapabilities: (_) {},
-      ),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+      builder: (context) =>
+          FetchModelsSheet(controller: controller, onShowCapabilities: (_) {}),
     );
   }
 
@@ -127,14 +121,11 @@ class ModelsManagementSection extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => EditModelSheet(
-        controller: controller,
-        onShowCapabilities: (_) {},
-      ),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+      builder: (context) =>
+          EditModelSheet(controller: controller, onShowCapabilities: (_) {}),
     );
   }
 
@@ -142,10 +133,9 @@ class ModelsManagementSection extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
       builder: (context) => EditModelSheet(
         controller: controller,
         modelToEdit: model,

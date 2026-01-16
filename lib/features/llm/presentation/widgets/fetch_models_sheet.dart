@@ -5,7 +5,6 @@ import 'package:llm/models/llm_model/ollama_model.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/features/llm/presentation/controllers/edit_provider_controller.dart';
 import 'package:multigateway/features/llm/presentation/widgets/model_card.dart';
-import 'package:multigateway/features/settings/presentation/widgets/settings_card.dart';
 
 class FetchModelsSheet extends StatefulWidget {
   final AddProviderController controller;
@@ -23,6 +22,13 @@ class FetchModelsSheet extends StatefulWidget {
 
 class _FetchModelsSheetState extends State<FetchModelsSheet> {
   String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   String _getModelId(dynamic model) {
     if (model is BasicModel) return model.id;
@@ -50,6 +56,8 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, _) {
@@ -61,7 +69,7 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
         return Container(
           height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: colorScheme.surface,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -69,107 +77,134 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
           ),
           child: Column(
             children: [
-              // Header without title
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+              // Drag handle
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
+              ),
+
+              // Search bar with actions
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.cloud_download,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      size: 28,
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                    // Search field
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: tl('Search models...'),
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() => _searchQuery = '');
+                                  },
+                                )
+                              : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: colorScheme.primary),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerLow,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value),
                       ),
-                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    // Add All button
+                    if (availableModels.isNotEmpty)
+                      IconButton(
+                        onPressed: () {
+                          for (final model in filteredModels) {
+                            widget.controller.addModelDirectly(model);
+                          }
+                        },
+                        icon: const Icon(Icons.playlist_add),
+                        tooltip: tl('Add All'),
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.primaryContainer,
+                          foregroundColor: colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    const SizedBox(width: 4),
+                    // Refresh button
+                    IconButton(
+                      onPressed: isFetchingModels
+                          ? null
+                          : () => widget.controller.fetchModels(context),
+                      icon: isFetchingModels
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colorScheme.primary,
+                              ),
+                            )
+                          : const Icon(Icons.refresh),
+                      tooltip: tl('Fetch Models'),
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.primaryContainer,
+                        foregroundColor: colorScheme.onPrimaryContainer,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              // Search bar
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: tl('Search models...'),
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () => setState(() => _searchQuery = ''),
-                          )
-                        : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  onChanged: (value) => setState(() => _searchQuery = value),
-                ),
-              ),
-
-              // Fetch Button Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SettingsCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              // Status bar
+              if (availableModels.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
                     children: [
-                      if (isFetchingModels)
-                        const LinearProgressIndicator()
-                      else
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                availableModels.isEmpty
-                                    ? 'No models fetched'
-                                    : '${availableModels.length} ${'models available'}',
-                                style: TextStyle(
-                                  color: availableModels.isEmpty
-                                      ? Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant
-                                      : Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            if (availableModels.isNotEmpty)
-                              TextButton.icon(
-                                onPressed: () {
-                                  for (final model in filteredModels) {
-                                    widget.controller.addModelDirectly(model);
-                                  }
-                                },
-                                icon: const Icon(Icons.add_circle_outline, size: 18),
-                                label: Text(tl('Add All')),
-                              ),
-                            const SizedBox(width: 8),
-                            ElevatedButton.icon(
-                              onPressed: () =>
-                                  widget.controller.fetchModels(context),
-                              icon: const Icon(Icons.refresh, size: 16),
-                              label: Text(tl('Fetch')),
-                            ),
-                          ],
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${availableModels.length} ${tl('models available')}',
+                        style: TextStyle(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
                         ),
+                      ),
                     ],
                   ),
                 ),
-              ),
+
+              const SizedBox(height: 8),
 
               // Models List
               Expanded(
@@ -181,89 +216,79 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
                             Icon(
                               Icons.cloud_off,
                               size: 64,
-                              color: Theme.of(
-                                context,
-                              ).disabledColor.withValues(alpha: 0.4),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              tl('Tap to fetch models'),
+                              tl('Tap refresh to fetch models'),
                               style: TextStyle(
-                                color: Theme.of(context).disabledColor,
+                                color: colorScheme.onSurfaceVariant,
                                 fontSize: 16,
                               ),
                             ),
                           ],
                         ),
                       )
-                    : SafeArea(
-                        child: filteredModels.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.search_off,
-                                      size: 64,
-                                      color: Theme.of(context)
-                                          .disabledColor
-                                          .withValues(alpha: 0.4),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      tl('No models match your search'),
-                                      style: TextStyle(
-                                        color: Theme.of(context).disabledColor,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.separated(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                itemCount: filteredModels.length,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(height: 8),
-                                itemBuilder: (context, index) {
-                                  final model = filteredModels[index];
-                                  final modelId = _getModelId(model);
-                                  final isSelected = selectedModels.any(
-                                    (m) => _getModelId(m) == modelId,
-                                  );
-
-                                  return ModelCard(
-                                    model: model,
-                                    onTap: () =>
-                                        widget.onShowCapabilities(model),
-                                    trailing: IconButton(
-                                      icon: Icon(
-                                        isSelected
-                                            ? Icons.close
-                                            : Icons.add_circle,
-                                        color: isSelected
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .error
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                        size: 24,
-                                      ),
-                                      onPressed: () {
-                                        if (isSelected) {
-                                          widget.controller
-                                              .removeModelDirectly(model);
-                                        } else {
-                                          widget.controller
-                                              .addModelDirectly(model);
-                                        }
-                                      },
-                                    ),
-                                  );
-                                },
+                    : filteredModels.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.3,
                               ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              tl('No models match your search'),
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        itemCount: filteredModels.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final model = filteredModels[index];
+                          final modelId = _getModelId(model);
+                          final isSelected = selectedModels.any(
+                            (m) => _getModelId(m) == modelId,
+                          );
+
+                          return ModelCard(
+                            model: model,
+                            onTap: () => widget.onShowCapabilities(model),
+                            trailing: IconButton(
+                              icon: Icon(
+                                isSelected
+                                    ? Icons.check_circle
+                                    : Icons.add_circle_outline,
+                                color: isSelected
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurfaceVariant,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                if (isSelected) {
+                                  widget.controller.removeModelDirectly(model);
+                                } else {
+                                  widget.controller.addModelDirectly(model);
+                                }
+                              },
+                            ),
+                          );
+                        },
                       ),
               ),
             ],

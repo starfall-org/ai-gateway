@@ -30,9 +30,27 @@ class AddProviderController extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController apiKeyController = TextEditingController();
   final TextEditingController baseUrlController = TextEditingController();
-  final TextEditingController openAIChatCompletionsRouteController =
+  final TextEditingController customChatCompletionUrlController =
       TextEditingController();
-  final TextEditingController openLegacyAiModelsRouteOrUrlController =
+  final TextEditingController customListModelsUrlController =
+      TextEditingController();
+
+  // HTTP Proxy controllers
+  final TextEditingController httpProxyHostController = TextEditingController();
+  final TextEditingController httpProxyPortController = TextEditingController();
+  final TextEditingController httpProxyUsernameController =
+      TextEditingController();
+  final TextEditingController httpProxyPasswordController =
+      TextEditingController();
+
+  // SOCKS Proxy controllers
+  final TextEditingController socksProxyHostController =
+      TextEditingController();
+  final TextEditingController socksProxyPortController =
+      TextEditingController();
+  final TextEditingController socksProxyUsernameController =
+      TextEditingController();
+  final TextEditingController socksProxyPasswordController =
       TextEditingController();
 
   // State
@@ -41,6 +59,7 @@ class AddProviderController extends ChangeNotifier {
   final TextEditingController customHeaderKeyController =
       TextEditingController();
   bool responsesApi = false;
+  bool supportStream = true;
 
   // Headers
   final List<HeaderPair> headers = [];
@@ -65,15 +84,42 @@ class AddProviderController extends ChangeNotifier {
 
       if (providerConfig != null) {
         responsesApi = providerConfig.responsesApi;
+        supportStream = providerConfig.supportStream;
+
+        // Custom URLs
+        customChatCompletionUrlController.text =
+            providerConfig.customChatCompletionUrl ?? '';
+        customListModelsUrlController.text =
+            providerConfig.customListModelsUrl ?? '';
+
+        // HTTP Proxy
+        if (providerConfig.httpProxy != null) {
+          httpProxyHostController.text =
+              providerConfig.httpProxy!['host']?.toString() ?? '';
+          httpProxyPortController.text =
+              providerConfig.httpProxy!['port']?.toString() ?? '';
+          httpProxyUsernameController.text =
+              providerConfig.httpProxy!['username']?.toString() ?? '';
+          httpProxyPasswordController.text =
+              providerConfig.httpProxy!['password']?.toString() ?? '';
+        }
+
+        // SOCKS Proxy
+        if (providerConfig.socksProxy != null) {
+          socksProxyHostController.text =
+              providerConfig.socksProxy!['host']?.toString() ?? '';
+          socksProxyPortController.text =
+              providerConfig.socksProxy!['port']?.toString() ?? '';
+          socksProxyUsernameController.text =
+              providerConfig.socksProxy!['username']?.toString() ?? '';
+          socksProxyPasswordController.text =
+              providerConfig.socksProxy!['password']?.toString() ?? '';
+        }
+
         // Headers
         providerConfig.headers?.forEach((k, v) {
           headers.add(HeaderPair(k: k, v: v.toString()));
         });
-
-        openAIChatCompletionsRouteController.text =
-            providerConfig.customChatCompletionUrl ?? '';
-        openLegacyAiModelsRouteOrUrlController.text =
-            providerConfig.customListModelsUrl ?? '';
       }
 
       if (providerModels != null) {
@@ -117,6 +163,11 @@ class AddProviderController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateSupportStream(bool value) {
+    supportStream = value;
+    notifyListeners();
+  }
+
   void updateAuthMethod(AuthMethod method) {
     selectedAuthMethod = method;
     notifyListeners();
@@ -140,7 +191,6 @@ class AddProviderController extends ChangeNotifier {
     }
   }
 
-  
   String _getModelName(dynamic model) {
     if (model is BasicModel) return model.id;
     if (model is OllamaModel) return model.name;
@@ -247,6 +297,32 @@ class AddProviderController extends ChangeNotifier {
       if (h.key.text.isNotEmpty) headerMap[h.key.text] = h.value.text;
     }
 
+    // Build HTTP Proxy map
+    Map<String, dynamic>? httpProxy;
+    if (httpProxyHostController.text.trim().isNotEmpty) {
+      httpProxy = {
+        'host': httpProxyHostController.text.trim(),
+        'port': int.tryParse(httpProxyPortController.text.trim()) ?? 0,
+        if (httpProxyUsernameController.text.trim().isNotEmpty)
+          'username': httpProxyUsernameController.text.trim(),
+        if (httpProxyPasswordController.text.trim().isNotEmpty)
+          'password': httpProxyPasswordController.text.trim(),
+      };
+    }
+
+    // Build SOCKS Proxy map
+    Map<String, dynamic>? socksProxy;
+    if (socksProxyHostController.text.trim().isNotEmpty) {
+      socksProxy = {
+        'host': socksProxyHostController.text.trim(),
+        'port': int.tryParse(socksProxyPortController.text.trim()) ?? 0,
+        if (socksProxyUsernameController.text.trim().isNotEmpty)
+          'username': socksProxyUsernameController.text.trim(),
+        if (socksProxyPasswordController.text.trim().isNotEmpty)
+          'password': socksProxyPasswordController.text.trim(),
+      };
+    }
+
     final providerInfo = LlmProviderInfo(
       id: id,
       name: name,
@@ -262,57 +338,64 @@ class AddProviderController extends ChangeNotifier {
 
     final providerConfig = LlmProviderConfig(
       id: id,
-      headers: headerMap,
+      headers: headerMap.isEmpty ? null : headerMap,
       responsesApi: responsesApi,
+      supportStream: supportStream,
+      httpProxy: httpProxy,
+      socksProxy: socksProxy,
       customChatCompletionUrl:
-          openAIChatCompletionsRouteController.text.trim().isEmpty
+          customChatCompletionUrlController.text.trim().isEmpty
           ? null
-          : openAIChatCompletionsRouteController.text.trim(),
-      customListModelsUrl:
-          openLegacyAiModelsRouteOrUrlController.text.trim().isEmpty
+          : customChatCompletionUrlController.text.trim(),
+      customListModelsUrl: customListModelsUrlController.text.trim().isEmpty
           ? null
-          : openLegacyAiModelsRouteOrUrlController.text.trim(),
+          : customListModelsUrlController.text.trim(),
     );
 
     // Convert selected models to LlmModel format
     final llmModels = <LlmModel>[];
-    
+
     for (var m in selectedModels) {
       if (m is BasicModel) {
-        llmModels.add(LlmModel(
-          id: m.id,
-          displayName: m.displayName,
-          type: LlmModelType.chat,
-          origin: m,
-        ));
+        llmModels.add(
+          LlmModel(
+            id: m.id,
+            displayName: m.displayName,
+            type: LlmModelType.chat,
+            origin: m,
+          ),
+        );
       } else if (m is OllamaModel) {
-        llmModels.add(LlmModel(
-          id: m.name,
-          displayName: m.name,
-          type: LlmModelType.chat,
-          origin: m,
-        ));
+        llmModels.add(
+          LlmModel(
+            id: m.name,
+            displayName: m.name,
+            type: LlmModelType.chat,
+            origin: m,
+          ),
+        );
       } else if (m is GoogleAiModel) {
-        llmModels.add(LlmModel(
-          id: m.name,
-          displayName: m.displayName,
-          type: LlmModelType.chat,
-          origin: m,
-        ));
+        llmModels.add(
+          LlmModel(
+            id: m.name,
+            displayName: m.displayName,
+            type: LlmModelType.chat,
+            origin: m,
+          ),
+        );
       } else if (m is GitHubModel) {
-        llmModels.add(LlmModel(
-          id: m.name,
-          displayName: m.name,
-          type: LlmModelType.chat,
-          origin: m,
-        ));
+        llmModels.add(
+          LlmModel(
+            id: m.name,
+            displayName: m.name,
+            type: LlmModelType.chat,
+            origin: m,
+          ),
+        );
       }
     }
 
-    final providerModels = LlmProviderModels(
-      id: id,
-      models: llmModels,
-    );
+    final providerModels = LlmProviderModels(id: id, models: llmModels);
 
     final infoStorage = await LlmProviderInfoStorage.init();
     final configStorage = await LlmProviderConfigStorage.init();
@@ -323,7 +406,7 @@ class AddProviderController extends ChangeNotifier {
     await modelsStorage.saveItem(providerModels);
 
     if (context.mounted) {
-      Navigator.pop(context, true);
+      context.showSuccessSnackBar(tl('Provider saved successfully'));
     }
   }
 
@@ -332,12 +415,20 @@ class AddProviderController extends ChangeNotifier {
     nameController.dispose();
     apiKeyController.dispose();
     baseUrlController.dispose();
-    openAIChatCompletionsRouteController.dispose();
-    openLegacyAiModelsRouteOrUrlController.dispose();
+    customChatCompletionUrlController.dispose();
+    customListModelsUrlController.dispose();
+    httpProxyHostController.dispose();
+    httpProxyPortController.dispose();
+    httpProxyUsernameController.dispose();
+    httpProxyPasswordController.dispose();
+    socksProxyHostController.dispose();
+    socksProxyPortController.dispose();
+    socksProxyUsernameController.dispose();
+    socksProxyPasswordController.dispose();
+    customHeaderKeyController.dispose();
     for (var h in headers) {
       h.dispose();
     }
     super.dispose();
   }
 }
-

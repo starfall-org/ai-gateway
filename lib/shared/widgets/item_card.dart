@@ -4,6 +4,21 @@ import 'package:multigateway/app/translate/tl.dart';
 
 enum ItemCardLayout { grid, list }
 
+/// Menu item cho ItemCard
+class ItemCardMenuItem {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  const ItemCardMenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.isDestructive = false,
+  });
+}
+
 /// Thẻ hiển thị tài nguyên dạng lưới (Grid) hoặc danh sách (List) theo Material 3.
 /// Dùng chung cho providers/agents/tts/mcp.
 /// Có hoạt ảnh chuyển đổi giữa 2 trạng thái và grid layout đảm bảo tỉ lệ 1:1.
@@ -17,6 +32,7 @@ class ItemCard extends StatefulWidget {
   final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final List<ItemCardMenuItem>? menuItems;
   final Widget? leading;
   final Widget? trailing;
   final EdgeInsetsGeometry padding;
@@ -36,6 +52,7 @@ class ItemCard extends StatefulWidget {
     this.onView,
     this.onEdit,
     this.onDelete,
+    this.menuItems,
     this.leading,
     this.trailing,
     this.iconColor,
@@ -191,6 +208,7 @@ class _ItemCardState extends State<ItemCard>
       // Nếu có trailing widget hoặc menu hành động
       if (widget.leading != null ||
           widget.trailing != null ||
+          widget.menuItems != null ||
           widget.onView != null ||
           widget.onEdit != null ||
           widget.onDelete != null) {
@@ -208,6 +226,7 @@ class _ItemCardState extends State<ItemCard>
                     onView: widget.onView,
                     onEdit: widget.onEdit,
                     onDelete: widget.onDelete,
+                    menuItems: widget.menuItems,
                   ),
             ),
           ],
@@ -232,13 +251,15 @@ class _ItemCardState extends State<ItemCard>
             : null,
         trailing:
             widget.trailing ??
-            (widget.onView != null ||
+            (widget.menuItems != null ||
+                    widget.onView != null ||
                     widget.onEdit != null ||
                     widget.onDelete != null
                 ? _ActionMenu(
                     onView: widget.onView,
                     onEdit: widget.onEdit,
                     onDelete: widget.onDelete,
+                    menuItems: widget.menuItems,
                   )
                 : null),
         onTap: widget.onTap,
@@ -251,11 +272,42 @@ class _ActionMenu extends StatelessWidget {
   final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final List<ItemCardMenuItem>? menuItems;
 
-  const _ActionMenu({this.onView, this.onEdit, this.onDelete});
+  const _ActionMenu({this.onView, this.onEdit, this.onDelete, this.menuItems});
 
   @override
   Widget build(BuildContext context) {
+    // If custom menuItems provided, use them
+    if (menuItems != null && menuItems!.isNotEmpty) {
+      return PopupMenuButton<int>(
+        icon: const Icon(Icons.more_vert),
+        onSelected: (index) {
+          menuItems![index].onTap();
+        },
+        itemBuilder: (context) {
+          return menuItems!.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            final color = item.isDestructive
+                ? Theme.of(context).colorScheme.error
+                : null;
+            return PopupMenuItem<int>(
+              value: index,
+              child: Row(
+                children: [
+                  Icon(item.icon, size: 20, color: color),
+                  const SizedBox(width: 12),
+                  Text(item.label, style: TextStyle(color: color)),
+                ],
+              ),
+            );
+          }).toList();
+        },
+      );
+    }
+
+    // Legacy behavior with onView, onEdit, onDelete
     return PopupMenuButton<_MenuAction>(
       icon: const Icon(Icons.more_vert),
       onSelected: (value) {

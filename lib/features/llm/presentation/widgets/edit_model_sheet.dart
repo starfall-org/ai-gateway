@@ -5,8 +5,6 @@ import 'package:llm/models/llm_model/googleai_model.dart';
 import 'package:llm/models/llm_model/ollama_model.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/features/llm/presentation/controllers/edit_provider_controller.dart';
-import 'package:multigateway/shared/widgets/bottom_sheet.dart';
-import 'package:multigateway/shared/widgets/common_dropdown.dart';
 import 'package:multigateway/shared/widgets/custom_text_field.dart';
 
 /// Model origin/type enum
@@ -14,23 +12,14 @@ enum ModelOrigin {
   openaiAnthropic('OpenAI/Anthropic', Icons.cloud),
   ollama('Ollama', Icons.computer),
   googleAi('Google AI', Icons.public),
-  github('GitHub', Icons.code),
-  ;
+  github('GitHub', Icons.code);
 
   final String label;
   final IconData icon;
   const ModelOrigin(this.label, this.icon);
 }
 
-/// Model type for BasicModel
-enum BasicModelType {
-  chat,
-  embedding,
-  moderation,
-  other,
-}
-
-/// Edit sheet for all model types using CustomBottomSheet
+/// Edit sheet for all model types
 /// Supports editing: BasicModel, OllamaModel, GoogleAiModel, GitHubModel
 class EditModelSheet extends StatefulWidget {
   final AddProviderController controller;
@@ -55,7 +44,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
   late TextEditingController _basicIdController;
   late TextEditingController _basicDisplayNameController;
   late TextEditingController _basicOwnedByController;
-  BasicModelType _basicSelectedType = BasicModelType.chat;
 
   // Controllers for OllamaModel
   late TextEditingController _ollamaNameController;
@@ -81,7 +69,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
   late TextEditingController _githubMaxOutputTokensController;
 
   ModelOrigin _selectedOrigin = ModelOrigin.openaiAnthropic;
-  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -91,18 +78,15 @@ class _EditModelSheetState extends State<EditModelSheet> {
   }
 
   void _initControllers() {
-    // BasicModel controllers
     _basicIdController = TextEditingController();
     _basicDisplayNameController = TextEditingController();
     _basicOwnedByController = TextEditingController();
 
-    // OllamaModel controllers
     _ollamaNameController = TextEditingController();
     _ollamaModelController = TextEditingController();
     _ollamaParameterSizeController = TextEditingController();
     _ollamaQuantizationController = TextEditingController();
 
-    // GoogleAiModel controllers
     _googleNameController = TextEditingController();
     _googleDisplayNameController = TextEditingController();
     _googleInputTokenLimitController = TextEditingController();
@@ -112,7 +96,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     _googleTopPController = TextEditingController();
     _googleTopKController = TextEditingController();
 
-    // GitHubModel controllers
     _githubIdController = TextEditingController();
     _githubNameController = TextEditingController();
     _githubMaxInputTokensController = TextEditingController();
@@ -139,7 +122,8 @@ class _EditModelSheetState extends State<EditModelSheet> {
       _googleNameController.text = model.name;
       _googleDisplayNameController.text = model.displayName;
       _googleInputTokenLimitController.text = model.inputTokenLimit.toString();
-      _googleOutputTokenLimitController.text = model.outputTokenLimit.toString();
+      _googleOutputTokenLimitController.text = model.outputTokenLimit
+          .toString();
       _googleTemperatureController.text = model.temperature.toString();
       _googleMaxTemperatureController.text = model.maxTemperature.toString();
       _googleTopPController.text = model.topP.toString();
@@ -156,18 +140,15 @@ class _EditModelSheetState extends State<EditModelSheet> {
 
   @override
   void dispose() {
-    // BasicModel controllers
     _basicIdController.dispose();
     _basicDisplayNameController.dispose();
     _basicOwnedByController.dispose();
 
-    // OllamaModel controllers
     _ollamaNameController.dispose();
     _ollamaModelController.dispose();
     _ollamaParameterSizeController.dispose();
     _ollamaQuantizationController.dispose();
 
-    // GoogleAiModel controllers
     _googleNameController.dispose();
     _googleDisplayNameController.dispose();
     _googleInputTokenLimitController.dispose();
@@ -177,7 +158,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     _googleTopPController.dispose();
     _googleTopKController.dispose();
 
-    // GitHubModel controllers
     _githubIdController.dispose();
     _githubNameController.dispose();
     _githubMaxInputTokensController.dispose();
@@ -216,12 +196,17 @@ class _EditModelSheetState extends State<EditModelSheet> {
           displayName: _googleDisplayNameController.text.trim().isEmpty
               ? _googleNameController.text.trim()
               : _googleDisplayNameController.text.trim(),
-          inputTokenLimit: int.tryParse(_googleInputTokenLimitController.text.trim()) ?? 0,
-          outputTokenLimit: int.tryParse(_googleOutputTokenLimitController.text.trim()) ?? 0,
+          inputTokenLimit:
+              int.tryParse(_googleInputTokenLimitController.text.trim()) ?? 0,
+          outputTokenLimit:
+              int.tryParse(_googleOutputTokenLimitController.text.trim()) ?? 0,
           supportedGenerationMethods: ['generateContent'],
           thinking: _googleThinking,
-          temperature: double.tryParse(_googleTemperatureController.text.trim()) ?? 1.0,
-          maxTemperature: double.tryParse(_googleMaxTemperatureController.text.trim()) ?? 2.0,
+          temperature:
+              double.tryParse(_googleTemperatureController.text.trim()) ?? 1.0,
+          maxTemperature:
+              double.tryParse(_googleMaxTemperatureController.text.trim()) ??
+              2.0,
           topP: double.tryParse(_googleTopPController.text.trim()) ?? 0.95,
           topK: int.tryParse(_googleTopKController.text.trim()) ?? 64,
         );
@@ -232,8 +217,10 @@ class _EditModelSheetState extends State<EditModelSheet> {
           name: _githubNameController.text.trim(),
           supportedInputModalities: ['text'],
           supportedOutputModalities: ['text'],
-          maxInputTokens: int.tryParse(_githubMaxInputTokensController.text.trim()) ?? 0,
-          maxOutputTokens: int.tryParse(_githubMaxOutputTokensController.text.trim()) ?? 0,
+          maxInputTokens:
+              int.tryParse(_githubMaxInputTokensController.text.trim()) ?? 0,
+          maxOutputTokens:
+              int.tryParse(_githubMaxOutputTokensController.text.trim()) ?? 0,
         );
         break;
     }
@@ -249,224 +236,145 @@ class _EditModelSheetState extends State<EditModelSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomBottomSheet(
-      header: _buildHeader(context),
-      items: _buildFormItems(),
-      footer: _buildFooter(),
-    );
-  }
+    final colorScheme = Theme.of(context).colorScheme;
 
-  Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+        color: colorScheme.surface,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
       ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.edit,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              widget.modelToEdit != null ? tl('Edit Model') : tl('Add Model'),
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildFormItems() {
-    return [
-      Padding(
-        padding: const EdgeInsets.all(16),
+      child: Form(
+        key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Model Origin Dropdown (Expandable)
-            _buildOriginSelector(),
-            const SizedBox(height: 16),
+            // Drag handle
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 8),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
 
-            // Model-specific fields
-            if (_isExpanded) ...[
-              _buildBasicModelFields(),
-              _buildOllamaModelFields(),
-              _buildGoogleAiModelFields(),
-              _buildGitHubModelFields(),
-            ],
+            // Origin selector with save button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+              child: Row(
+                children: [
+                  Expanded(child: _buildOriginSelector()),
+                  const SizedBox(width: 8),
+                  FilledButton.icon(
+                    onPressed: _save,
+                    icon: Icon(
+                      widget.modelToEdit != null ? Icons.save : Icons.add,
+                      size: 18,
+                    ),
+                    label: Text(
+                      widget.modelToEdit != null ? tl('Save') : tl('Add'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Form Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: _buildFormFields(),
+              ),
+            ),
           ],
         ),
-      ),
-    ];
-  }
-
-  Widget _buildFooter() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close, size: 18),
-              label: Text(tl('Cancel')),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: _save,
-              icon: Icon(
-                widget.modelToEdit != null ? Icons.save : Icons.add,
-                size: 18,
-              ),
-              label: Text(
-                widget.modelToEdit != null ? tl('Save') : tl('Add'),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildOriginSelector() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isEditing = widget.modelToEdit != null;
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
       ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(
-                    _selectedOrigin.icon,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tl('Model Origin'),
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _selectedOrigin.label,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                      ],
+      child: Row(
+        children: ModelOrigin.values.map((origin) {
+          final isSelected = _selectedOrigin == origin;
+          return Expanded(
+            child: GestureDetector(
+              onTap: isEditing
+                  ? null
+                  : () => setState(() => _selectedOrigin = origin),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? colorScheme.primaryContainer
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      origin.icon,
+                      size: 18,
+                      color: isSelected
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurfaceVariant,
                     ),
-                  ),
-                  Icon(
-                    _isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ],
+                    const SizedBox(height: 2),
+                    Text(
+                      origin.label.split('/').first,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: isSelected
+                            ? colorScheme.onPrimaryContainer
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (_isExpanded) ...[
-            const Divider(height: 1),
-            _buildOriginOption(ModelOrigin.openaiAnthropic),
-            _buildOriginOption(ModelOrigin.ollama),
-            _buildOriginOption(ModelOrigin.googleAi),
-            _buildOriginOption(ModelOrigin.github),
-          ],
-        ],
+          );
+        }).toList(),
       ),
     );
   }
 
-  Widget _buildOriginOption(ModelOrigin origin) {
-    final isSelected = _selectedOrigin == origin;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedOrigin = origin;
-          _isExpanded = false;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: isSelected
-            ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3)
-            : Colors.transparent,
-        child: Row(
-          children: [
-            Icon(
-              origin.icon,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              origin.label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                  ),
-            ),
-            if (isSelected) const Spacer(),
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: Theme.of(context).colorScheme.primary,
-                size: 20,
-              ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildFormFields() {
+    switch (_selectedOrigin) {
+      case ModelOrigin.openaiAnthropic:
+        return _buildBasicModelFields();
+      case ModelOrigin.ollama:
+        return _buildOllamaModelFields();
+      case ModelOrigin.googleAi:
+        return _buildGoogleAiModelFields();
+      case ModelOrigin.github:
+        return _buildGitHubModelFields();
+    }
   }
 
   Widget _buildBasicModelFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('OpenAI/Anthropic Model'),
         CustomTextField(
           controller: _basicIdController,
           label: tl('Model ID'),
@@ -493,24 +401,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
           hint: tl('e.g., openai, anthropic'),
           prefixIcon: Icons.business,
         ),
-        const SizedBox(height: 16),
-        CommonDropdown<BasicModelType>(
-          labelText: tl('Model Type'),
-          value: _basicSelectedType,
-          options: BasicModelType.values.map((type) {
-            return DropdownOption<BasicModelType>(
-              value: type,
-              label: _getModelTypeLabel(type),
-              icon: _getModelTypeIcon(type),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _basicSelectedType = value);
-            }
-          },
-        ),
-        const SizedBox(height: 24),
       ],
     );
   }
@@ -519,7 +409,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('Ollama Model'),
         CustomTextField(
           controller: _ollamaNameController,
           label: tl('Name'),
@@ -559,16 +448,16 @@ class _EditModelSheetState extends State<EditModelSheet> {
           hint: tl('e.g., Q4_0, Q5_1'),
           prefixIcon: Icons.compress,
         ),
-        const SizedBox(height: 24),
       ],
     );
   }
 
   Widget _buildGoogleAiModelFields() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('Google AI Model'),
         CustomTextField(
           controller: _googleNameController,
           label: tl('Model ID'),
@@ -600,7 +489,7 @@ class _EditModelSheetState extends State<EditModelSheet> {
                 prefixIcon: Icons.text_fields,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 controller: _googleOutputTokenLimitController,
@@ -620,17 +509,21 @@ class _EditModelSheetState extends State<EditModelSheet> {
                 controller: _googleTemperatureController,
                 label: tl('Temperature'),
                 hint: '0-2',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 prefixIcon: Icons.thermostat,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 controller: _googleMaxTemperatureController,
                 label: tl('Max Temp'),
                 hint: '0-2',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 prefixIcon: Icons.thermostat,
               ),
             ),
@@ -644,11 +537,13 @@ class _EditModelSheetState extends State<EditModelSheet> {
                 controller: _googleTopPController,
                 label: tl('Top P'),
                 hint: '0-1',
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 prefixIcon: Icons.filter_list,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 controller: _googleTopKController,
@@ -661,13 +556,28 @@ class _EditModelSheetState extends State<EditModelSheet> {
           ],
         ),
         const SizedBox(height: 16),
-        SwitchListTile(
-          title: Text(tl('Thinking Mode')),
-          value: _googleThinking,
-          onChanged: (value) => setState(() => _googleThinking = value),
-          secondary: const Icon(Icons.psychology),
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: colorScheme.outline.withValues(alpha: 0.3),
+            ),
+          ),
+          child: SwitchListTile(
+            title: Text(tl('Thinking Mode')),
+            subtitle: Text(
+              tl('Enable extended thinking for complex tasks'),
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            value: _googleThinking,
+            onChanged: (value) => setState(() => _googleThinking = value),
+            secondary: Icon(Icons.psychology, color: colorScheme.primary),
+          ),
         ),
-        const SizedBox(height: 24),
       ],
     );
   }
@@ -676,7 +586,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('GitHub Model'),
         CustomTextField(
           controller: _githubIdController,
           label: tl('Model ID'),
@@ -708,7 +617,7 @@ class _EditModelSheetState extends State<EditModelSheet> {
                 prefixIcon: Icons.text_fields,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 controller: _githubMaxOutputTokensController,
@@ -720,47 +629,7 @@ class _EditModelSheetState extends State<EditModelSheet> {
             ),
           ],
         ),
-        const SizedBox(height: 24),
       ],
     );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-      ),
-    );
-  }
-
-  String _getModelTypeLabel(BasicModelType type) {
-    switch (type) {
-      case BasicModelType.chat:
-        return tl('Chat');
-      case BasicModelType.embedding:
-        return tl('Embedding');
-      case BasicModelType.moderation:
-        return tl('Moderation');
-      case BasicModelType.other:
-        return tl('Other');
-    }
-  }
-
-  Icon _getModelTypeIcon(BasicModelType type) {
-    switch (type) {
-      case BasicModelType.chat:
-        return const Icon(Icons.chat);
-      case BasicModelType.embedding:
-        return const Icon(Icons.code);
-      case BasicModelType.moderation:
-        return const Icon(Icons.shield);
-      case BasicModelType.other:
-        return const Icon(Icons.more_horiz);
-    }
   }
 }

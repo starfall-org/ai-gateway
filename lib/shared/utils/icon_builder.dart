@@ -65,12 +65,40 @@ Widget buildLogoIcon(String name, {double size = 24}) {
             'assets/brand_logos/$name.png',
             width: size,
             height: size,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildLetterPlaceholderSized(name, context, size);
+            },
           ),
         );
       }
 
-      return SizedBox(width: size, height: size, child: Icon(Icons.token));
+      return _buildLetterPlaceholderSized(name, context, size);
     },
+  );
+}
+
+Widget _buildLetterPlaceholderSized(
+  String name,
+  BuildContext context,
+  double size,
+) {
+  final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+  return Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      shape: BoxShape.circle,
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      letter,
+      style: TextStyle(
+        fontSize: size * 0.6,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+    ),
   );
 }
 
@@ -109,8 +137,29 @@ Widget _buildAssetFallback(String name, BuildContext context) {
       height: 24,
       width: 24,
       errorBuilder: (context, error, stackTrace) {
-        return const Icon(Icons.token, size: 24);
+        return _buildLetterPlaceholder(name, context);
       },
+    ),
+  );
+}
+
+Widget _buildLetterPlaceholder(String name, BuildContext context) {
+  final letter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+  return Container(
+    width: 24,
+    height: 24,
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      shape: BoxShape.circle,
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      letter,
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
     ),
   );
 }

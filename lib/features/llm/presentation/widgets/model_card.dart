@@ -23,8 +23,8 @@ class ModelCard extends StatelessWidget {
       icon: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child: model.icon != null
-          ? buildIcon(model.icon!)
-          : buildIcon(model.id),
+            ? buildIcon(model.icon!)
+            : buildIcon(model.id),
       ),
       subtitleWidget: _buildOriginSpecificInfo(context),
       leading: _buildTypeTag(context),
@@ -70,7 +70,7 @@ class ModelCard extends StatelessWidget {
       ]);
     } else if (model.origin is GoogleAiModel) {
       final googleModel = model.origin as GoogleAiModel;
-      
+
       // Thinking capability
       if (googleModel.thinking) {
         tags.add(
@@ -124,7 +124,7 @@ class ModelCard extends StatelessWidget {
   Widget _buildTypeTag(BuildContext context) {
     IconData iconData;
     Color color = Theme.of(context).colorScheme.primary;
-    
+
     switch (model.type) {
       case LlmModelType.chat:
         iconData = Icons.chat;
@@ -146,15 +146,10 @@ class ModelCard extends StatelessWidget {
         color = Theme.of(context).colorScheme.outline;
         break;
     }
-    
-    return _ModelCardHelpers.buildTag(
-      context,
-      Icon(iconData, size: 16),
-      color,
-    );
+
+    return _ModelCardHelpers.buildTag(context, Icon(iconData, size: 16), color);
   }
 }
-
 
 // ============================================================================
 // Helper Class
@@ -172,18 +167,6 @@ class _ModelCardHelpers {
       return '${(num / 1000).toStringAsFixed(1)}K';
     }
     return num.toString();
-  }
-
-  /// Format parameters (e.g., 7000000000 → "7B")
-  static String formatParameters(int params) {
-    if (params >= 1000000000) {
-      return '${(params / 1000000000).toStringAsFixed(0)}B';
-    } else if (params >= 1000000) {
-      return '${(params / 1000000).toStringAsFixed(0)}M';
-    } else if (params >= 1000) {
-      return '${(params / 1000).toStringAsFixed(0)}K';
-    }
-    return params.toString();
   }
 
   /// Build a colored tag widget
