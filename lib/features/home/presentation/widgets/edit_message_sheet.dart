@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/shared/utils/theme_aware_image.dart';
 import 'package:multigateway/shared/widgets/app_dialog.dart';
 import 'package:multigateway/shared/widgets/custom_text_field.dart';
-import 'package:multigateway/shared/widgets/theme_aware_image.dart';
 
 class EditMessageResult {
   final String content;
