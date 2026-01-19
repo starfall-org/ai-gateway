@@ -93,7 +93,7 @@ class _DefaultOptionsView extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<String>(
-                              value: selectedProfileId ?? '',
+                              initialValue: selectedProfileId ?? '',
                               items: [
                                 DropdownMenuItem(
                                   value: '',
