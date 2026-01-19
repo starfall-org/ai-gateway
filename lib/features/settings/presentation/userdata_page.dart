@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/features/settings/presentation/controllers/userdata_controller.dart';
 import 'package:multigateway/features/settings/presentation/widgets/userdata/data_management_section.dart';
 import 'package:multigateway/features/settings/presentation/widgets/userdata/data_overview_card.dart';
 import 'package:multigateway/features/settings/presentation/widgets/userdata/privacy_controls_section.dart';
 import 'package:multigateway/features/settings/presentation/widgets/userdata/storage_controls_section.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
+import 'package:signals/signals_flutter.dart';
 
 /// Màn hình điều khiển dữ liệu cho phép quản lý và kiểm soát dữ liệu ứng dụng
 class DataControlsScreen extends StatelessWidget {
@@ -12,6 +14,19 @@ class DataControlsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return UserDataControllerScope(
+      child: const _DataControlsView(),
+    );
+  }
+}
+
+class _DataControlsView extends StatelessWidget {
+  const _DataControlsView();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = UserDataControllerProvider.of(context);
+    final initFuture = UserDataControllerProvider.initializationFutureOf(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -50,93 +65,222 @@ class DataControlsScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         bottom: true,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const DataOverviewCard(),
-              const SizedBox(height: 24),
-              DataManagementSection(
-                onBackupTap: () => _handleBackup(context),
-                onRestoreTap: () => _handleRestore(context),
-                onExportTap: () => _handleExport(context),
-              ),
-              const SizedBox(height: 24),
-              PrivacyControlsSection(
-                onAnonymizeTap: () => _handleAnonymize(context),
-                onDeleteAllTap: () => _handleDeleteAll(context),
-              ),
-              const SizedBox(height: 24),
-              StorageControlsSection(
-                onCleanCacheTap: () => _handleCleanCache(context),
-                onManageFilesTap: () => _handleManageFiles(context),
-              ),
-            ],
-          ),
+        child: FutureBuilder<void>(
+          future: initFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Watch((context) {
+              final isBusy = controller.isProcessing.value;
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DataOverviewCard(
+                      conversationCount: controller.conversationCount.value,
+                      profileCount: controller.profileCount.value,
+                      providerCount: controller.providerCount.value,
+                    ),
+                    const SizedBox(height: 24),
+                    AbsorbPointer(
+                      absorbing: isBusy,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DataManagementSection(
+                            onBackupTap: () => _handleBackup(context, controller),
+                            onRestoreTap: () => _handleRestore(context, controller),
+                            onExportTap: () => _handleExport(context, controller),
+                          ),
+                          const SizedBox(height: 24),
+                          PrivacyControlsSection(
+                            onAnonymizeTap: () => _handleAnonymize(context, controller),
+                            onDeleteAllTap: () => _handleDeleteAll(context, controller),
+                          ),
+                          const SizedBox(height: 24),
+                          StorageControlsSection(
+                            onCleanCacheTap: () => _handleCleanCache(context, controller),
+                            onManageFilesTap: () => _handleManageFiles(context, controller),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isBusy) ...[
+                      const SizedBox(height: 16),
+                      const LinearProgressIndicator(),
+                    ],
+                  ],
+                ),
+              );
+            });
+          },
         ),
       ),
     );
   }
+}
 
-  /// Handlers cho các hành động
-  static void _handleBackup(BuildContext context) {
-    context.showInfoSnackBar(tl('Data backup started'));
+/// Provider + scope để khởi tạo/dispose controller
+class UserDataControllerScope extends StatefulWidget {
+  final Widget child;
+  const UserDataControllerScope({super.key, required this.child});
+
+  @override
+  State<UserDataControllerScope> createState() => _UserDataControllerScopeState();
+}
+
+class _UserDataControllerScopeState extends State<UserDataControllerScope> {
+  late final UserDataController _controller;
+  late final Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = UserDataController();
+    _initFuture = _controller.initialize();
   }
 
-  static void _handleRestore(BuildContext context) {
-    context.showInfoSnackBar(tl('Data restore started'));
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
-  static void _handleExport(BuildContext context) {
-    context.showInfoSnackBar(tl('Data export started'));
+  @override
+  Widget build(BuildContext context) {
+    return UserDataControllerProvider(
+      controller: _controller,
+      initializationFuture: _initFuture,
+      child: widget.child,
+    );
+  }
+}
+
+class UserDataControllerProvider extends InheritedWidget {
+  final UserDataController controller;
+  final Future<void> initializationFuture;
+
+  const UserDataControllerProvider({
+    super.key,
+    required this.controller,
+    required this.initializationFuture,
+    required super.child,
+  });
+
+  static UserDataController of(BuildContext context) {
+    final provider =
+        context.dependOnInheritedWidgetOfExactType<UserDataControllerProvider>();
+    assert(provider != null, 'UserDataControllerProvider not found in context');
+    return provider!.controller;
   }
 
-  static void _handleAnonymize(BuildContext context) {
-    context.showInfoSnackBar(tl('Data anonymization started'));
+  static Future<void> initializationFutureOf(BuildContext context) {
+    final provider =
+        context.dependOnInheritedWidgetOfExactType<UserDataControllerProvider>();
+    assert(provider != null, 'UserDataControllerProvider not found in context');
+    return provider!.initializationFuture;
   }
 
-  static void _handleDeleteAll(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(tl('Confirm Delete All')),
-        content: Text(
-          tl(
-            'This action will permanently delete all app data. Are you sure you want to continue?',
-          ),
+  @override
+  bool updateShouldNotify(covariant UserDataControllerProvider oldWidget) {
+    return false;
+  }
+}
+
+/// Handlers cho các hành động (giữ Stateless UI, logic nằm ở controller)
+Future<void> _handleBackup(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.backupData();
+  if (!context.mounted) return;
+  context.showInfoSnackBar(tl('Data backup started'));
+}
+
+Future<void> _handleRestore(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.restoreData();
+  if (!context.mounted) return;
+  context.showInfoSnackBar(tl('Data restore started'));
+}
+
+Future<void> _handleExport(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.exportData();
+  if (!context.mounted) return;
+  context.showInfoSnackBar(tl('Data export started'));
+}
+
+Future<void> _handleAnonymize(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.anonymizeData();
+  if (!context.mounted) return;
+  context.showInfoSnackBar(tl('Data anonymization started'));
+}
+
+Future<void> _handleDeleteAll(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(tl('Confirm Delete All')),
+      content: Text(
+        tl(
+          'This action will permanently delete all chat data and cached translations. Are you sure you want to continue?',
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(tl('Cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.showSuccessSnackBar(tl('All data deleted'));
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-              side: BorderSide(
-                color:
-                    Theme.of(context).inputDecorationTheme.hintStyle?.color ??
-                        Theme.of(context).colorScheme.outline,
-                width: 1,
-              ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: Text(tl('Cancel')),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.pop(dialogContext);
+            await controller.deleteAllData();
+            if (!context.mounted) return;
+            context.showSuccessSnackBar(tl('All data deleted'));
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+            side: BorderSide(
+              color:
+                  Theme.of(context).inputDecorationTheme.hintStyle?.color ??
+                      Theme.of(context).colorScheme.outline,
+              width: 1,
             ),
-            child: Text(tl('Delete')),
           ),
-        ],
-      ),
-    );
-  }
+          child: Text(tl('Delete')),
+        ),
+      ],
+    ),
+  );
+}
 
-  static void _handleCleanCache(BuildContext context) {
-    context.showSuccessSnackBar(tl('Cache cleaned'));
-  }
+Future<void> _handleCleanCache(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.cleanCache();
+  if (!context.mounted) return;
+  context.showSuccessSnackBar(tl('Cache cleaned'));
+}
 
-  static void _handleManageFiles(BuildContext context) {
-    context.showInfoSnackBar(tl('File manager opened'));
-  }
+Future<void> _handleManageFiles(
+  BuildContext context,
+  UserDataController controller,
+) async {
+  await controller.manageFiles();
+  if (!context.mounted) return;
+  context.showInfoSnackBar(tl('File manager opened'));
 }
