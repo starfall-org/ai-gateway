@@ -30,11 +30,11 @@ class ChatController {
   ChatController({
     required this.navigator,
     required ConversationStorage conversationRepository,
-    required ChatProfileStorage aiProfileRepository,
+    required ChatProfileStorage chatProfileRepository,
     required LlmProviderInfoStorage llmProviderInfoStorage,
     required LlmProviderModelsStorage llmProviderModelsStorage,
     required this.preferencesSp,
-    required McpServerInfoStorage mcpServerStorage,
+    required McpInfoStorage mcpStorage,
     required this.speechManager,
     bool continueLastConversation = true,
   }) : session = SessionController(
@@ -48,8 +48,8 @@ class ChatController {
          pModStorage: llmProviderModelsStorage,
        ),
        profile = ProfileController(
-         aiProfileRepository: aiProfileRepository,
-         mcpServerStorage: mcpServerStorage,
+         chatProfileRepository: chatProfileRepository,
+         mcpStorage: mcpStorage,
        );
 
   Future<void> initChat() => session.initChat();
@@ -58,7 +58,7 @@ class ChatController {
 
   Future<void> loadSelectedProfile() => profile.loadSelectedProfile();
   Future<void> updateProfile(ChatProfile p) => profile.updateProfile(p);
-  Future<void> loadMcpServers() => profile.loadMcpServers();
+  Future<void> loadMcpClients() => profile.loadMcpClients();
 
   Future<void> refreshProviders() => model.refreshProviders();
 

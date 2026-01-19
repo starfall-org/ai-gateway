@@ -19,18 +19,20 @@ class LlmProviderModels {
 class LlmModel {
   final String id;
   final String displayName;
-  final LlmModelType type;
   final String? icon;
-  final String? providerName;
-  final Map<String, dynamic>? metadata;
+  final String providerId;
+  final Capabilities inputCapabilities;
+  final Capabilities outputCapabilities;
+  final Map<String, dynamic> modelInfo;
 
   LlmModel({
     required this.id,
     required this.displayName,
-    required this.type,
     this.icon,
-    this.providerName,
-    this.metadata,
+    required this.providerId,
+    required this.inputCapabilities,
+    required this.outputCapabilities,
+    required this.modelInfo,
   });
 
   factory LlmModel.fromJson(Map<String, dynamic> json) =>
@@ -39,4 +41,26 @@ class LlmModel {
   Map<String, dynamic> toJson() => _$LlmModelToJson(this);
 }
 
-enum LlmModelType { chat, image, audio, video, embed, media, other }
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
+class Capabilities {
+  final bool text;
+  final bool image;
+  final bool video;
+  final bool embed;
+  final bool audio;
+  final String? others;
+
+  Capabilities({
+    this.text = true,
+    this.image = false,
+    this.video = false,
+    this.embed = false,
+    this.audio = false,
+    this.others,
+  });
+
+  factory Capabilities.fromJson(Map<String, dynamic> json) =>
+      _$CapabilitiesFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CapabilitiesToJson(this);
+}

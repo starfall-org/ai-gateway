@@ -11,7 +11,7 @@ class ModelsDrawer extends StatefulWidget {
   final LlmModel? selectedModelToAdd;
   final bool isFetchingModels;
   final Function() onFetchModels;
-  final Function(LlmModel) onUpdateSelectedModel;
+  final ValueChanged<LlmModel?> onUpdateSelectedModel;
   final Function() onAddModel;
   final Function(String) onRemoveModel;
   final Function(LlmModel) onShowCapabilities;

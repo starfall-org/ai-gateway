@@ -1,50 +1,121 @@
 import 'dart:async';
 
-import 'package:dartantic_ai/dartantic_ai.dart';
-import 'package:dartantic_interface/dartantic_interface.dart' as dai;
+import 'package:dartantic_ai/dartantic_ai.dart' hide ChatMessage;
+import 'package:dartantic_ai/dartantic_ai.dart' as dai;
 
-import 'package:multigateway/core/core.dart' hide McpClient;
+import 'package:multigateway/core/core.dart';
 
 class ChatService {
-  static McpClient? _buildDartanticMcpClient(McpServerInfo info) {
+  static Uri? _parseUri(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return Uri.tryParse(value);
+  }
+
+  static Map<String, String>? _stringHeaders(Map<String, dynamic>? headers) {
+    if (headers == null) return null;
+    return headers.map((key, value) => MapEntry(key, value.toString()));
+  }
+
+  static bool _shouldEnableThinking(
+    ThinkingLevel level,
+    ProviderType providerType, {
+    required bool useResponsesApi,
+  }) {
+    if (level == ThinkingLevel.none) return false;
+    switch (providerType) {
+      case ProviderType.google:
+      case ProviderType.anthropic:
+        return true;
+      case ProviderType.openai:
+        return useResponsesApi;
+      case ProviderType.ollama:
+        return false;
+    }
+  }
+
+  static Uri? _resolveBaseUrl({
+    required LlmProviderInfo providerInfo,
+    required bool useResponsesApi,
+  }) {
+    if (providerInfo.type == ProviderType.openai && useResponsesApi) {
+      final base = providerInfo.baseUrl;
+      if (base.isEmpty) return null;
+      if (base.endsWith('/responses')) return _parseUri(base);
+      final separator = base.endsWith('/') ? '' : '/';
+      return _parseUri('$base${separator}responses');
+    }
+
+    return _parseUri(providerInfo.baseUrl);
+  }
+
+  static OpenAIChatOptions _buildOpenAIOptions(LlmChatConfig config) {
+    return OpenAIChatOptions(topP: config.topP, maxTokens: config.maxTokens);
+  }
+
+  static OpenAIResponsesChatModelOptions _buildOpenAIResponsesOptions(
+    LlmChatConfig config,
+  ) {
+    return OpenAIResponsesChatModelOptions(
+      topP: config.topP,
+      maxOutputTokens: config.maxTokens,
+    );
+  }
+
+  static AnthropicChatOptions _buildAnthropicOptions(
+    LlmChatConfig config, {
+    required bool enableThinking,
+  }) {
+    return AnthropicChatOptions(
+      temperature: config.temperature,
+      topP: config.topP,
+      topK: config.topK?.round(),
+      maxTokens: config.maxTokens,
+      thinkingBudgetTokens: enableThinking ? config.customThinkingTokens : null,
+    );
+  }
+
+  static GoogleChatModelOptions _buildGoogleOptions(
+    LlmChatConfig config, {
+    required bool enableThinking,
+  }) {
+    return GoogleChatModelOptions(
+      topP: config.topP,
+      topK: config.topK?.round(),
+      maxOutputTokens: config.maxTokens,
+      thinkingBudgetTokens: enableThinking ? config.customThinkingTokens : null,
+    );
+  }
+
+  static OllamaChatOptions _buildOllamaOptions(LlmChatConfig config) {
+    return OllamaChatOptions(
+      topP: config.topP,
+      topK: config.topK?.round(),
+      numPredict: config.maxTokens,
+      numCtx: config.contextWindow,
+    );
+  }
+
+  static McpClient? _buildDartanticMcpClient(McpInfo info) {
     switch (info.protocol) {
       case McpProtocol.stdio:
-        final stdio = info.stdioConfig;
-        if (stdio == null) return null;
-        final command = stdio.execBinaryPath.isNotEmpty
-            ? stdio.execBinaryPath
-            : stdio.execFilePath;
-        if (command.isEmpty) return null;
-        final args = stdio.execArgs
-            .split(RegExp(r'\s+'))
-            .where((e) => e.isNotEmpty)
-            .toList();
-        return McpClient.local(
-          info.name,
-          command: command,
-          args: args,
-          workingDirectory: null,
-        );
+        // Stdio configuration is not available in the current model schema
+        return null;
       case McpProtocol.streamableHttp:
       case McpProtocol.sse:
         if (info.url == null || info.url!.isEmpty) return null;
         final uri = Uri.tryParse(info.url!);
         if (uri == null) return null;
-        return McpClient.remote(
-          info.name,
-          url: uri,
-          headers: info.headers,
-        );
+        return McpClient.remote(info.name, url: uri, headers: info.headers);
     }
   }
 
   static Future<List<dai.Tool>> _collectMcpTools(ChatProfile profile) async {
-    if (profile.activeMcpServers.isEmpty) return const <dai.Tool>[];
-    final mcpServerStorage = await McpServerInfoStorage.init();
+    if (profile.activeMcp.isEmpty) return const <dai.Tool>[];
+    final mcpStorage = await McpInfoStorage.init();
     final tools = <dai.Tool>[];
 
-    for (final active in profile.activeMcpServers) {
-      final serverInfo = mcpServerStorage.getItem(active.id);
+    for (final active in profile.activeMcp) {
+      final serverInfo = mcpStorage.getItem(active.id);
       if (serverInfo == null) continue;
 
       final client = _buildDartanticMcpClient(serverInfo);
@@ -54,8 +125,9 @@ class ChatService {
         final serverTools = await client.listTools();
         tools.addAll(
           serverTools.where(
-            (t) => active.activeToolIds.isEmpty ||
-                active.activeToolIds.contains(t.name),
+            (t) =>
+                active.activeToolNames.isEmpty ||
+                active.activeToolNames.contains(t.name),
           ),
         );
       } catch (_) {
@@ -82,12 +154,7 @@ class ChatService {
     for (final msg in history) {
       final content = msg.content ?? '';
       final role = _mapRole(msg.role);
-      messages.add(
-        dai.ChatMessage(
-          role: role,
-          parts: [dai.TextPart(content)],
-        ),
-      );
+      messages.add(dai.ChatMessage(role: role, parts: [dai.TextPart(content)]));
     }
 
     messages.add(
@@ -109,7 +176,6 @@ class ChatService {
     List<String>? allowedToolNames,
   }) async* {
     final providerRepo = await LlmProviderInfoStorage.init();
-    final configRepo = await LlmProviderConfigStorage.init();
 
     final providers = providerRepo.getItems();
     if (providers.isEmpty) {
@@ -123,13 +189,13 @@ class ChatService {
       orElse: () => throw Exception('Provider "$providerName" not found.'),
     );
 
-    final providerConfig = configRepo.getItem(providerInfo.id);
-
     var mcpTools = await _collectMcpTools(profile);
     if (allowedToolNames != null && allowedToolNames.isNotEmpty) {
-      mcpTools =
-          mcpTools.where((t) => allowedToolNames.contains(t.name)).toList();
+      mcpTools = mcpTools
+          .where((t) => allowedToolNames.contains(t.name))
+          .toList();
     }
+    final tools = mcpTools;
 
     final messages = _buildMessages(
       userText: userText,
@@ -138,52 +204,86 @@ class ChatService {
     );
 
     dai.ChatModel chatModel;
+    final headers = _stringHeaders(providerInfo.config.headers) ?? const {};
+    final useResponsesApi = providerInfo.config.responsesApi;
+    final baseUrl = _resolveBaseUrl(
+      providerInfo: providerInfo,
+      useResponsesApi: useResponsesApi,
+    );
+    final config = profile.config;
+    final enableThinking = _shouldEnableThinking(
+      config.thinkingLevel,
+      providerInfo.type,
+      useResponsesApi: useResponsesApi,
+    );
 
     switch (providerInfo.type) {
-      case ProviderType.googleai:
+      case ProviderType.google:
         final provider = GoogleProvider(
           apiKey: providerInfo.auth.key,
-          baseUrl: Uri.tryParse(providerInfo.baseUrl),
-          headers: providerConfig?.headers?.cast<String, String>(),
+          baseUrl: baseUrl,
+          headers: headers,
         );
         chatModel = provider.createChatModel(
           name: modelName,
           tools: tools,
-          temperature: profile.config.temperature,
+          temperature: config.temperature,
+          enableThinking: enableThinking,
+          options: _buildGoogleOptions(config, enableThinking: enableThinking),
         );
         break;
       case ProviderType.openai:
-        final provider = OpenAIProvider(
-          apiKey: providerInfo.auth.key,
-          baseUrl: Uri.tryParse(providerInfo.baseUrl),
-          headers: providerConfig?.headers?.cast<String, String>(),
-        );
-        chatModel = provider.createChatModel(
-          name: modelName,
-          tools: tools,
-          temperature: profile.config.temperature,
-        );
+        if (useResponsesApi) {
+          final provider = OpenAIResponsesProvider(
+            apiKey: providerInfo.auth.key,
+            baseUrl: baseUrl,
+            headers: headers,
+          );
+          chatModel = provider.createChatModel(
+            name: modelName,
+            tools: tools,
+            temperature: config.temperature,
+            enableThinking: enableThinking,
+            options: _buildOpenAIResponsesOptions(config),
+          );
+        } else {
+          final provider = OpenAIProvider(
+            apiKey: providerInfo.auth.key,
+            baseUrl: baseUrl,
+            headers: headers,
+          );
+          chatModel = provider.createChatModel(
+            name: modelName,
+            tools: tools,
+            temperature: config.temperature,
+            options: _buildOpenAIOptions(config),
+          );
+        }
         break;
       case ProviderType.anthropic:
         final provider = AnthropicProvider(
           apiKey: providerInfo.auth.key,
-          headers: providerConfig?.headers?.cast<String, String>(),
+          headers: headers,
         );
         chatModel = provider.createChatModel(
           name: modelName,
           tools: tools,
-          temperature: profile.config.temperature,
+          temperature: config.temperature,
+          enableThinking: enableThinking,
+          options: _buildAnthropicOptions(
+            config,
+            enableThinking: enableThinking,
+          ),
         );
         break;
       case ProviderType.ollama:
-        final provider = OllamaProvider(
-          baseUrl: Uri.tryParse(providerInfo.baseUrl),
-          headers: providerConfig?.headers?.cast<String, String>(),
-        );
+        final provider = OllamaProvider(baseUrl: baseUrl, headers: headers);
         chatModel = provider.createChatModel(
           name: modelName,
           tools: tools,
-          temperature: profile.config.temperature,
+          temperature: config.temperature,
+          enableThinking: false,
+          options: _buildOllamaOptions(config),
         );
         break;
     }

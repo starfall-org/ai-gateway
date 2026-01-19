@@ -141,7 +141,7 @@ class ModelPickerSheet extends StatelessWidget {
 
   IconData _getProviderIcon(ProviderType type) {
     switch (type) {
-      case ProviderType.googleai:
+      case ProviderType.google:
         return Icons.android;
       case ProviderType.openai:
         return Icons.token; // Changed from Icons.smart_toy

@@ -9,7 +9,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 
 /// Section cấu hình thông tin provider
 class ProviderInfoSection extends StatelessWidget {
-  final AddProviderController controller;
+  final EditProviderController controller;
 
   const ProviderInfoSection({super.key, required this.controller});
 
@@ -29,10 +29,7 @@ class ProviderInfoSection extends StatelessWidget {
               return DropdownOption<ProviderType>(
                 value: type,
                 label: type.name,
-                icon: buildLogoIcon(
-                  _getProviderIcon(type, controller),
-                  size: 24,
-                ),
+                icon: buildLogoIcon(_getProviderIcon(type), size: 24),
               );
             }).toList(),
             onChanged: (value) {
@@ -42,18 +39,15 @@ class ProviderInfoSection extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          CustomTextField(controller: controller.nameController, label: 'Name'),
+          CustomTextField(signal: controller.name, label: 'Name'),
           const SizedBox(height: 16),
           CustomTextField(
-            controller: controller.apiKeyController,
+            signal: controller.apiKey,
             label: 'API Key',
             obscureText: true,
           ),
           const SizedBox(height: 16),
-          CustomTextField(
-            controller: controller.baseUrlController,
-            label: 'Base URL',
-          ),
+          CustomTextField(signal: controller.baseUrl, label: 'Base URL'),
           const SizedBox(height: 8),
           if (selectedType == ProviderType.openai)
             CheckboxListTile(
@@ -61,7 +55,7 @@ class ProviderInfoSection extends StatelessWidget {
               value: responsesApi,
               onChanged: (value) {
                 if (value != null) {
-                  controller.updateResponsesApi(value);
+                  controller.responsesApi.value = value;
                 }
               },
               controlAffinity: ListTileControlAffinity.leading,
@@ -71,11 +65,11 @@ class ProviderInfoSection extends StatelessWidget {
     });
   }
 
-  String _getProviderIcon(ProviderType type, AddProviderController controller) {
+  String _getProviderIcon(ProviderType type) {
     switch (type) {
       case ProviderType.openai:
         return 'openai';
-      case ProviderType.googleai:
+      case ProviderType.google:
         return 'aistudio';
       case ProviderType.anthropic:
         return 'anthropic';

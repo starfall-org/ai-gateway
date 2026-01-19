@@ -133,7 +133,7 @@ class CommonDropdown<T> extends StatelessWidget {
           )
           .toList(),
       decoration: InputDecoration(
-        label: label,
+        label: Text(label!),
         hintText: hintText,
         helperText: helperText,
         errorText: errorText,

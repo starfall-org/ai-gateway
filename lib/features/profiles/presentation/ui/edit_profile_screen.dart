@@ -20,7 +20,7 @@ class AddProfileScreen extends StatefulWidget {
 
 class _AddProfileScreenState extends State<AddProfileScreen>
     with SingleTickerProviderStateMixin {
-  late AddAgentController _controller;
+  late EditProfileController _controller;
   late TabController _tabController;
 
   @override
@@ -30,7 +30,7 @@ class _AddProfileScreenState extends State<AddProfileScreen>
     _tabController.addListener(() {
       setState(() {}); // Rebuild to show/hide FAB based on tab
     });
-    _controller = AddAgentController();
+    _controller = EditProfileController();
     _controller.initialize(widget.profile);
   }
 

@@ -4,9 +4,9 @@ import 'package:multigateway/core/core.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
 import 'package:signals/signals.dart';
 
-class EditMcpServerController {
+class EditMcpItemController {
   // Repository
-  late McpServerInfoStorage _repository;
+  late McpInfoStorage _repository;
 
   // Form controllers
   final TextEditingController nameController = TextEditingController();
@@ -21,15 +21,15 @@ class EditMcpServerController {
   // Getters
   bool get isEditMode => _editingServerId != null;
 
-  EditMcpServerController() {
+  EditMcpItemController() {
     _initRepository();
   }
 
   Future<void> _initRepository() async {
-    _repository = await McpServerInfoStorage.init();
+    _repository = await McpInfoStorage.init();
   }
 
-  void initialize(McpServerInfo? serverInfo) {
+  void initialize(McpInfo? serverInfo) {
     if (serverInfo != null) {
       _editingServerId = serverInfo.id;
       nameController.text = serverInfo.name;
@@ -130,7 +130,7 @@ class EditMcpServerController {
         }
       }
 
-      final serverInfo = McpServerInfo(
+      final serverInfo = McpInfo(
         _editingServerId,
         nameController.text.trim(),
         selectedTransport.value,
@@ -138,7 +138,6 @@ class EditMcpServerController {
             ? urlController.text.trim()
             : null,
         headersMap.isNotEmpty ? headersMap : null,
-        null, // stdioConfig
       );
 
       await _repository.saveItem(serverInfo);

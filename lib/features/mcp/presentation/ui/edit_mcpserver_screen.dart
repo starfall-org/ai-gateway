@@ -9,18 +9,18 @@ import 'package:multigateway/features/mcp/presentation/widgets/mcp_tabs/mcp_info
 import 'package:signals_flutter/signals_flutter.dart';
 
 /// Màn hình thêm/chỉnh sửa MCP server
-class EditMcpServerscreen extends StatefulWidget {
-  final McpServerInfo? server;
+class EditMcpItemscreen extends StatefulWidget {
+  final McpInfo? server;
 
-  const EditMcpServerscreen({super.key, this.server});
+  const EditMcpItemscreen({super.key, this.server});
 
   @override
-  State<EditMcpServerscreen> createState() => _EditMcpServerscreenState();
+  State<EditMcpItemscreen> createState() => _EditMcpItemscreenState();
 }
 
-class _EditMcpServerscreenState extends State<EditMcpServerscreen>
+class _EditMcpItemscreenState extends State<EditMcpItemscreen>
     with SingleTickerProviderStateMixin {
-  late EditMcpServerController _controller;
+  late EditMcpItemController _controller;
   late TabController _tabController;
 
   @override
@@ -30,7 +30,7 @@ class _EditMcpServerscreenState extends State<EditMcpServerscreen>
     _tabController.addListener(() {
       setState(() {}); // Rebuild to show/hide FAB based on tab
     });
-    _controller = EditMcpServerController();
+    _controller = EditMcpItemController();
     _controller.initialize(widget.server);
   }
 

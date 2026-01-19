@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/llm/models/llm_provider_models.dart';
 import 'package:multigateway/features/llm/presentation/controllers/edit_provider_controller.dart';
+import 'package:multigateway/features/llm/presentation/widgets/capabilities_section.dart';
 import 'package:multigateway/shared/widgets/custom_text_field.dart';
 
 class EditModelSheet extends StatefulWidget {
-  final AddProviderController controller;
+  final EditProviderController controller;
   final LlmModel? modelToEdit;
 
   const EditModelSheet({super.key, required this.controller, this.modelToEdit});
@@ -21,7 +22,8 @@ class _EditModelSheetState extends State<EditModelSheet> {
   late TextEditingController _displayNameController;
   late TextEditingController _providerNameController;
   late TextEditingController _iconController;
-  LlmModelType _selectedType = LlmModelType.chat;
+  Capabilities _inputCapabilities = Capabilities();
+  Capabilities _outputCapabilities = Capabilities();
 
   @override
   void initState() {
@@ -38,9 +40,10 @@ class _EditModelSheetState extends State<EditModelSheet> {
     if (model == null) return;
     _idController.text = model.id;
     _displayNameController.text = model.displayName;
-    _providerNameController.text = model.providerName ?? '';
+    _providerNameController.text = model.providerId;
     _iconController.text = model.icon ?? '';
-    _selectedType = model.type;
+    _inputCapabilities = model.inputCapabilities;
+    _outputCapabilities = model.outputCapabilities;
   }
 
   @override
@@ -55,22 +58,26 @@ class _EditModelSheetState extends State<EditModelSheet> {
   void _save() {
     if (!_formKey.currentState!.validate()) return;
 
-    final model = LlmModel(
-      id: _idController.text.trim(),
-      displayName: _displayNameController.text.trim(),
-      type: _selectedType,
-      icon: _iconController.text.trim().isEmpty
-          ? null
-          : _iconController.text.trim(),
-      providerName: _providerNameController.text.trim().isEmpty
-          ? null
-          : _providerNameController.text.trim(),
-      metadata: null,
-    );
-
     if (widget.modelToEdit == null) {
-      widget.controller.addModelDirectly(model);
+      widget.controller.addCustomModel(
+        modelId: _idController.text.trim(),
+        modelIcon: _iconController.text.trim().isEmpty
+            ? null
+            : _iconController.text.trim(),
+        modelDisplayName: _displayNameController.text.trim(),
+        inputCapabilities: _inputCapabilities,
+        outputCapabilities: _outputCapabilities,
+        modelInfo: {},
+      );
     } else {
+      final model = LlmModel(
+        id: _idController.text.trim(),
+        displayName: _displayNameController.text.trim(),
+        providerId: _providerNameController.text.trim(),
+        inputCapabilities: _inputCapabilities,
+        outputCapabilities: _outputCapabilities,
+        modelInfo: {},
+      );
       widget.controller.updateModel(widget.modelToEdit!, model);
     }
     Navigator.of(context).pop();
@@ -138,19 +145,17 @@ class _EditModelSheetState extends State<EditModelSheet> {
                 controller: _iconController,
                 label: tl('Icon (optional)'),
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<LlmModelType>(
-                value: _selectedType,
-                items: LlmModelType.values
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t.name)))
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) setState(() => _selectedType = val);
-                },
-                decoration: InputDecoration(
-                  label: tl('Type'),
-                  border: const OutlineInputBorder(),
-                ),
+              const SizedBox(height: 16),
+              CapabilitiesSection(
+                title: tl('Input Capabilities'),
+                capabilities: _inputCapabilities,
+                onUpdate: (cap) => setState(() => _inputCapabilities = cap),
+              ),
+              const SizedBox(height: 16),
+              CapabilitiesSection(
+                title: tl('Output Capabilities'),
+                capabilities: _outputCapabilities,
+                onUpdate: (cap) => setState(() => _outputCapabilities = cap),
               ),
               const SizedBox(height: 20),
               SizedBox(

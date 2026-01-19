@@ -87,7 +87,7 @@ class TtsConfigurationSection extends StatelessWidget {
             value: selectedProviderId,
             label: tl('Provider'),
             options: availableProviders.map((p) {
-              final iconData = p.type == ProviderType.googleai
+              final iconData = p.type == ProviderType.google
                   ? Icons.cloud
                   : p.type == ProviderType.openai
                   ? Icons.api

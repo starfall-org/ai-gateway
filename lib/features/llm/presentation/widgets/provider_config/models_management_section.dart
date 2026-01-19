@@ -10,7 +10,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 /// Section quản lý models (LlmProviderModels)
 /// Hiển thị tất cả 4 loại: BasicModel, OllamaModel, GoogleAiModel, GitHubModel
 class ModelsManagementSection extends StatelessWidget {
-  final AddProviderController controller;
+  final EditProviderController controller;
 
   const ModelsManagementSection({super.key, required this.controller});
 

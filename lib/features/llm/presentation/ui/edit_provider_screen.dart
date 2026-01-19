@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/core/llm/models/llm_provider_info.dart';
-import 'package:multigateway/core/llm/storage/llm_provider_config_storage.dart';
 import 'package:multigateway/core/llm/storage/llm_provider_models_storage.dart';
 import 'package:multigateway/features/llm/presentation/controllers/edit_provider_controller.dart';
 import 'package:multigateway/features/llm/presentation/widgets/provider_config/http_config_section.dart';
@@ -20,7 +19,7 @@ class AddProviderScreen extends StatefulWidget {
 class _AddProviderScreenState extends State<AddProviderScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late AddProviderController _controller;
+  late EditProviderController _controller;
 
   @override
   void initState() {
@@ -29,21 +28,18 @@ class _AddProviderScreenState extends State<AddProviderScreen>
     _tabController.addListener(() {
       setState(() {});
     });
-    _controller = AddProviderController();
+    _controller = EditProviderController();
     _initController();
   }
 
   Future<void> _initController() async {
     if (widget.providerInfo != null) {
-      final configStorage = await LlmProviderConfigStorage.init();
       final modelsStorage = await LlmProviderModelsStorage.init();
 
-      final config = configStorage.getItem(widget.providerInfo!.id);
       final models = modelsStorage.getItem(widget.providerInfo!.id);
 
       _controller.initialize(
         providerInfo: widget.providerInfo,
-        providerConfig: config,
         providerModels: models,
       );
 

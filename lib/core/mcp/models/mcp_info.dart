@@ -1,32 +1,25 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
-part 'mcp_server_info.g.dart';
+part 'mcp_info.g.dart';
 
 enum McpProtocol { streamableHttp, sse, stdio }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
-class McpServerInfo {
+class McpInfo {
   final String id;
   final String name;
   final McpProtocol protocol;
   final String? url;
   final Map<String, String>? headers;
-  final StdioConfig? stdioConfig;
 
-  McpServerInfo(
-    String? id,
-    this.name,
-    this.protocol,
-    this.url,
-    this.headers,
-    this.stdioConfig,
-  ) : id = id ?? Uuid().v4();
+  McpInfo(String? id, this.name, this.protocol, this.url, this.headers)
+    : id = id ?? Uuid().v4();
 
-  factory McpServerInfo.fromJson(Map<String, dynamic> json) =>
-      _$McpServerInfoFromJson(json);
+  factory McpInfo.fromJson(Map<String, dynamic> json) =>
+      _$McpInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$McpServerInfoToJson(this);
+  Map<String, dynamic> toJson() => _$McpInfoToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)

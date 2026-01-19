@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'mcp_server_info.dart';
+part of 'mcp_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-McpServerInfo _$McpServerInfoFromJson(Map<String, dynamic> json) =>
-    McpServerInfo(
+McpInfo _$McpInfoFromJson(Map<String, dynamic> json) => McpInfo(
       json['id'] as String?,
       json['name'] as String,
       $enumDecode(_$McpProtocolEnumMap, json['protocol']),
@@ -15,19 +14,14 @@ McpServerInfo _$McpServerInfoFromJson(Map<String, dynamic> json) =>
       (json['headers'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
-      json['stdio_config'] == null
-          ? null
-          : StdioConfig.fromJson(json['stdio_config'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$McpServerInfoToJson(McpServerInfo instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$McpInfoToJson(McpInfo instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'protocol': _$McpProtocolEnumMap[instance.protocol]!,
       'url': instance.url,
       'headers': instance.headers,
-      'stdio_config': instance.stdioConfig?.toJson(),
     };
 
 const _$McpProtocolEnumMap = {

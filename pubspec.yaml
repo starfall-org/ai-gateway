@@ -59,8 +59,7 @@ dependencies:
   
   # Metalore packages
   dartantic_ai: any
-  mcp:
-    path: mcp
+ 
   signals_flutter: ^6.3.0
 
 dev_dependencies:

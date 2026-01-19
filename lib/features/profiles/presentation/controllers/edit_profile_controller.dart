@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mcp/mcp.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/core.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class AddAgentController {
+class EditProfileController {
   // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController promptController = TextEditingController();
@@ -27,8 +26,8 @@ class AddAgentController {
   final isCustomThinkingTokensEnabled = signal<bool>(false);
   final customThinkingTokensValue = signal<int>(0);
   final thinkingLevel = signal<ThinkingLevel>(ThinkingLevel.auto);
-  final availableMcpServers = signal<List<McpServer>>([]);
-  final selectedMcpServerIds = signal<List<String>>([]);
+  final availableMcpItems = signal<List<McpInfo>>([]);
+  final selectedMcpItemIds = signal<List<String>>([]);
 
   // Initialize with optional existing profile
   void initialize(ChatProfile? profile) {
@@ -59,14 +58,14 @@ class AddAgentController {
       }
 
       thinkingLevel.value = profile.config.thinkingLevel;
-      selectedMcpServerIds.value = List.from(profile.activeMcpServerIds);
+      selectedMcpItemIds.value = List.from(profile.activeMcpName);
     }
-    _loadMcpServers();
+    _loadMcpClients();
   }
 
-  Future<void> _loadMcpServers() async {
-    final mcpRepo = await McpServerInfoStorage.init();
-    availableMcpServers.value = mcpRepo.getItems().cast<McpServer>();
+  Future<void> _loadMcpClients() async {
+    final mcpRepo = await McpInfoStorage.init();
+    availableMcpItems.value = mcpRepo.getItems().cast<McpInfo>();
   }
 
   Future<void> saveAgent(
@@ -96,8 +95,8 @@ class AddAgentController {
             : null,
         thinkingLevel: thinkingLevel.value,
       ),
-      activeMcpServers: selectedMcpServerIds.value
-          .map((id) => ActiveMcpServer(id: id, activeToolIds: []))
+      activeMcp: selectedMcpItemIds.value
+          .map((id) => ActiveMcp(id: id, activeToolNames: []))
           .toList(),
     );
 
@@ -108,14 +107,14 @@ class AddAgentController {
     }
   }
 
-  void toggleMcpServer(String serverId) {
-    final currentList = List<String>.from(selectedMcpServerIds.value);
+  void toggleMcpItem(String serverId) {
+    final currentList = List<String>.from(selectedMcpItemIds.value);
     if (currentList.contains(serverId)) {
       currentList.remove(serverId);
     } else {
       currentList.add(serverId);
     }
-    selectedMcpServerIds.value = currentList;
+    selectedMcpItemIds.value = currentList;
   }
 
   void toggleStream(bool value) {
@@ -187,8 +186,8 @@ class AddAgentController {
     isCustomThinkingTokensEnabled.dispose();
     customThinkingTokensValue.dispose();
     thinkingLevel.dispose();
-    availableMcpServers.dispose();
-    selectedMcpServerIds.dispose();
+    availableMcpItems.dispose();
+    selectedMcpItemIds.dispose();
   }
 
   void pickImage(BuildContext context) async {

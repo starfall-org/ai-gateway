@@ -6,7 +6,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 
 /// Section cấu hình HTTP (LlmProviderConfig)
 class HttpConfigSection extends StatelessWidget {
-  final AddProviderController controller;
+  final EditProviderController controller;
 
   const HttpConfigSection({super.key, required this.controller});
 
@@ -25,21 +25,19 @@ class HttpConfigSection extends StatelessWidget {
           // API Options
           _buildSectionTitle(context, tl('API Options')),
           const SizedBox(height: 8),
-          _buildSwitchTile(
-            context,
+          SwitchTile(
             title: tl('Responses API'),
             subtitle: tl('Use OpenAI Responses API format'),
             value: responsesApi,
-            onChanged: controller.updateResponsesApi,
+            onChanged: (v) => controller.responsesApi.value = v,
             icon: Icons.api,
           ),
           const SizedBox(height: 8),
-          _buildSwitchTile(
-            context,
-            title: tl('Support Stream'),
+          SwitchTile(
+            title: tl('Stream Support'),
             subtitle: tl('Enable streaming responses'),
             value: supportStream,
-            onChanged: controller.updateSupportStream,
+            onChanged: (v) => controller.supportStream.value = v,
             icon: Icons.stream,
           ),
 
@@ -49,14 +47,7 @@ class HttpConfigSection extends StatelessWidget {
           _buildSectionTitle(context, tl('Custom URLs')),
           const SizedBox(height: 8),
           CustomTextField(
-            controller: controller.customChatCompletionUrlController,
-            label: tl('Chat Completions URL'),
-            hint: tl('e.g., /chat/completions or full URL'),
-            prefixIcon: Icons.chat,
-          ),
-          const SizedBox(height: 12),
-          CustomTextField(
-            controller: controller.customListModelsUrlController,
+            signal: controller.customListModelsUrl,
             label: tl('List Models URL'),
             hint: tl('e.g., /models or full URL'),
             prefixIcon: Icons.list,
@@ -72,7 +63,7 @@ class HttpConfigSection extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: CustomTextField(
-                  controller: controller.httpProxyHostController,
+                  signal: controller.httpProxyHost,
                   label: tl('Host'),
                   hint: tl('e.g., proxy.example.com'),
                   prefixIcon: Icons.dns,
@@ -81,7 +72,7 @@ class HttpConfigSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: CustomTextField(
-                  controller: controller.httpProxyPortController,
+                  signal: controller.httpProxyPort,
                   label: tl('Port'),
                   hint: '8080',
                   keyboardType: TextInputType.number,
@@ -95,7 +86,7 @@ class HttpConfigSection extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextField(
-                  controller: controller.httpProxyUsernameController,
+                  signal: controller.httpProxyUsername,
                   label: tl('Username'),
                   hint: tl('Optional'),
                   prefixIcon: Icons.person,
@@ -104,7 +95,7 @@ class HttpConfigSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: CustomTextField(
-                  controller: controller.httpProxyPasswordController,
+                  signal: controller.httpProxyPassword,
                   label: tl('Password'),
                   hint: tl('Optional'),
                   prefixIcon: Icons.lock,
@@ -124,7 +115,7 @@ class HttpConfigSection extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: CustomTextField(
-                  controller: controller.socksProxyHostController,
+                  signal: controller.socksProxyHost,
                   label: tl('Host'),
                   hint: tl('e.g., socks.example.com'),
                   prefixIcon: Icons.dns,
@@ -133,7 +124,7 @@ class HttpConfigSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: CustomTextField(
-                  controller: controller.socksProxyPortController,
+                  signal: controller.socksProxyPort,
                   label: tl('Port'),
                   hint: '1080',
                   keyboardType: TextInputType.number,
@@ -147,7 +138,7 @@ class HttpConfigSection extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextField(
-                  controller: controller.socksProxyUsernameController,
+                  signal: controller.socksProxyUsername,
                   label: tl('Username'),
                   hint: tl('Optional'),
                   prefixIcon: Icons.person,
@@ -156,7 +147,7 @@ class HttpConfigSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: CustomTextField(
-                  controller: controller.socksProxyPasswordController,
+                  signal: controller.socksProxyPassword,
                   label: tl('Password'),
                   hint: tl('Optional'),
                   prefixIcon: Icons.lock,
@@ -221,7 +212,8 @@ class HttpConfigSection extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextField(
-                        controller: header.key,
+                        initialValue: header.key,
+                        onChanged: (v) => controller.updateHeader(index, key: v),
                         label: tl('Key'),
                         hint: tl('e.g., X-Custom-Header'),
                       ),
@@ -229,7 +221,8 @@ class HttpConfigSection extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: CustomTextField(
-                        controller: header.value,
+                        initialValue: header.value,
+                        onChanged: (v) => controller.updateHeader(index, value: v),
                         label: tl('Value'),
                         hint: tl('Header value'),
                       ),
@@ -258,15 +251,26 @@ class HttpConfigSection extends StatelessWidget {
       ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
+}
 
-  Widget _buildSwitchTile(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-    required IconData icon,
-  }) {
+class SwitchTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final IconData icon;
+
+  const SwitchTile({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onChanged,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(

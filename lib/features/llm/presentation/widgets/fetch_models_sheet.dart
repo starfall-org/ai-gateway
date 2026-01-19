@@ -6,7 +6,7 @@ import 'package:multigateway/features/llm/presentation/widgets/model_card.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
 class FetchModelsSheet extends StatefulWidget {
-  final AddProviderController controller;
+  final EditProviderController controller;
 
   const FetchModelsSheet({
     super.key,
@@ -273,7 +273,7 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
 
                       return ModelCard(
                         model: model,
-                        onTap: () => widget.onShowCapabilities(model),
+                        onTap: () => _showCapabilities(context, model),
                         trailing: IconButton(
                           icon: Icon(
                             isSelected
@@ -295,6 +295,34 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
                       );
                     },
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCapabilities(BuildContext context, LlmModel model) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(model.displayName),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ID: ${model.id}'),
+            const SizedBox(height: 8),
+            Text(tl('Input Capabilities:')),
+            Text(model.inputCapabilities.toJson().toString()),
+            const SizedBox(height: 8),
+            Text(tl('Output Capabilities:')),
+            Text(model.outputCapabilities.toJson().toString()),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(tl('Close')),
           ),
         ],
       ),
