@@ -52,8 +52,8 @@ class MessageStreamService {
     onSessionUpdate(session);
 
     try {
-      DateTime lastUpdate = DateTime.now();
-      const throttleDuration = Duration(milliseconds: 100);
+      // Force the very first chunk to render immediately
+      var lastEmittedContent = '';
       var acc = '';
       String? reasoning;
 
@@ -72,8 +72,7 @@ class MessageStreamService {
           reasoning = chunk.thinking;
         }
 
-        final now = DateTime.now();
-        if (now.difference(lastUpdate) >= throttleDuration) {
+        if (acc != lastEmittedContent) {
           session = MessageHelper.updateMessageActiveContent(
             session,
             modelId,
@@ -81,7 +80,7 @@ class MessageStreamService {
             reasoningContent: reasoning,
           );
           onSessionUpdate(session);
-          lastUpdate = now;
+          lastEmittedContent = acc;
         }
       }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/profile/profile.dart';
 import 'package:multigateway/features/llm/presentation/widgets/view_profile_dialog.dart';
 import 'package:multigateway/features/profiles/presentation/controllers/edit_profile_controller.dart';
@@ -41,12 +40,6 @@ class _AddProfileScreenState extends State<AddProfileScreen>
     super.dispose();
   }
 
-  Future<void> _saveAgent() async {
-    await _controller.saveAgent(widget.profile, context);
-    if (!mounted) return;
-    Navigator.pop(context, true);
-  }
-
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.profile != null;
@@ -73,12 +66,6 @@ class _AddProfileScreenState extends State<AddProfileScreen>
                   child: const Icon(Icons.info_outline),
                 ),
               if (isEditing) const SizedBox(width: 16),
-              FloatingActionButton.extended(
-                heroTag: "save",
-                onPressed: _saveAgent,
-                label: Text(tl('Save')),
-                icon: const Icon(Icons.check),
-              ),
             ],
           ),
           bottomNavigationBar: BottomAppBar(

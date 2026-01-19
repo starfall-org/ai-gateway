@@ -8,10 +8,7 @@ import 'package:signals_flutter/signals_flutter.dart';
 class FetchModelsSheet extends StatefulWidget {
   final EditProviderController controller;
 
-  const FetchModelsSheet({
-    super.key,
-    required this.controller,
-  });
+  const FetchModelsSheet({super.key, required this.controller});
 
   @override
   State<FetchModelsSheet> createState() => _FetchModelsSheetState();
@@ -148,16 +145,39 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Add All button
+                // Add All / Remove All button
                 if (availableModels.isNotEmpty)
                   IconButton(
                     onPressed: () {
-                      for (final model in filteredModels) {
-                        widget.controller.addModelDirectly(model);
+                      final allAdded = filteredModels.every(
+                        (model) => selectedModels.any((m) => m.id == model.id),
+                      );
+
+                      if (allAdded) {
+                        for (final model in filteredModels) {
+                          widget.controller.removeModelDirectly(model);
+                        }
+                      } else {
+                        for (final model in filteredModels) {
+                          widget.controller.addModelDirectly(model);
+                        }
                       }
                     },
-                    icon: const Icon(Icons.playlist_add),
-                    tooltip: tl('Add All'),
+                    icon: Icon(
+                      filteredModels.every(
+                            (model) =>
+                                selectedModels.any((m) => m.id == model.id),
+                          )
+                          ? Icons.playlist_remove
+                          : Icons.playlist_add,
+                    ),
+                    tooltip:
+                        filteredModels.every(
+                          (model) =>
+                              selectedModels.any((m) => m.id == model.id),
+                        )
+                        ? tl('Remove All')
+                        : tl('Add All'),
                     style: IconButton.styleFrom(
                       backgroundColor: colorScheme.primaryContainer,
                       foregroundColor: colorScheme.onPrimaryContainer,

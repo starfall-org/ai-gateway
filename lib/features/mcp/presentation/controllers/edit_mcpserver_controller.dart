@@ -20,6 +20,7 @@ class EditMcpItemController {
   final mcpTools = signal<List<Map<String, dynamic>>>([]);
   final isLoadingTools = signal<bool>(false);
   final toolsError = signal<String?>(null);
+  EffectCleanup? _autoSaveCleanup;
   String? _editingServerId;
 
   // Getters
@@ -59,6 +60,24 @@ class EditMcpItemController {
       headers.value = [];
       addHeader(); // Add one empty header by default
     }
+
+    _setupAutoSave();
+
+    nameController.addListener(_debouncedSave);
+    urlController.addListener(_debouncedSave);
+  }
+
+  void _setupAutoSave() {
+    _autoSaveCleanup = effect(() {
+      selectedTransport.value;
+      headers.value;
+
+      _debouncedSave();
+    });
+  }
+
+  void _debouncedSave() {
+    saveServer();
   }
 
   void updateTransport(McpProtocol transport) {
@@ -112,16 +131,12 @@ class EditMcpItemController {
     return null;
   }
 
-  Future<void> saveServer(BuildContext context) async {
+  Future<void> saveServer([BuildContext? context]) async {
     final validationError = validateForm();
-    if (validationError != null) {
-      if (context.mounted) {
-        context.showErrorSnackBar(validationError);
-      }
-      return;
-    }
+    if (validationError != null) return;
 
-    isLoading.value = true;
+    // We don't want to show loading during auto-save
+    if (context != null) isLoading.value = true;
 
     try {
       // Prepare headers map
@@ -154,19 +169,15 @@ class EditMcpItemController {
         );
       }
 
-      if (context.mounted) {
+      if (context != null && context.mounted) {
         if (isEditMode) {
           context.showSuccessSnackBar(tl('MCP server updated successfully'));
         } else {
           context.showSuccessSnackBar(tl('MCP server added successfully'));
         }
       }
-
-      if (context.mounted) {
-        Navigator.pop(context, true);
-      }
     } catch (e) {
-      if (context.mounted) {
+      if (context != null && context.mounted) {
         context.showErrorSnackBar(tl('Error saving MCP server: $e'));
       }
     } finally {
@@ -175,6 +186,10 @@ class EditMcpItemController {
   }
 
   void dispose() {
+    _autoSaveCleanup?.call();
+    nameController.removeListener(_debouncedSave);
+    urlController.removeListener(_debouncedSave);
+
     nameController.dispose();
     urlController.dispose();
     for (final header in headers.value) {

@@ -38,6 +38,8 @@ class EditSpeechServiceController {
   final availableModels = signal<List<LlmModel>>([]);
   final sttAvailableModels = signal<List<LlmModel>>([]);
   final isLoadingModels = signal<bool>(false);
+  EffectCleanup? _autoSaveCleanup;
+  String? _editingServiceId;
 
   // Available languages
   final List<String> availableLanguages = [
@@ -58,6 +60,36 @@ class EditSpeechServiceController {
   Future<void> _initialize() async {
     await _loadProviders();
     selectedLanguage.value = _getSystemLocale();
+
+    // Listen to text changes
+    nameController.addListener(_debouncedSave);
+    customVoiceController.addListener(_debouncedSave);
+    modelNameController.addListener(_debouncedSave);
+    sttModelNameController.addListener(_debouncedSave);
+
+    _setupAutoSave();
+  }
+
+  void _setupAutoSave() {
+    _autoSaveCleanup = effect(() {
+      selectedType.value;
+      selectedProviderId.value;
+      selectedVoiceId.value;
+      useCustomVoice.value;
+      selectedLanguage.value;
+      speechRate.value;
+      volume.value;
+      pitch.value;
+      sttSelectedType.value;
+      sttSelectedProviderId.value;
+      sttSelectedModelId.value;
+
+      _debouncedSave();
+    });
+  }
+
+  void _debouncedSave() {
+    saveService();
   }
 
   Future<void> _loadProviders() async {
@@ -224,15 +256,15 @@ class EditSpeechServiceController {
     }
   }
 
-  Future<bool> saveService(BuildContext context) async {
-    if (nameController.text.isEmpty) {
-      context.showInfoSnackBar(tl('Please enter a name'));
-      return false;
-    }
+  Future<bool> saveService([BuildContext? context]) async {
+    final name = nameController.text.trim();
+    if (name.isEmpty) return false;
 
     if (selectedType.value == ServiceType.provider &&
         selectedProviderId.value == null) {
-      context.showInfoSnackBar(tl('Please select a provider'));
+      if (context != null) {
+        context.showInfoSnackBar(tl('Please select a provider'));
+      }
       return false;
     }
 
@@ -245,7 +277,9 @@ class EditSpeechServiceController {
 
     // Validate voice selection
     if (finalVoiceId == null || finalVoiceId.isEmpty) {
-      context.showInfoSnackBar(tl('Please select or enter a voice'));
+      if (context != null) {
+        context.showInfoSnackBar(tl('Please select or enter a voice'));
+      }
       return false;
     }
 
@@ -280,8 +314,8 @@ class EditSpeechServiceController {
     );
 
     final profile = SpeechService(
-      id: const Uuid().v4(),
-      name: nameController.text,
+      id: _editingServiceId ??= const Uuid().v4(),
+      name: name,
       icon: 'assets/brand_icons.json',
       tts: tts,
       stt: stt,
@@ -292,6 +326,12 @@ class EditSpeechServiceController {
   }
 
   void dispose() {
+    _autoSaveCleanup?.call();
+    nameController.removeListener(_debouncedSave);
+    customVoiceController.removeListener(_debouncedSave);
+    modelNameController.removeListener(_debouncedSave);
+    sttModelNameController.removeListener(_debouncedSave);
+
     nameController.dispose();
     customVoiceController.dispose();
     modelNameController.dispose();

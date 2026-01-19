@@ -15,34 +15,11 @@ class HttpConfigSection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Watch((context) {
-      final responsesApi = controller.responsesApi.value;
-      final supportStream = controller.supportStream.value;
       final headers = controller.headers.value;
 
       return ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // API Options
-          _buildSectionTitle(context, tl('API Options')),
-          const SizedBox(height: 8),
-          SwitchTile(
-            title: tl('Responses API'),
-            subtitle: tl('Use OpenAI Responses API format'),
-            value: responsesApi,
-            onChanged: (v) => controller.responsesApi.value = v,
-            icon: Icons.api,
-          ),
-          const SizedBox(height: 8),
-          SwitchTile(
-            title: tl('Stream Support'),
-            subtitle: tl('Enable streaming responses'),
-            value: supportStream,
-            onChanged: (v) => controller.supportStream.value = v,
-            icon: Icons.stream,
-          ),
-
-          const SizedBox(height: 24),
-
           // Custom URLs
           _buildSectionTitle(context, tl('Custom URLs')),
           const SizedBox(height: 8),
@@ -51,110 +28,6 @@ class HttpConfigSection extends StatelessWidget {
             label: tl('List Models URL'),
             hint: tl('e.g., /models or full URL'),
             prefixIcon: Icons.list,
-          ),
-
-          const SizedBox(height: 24),
-
-          // HTTP Proxy
-          _buildSectionTitle(context, tl('HTTP Proxy')),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: CustomTextField(
-                  signal: controller.httpProxyHost,
-                  label: tl('Host'),
-                  hint: tl('e.g., proxy.example.com'),
-                  prefixIcon: Icons.dns,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.httpProxyPort,
-                  label: tl('Port'),
-                  hint: '8080',
-                  keyboardType: TextInputType.number,
-                  prefixIcon: Icons.numbers,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.httpProxyUsername,
-                  label: tl('Username'),
-                  hint: tl('Optional'),
-                  prefixIcon: Icons.person,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.httpProxyPassword,
-                  label: tl('Password'),
-                  hint: tl('Optional'),
-                  prefixIcon: Icons.lock,
-                  obscureText: true,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // SOCKS Proxy
-          _buildSectionTitle(context, tl('SOCKS Proxy')),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: CustomTextField(
-                  signal: controller.socksProxyHost,
-                  label: tl('Host'),
-                  hint: tl('e.g., socks.example.com'),
-                  prefixIcon: Icons.dns,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.socksProxyPort,
-                  label: tl('Port'),
-                  hint: '1080',
-                  keyboardType: TextInputType.number,
-                  prefixIcon: Icons.numbers,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.socksProxyUsername,
-                  label: tl('Username'),
-                  hint: tl('Optional'),
-                  prefixIcon: Icons.person,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  signal: controller.socksProxyPassword,
-                  label: tl('Password'),
-                  hint: tl('Optional'),
-                  prefixIcon: Icons.lock,
-                  obscureText: true,
-                ),
-              ),
-            ],
           ),
 
           const SizedBox(height: 24),
@@ -213,7 +86,8 @@ class HttpConfigSection extends StatelessWidget {
                     Expanded(
                       child: CustomTextField(
                         initialValue: header.key,
-                        onChanged: (v) => controller.updateHeader(index, key: v),
+                        onChanged: (v) =>
+                            controller.updateHeader(index, key: v),
                         label: tl('Key'),
                         hint: tl('e.g., X-Custom-Header'),
                       ),
@@ -222,7 +96,8 @@ class HttpConfigSection extends StatelessWidget {
                     Expanded(
                       child: CustomTextField(
                         initialValue: header.value,
-                        onChanged: (v) => controller.updateHeader(index, value: v),
+                        onChanged: (v) =>
+                            controller.updateHeader(index, value: v),
                         label: tl('Value'),
                         hint: tl('Header value'),
                       ),

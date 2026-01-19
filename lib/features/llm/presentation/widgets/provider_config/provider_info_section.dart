@@ -18,6 +18,7 @@ class ProviderInfoSection extends StatelessWidget {
     return Watch((context) {
       final selectedType = controller.selectedType.value;
       final responsesApi = controller.responsesApi.value;
+      final supportStream = controller.supportStream.value;
 
       return ListView(
         padding: const EdgeInsets.all(16),
@@ -48,18 +49,22 @@ class ProviderInfoSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           CustomTextField(signal: controller.baseUrl, label: 'Base URL'),
-          const SizedBox(height: 8),
-          if (selectedType == ProviderType.openai)
-            CheckboxListTile(
-              title: Text(tl('Responses API')),
-              value: responsesApi,
-              onChanged: (value) {
-                if (value != null) {
-                  controller.responsesApi.value = value;
-                }
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
+          const SizedBox(height: 16),
+          SwitchTile(
+            title: tl('Responses API'),
+            subtitle: tl('Use OpenAI Responses API format'),
+            value: responsesApi,
+            onChanged: (v) => controller.responsesApi.value = v,
+            icon: Icons.api,
+          ),
+          const SizedBox(height: 12),
+          SwitchTile(
+            title: tl('Stream Support'),
+            subtitle: tl('Enable streaming responses'),
+            value: supportStream,
+            onChanged: (v) => controller.supportStream.value = v,
+            icon: Icons.stream,
+          ),
         ],
       );
     });
@@ -76,5 +81,45 @@ class ProviderInfoSection extends StatelessWidget {
       case ProviderType.ollama:
         return 'ollama';
     }
+  }
+}
+
+class SwitchTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final IconData icon;
+
+  const SwitchTile({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onChanged,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
+      ),
+      child: SwitchListTile(
+        title: Text(title),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+        ),
+        value: value,
+        onChanged: onChanged,
+        secondary: Icon(icon, color: colorScheme.primary),
+      ),
+    );
   }
 }

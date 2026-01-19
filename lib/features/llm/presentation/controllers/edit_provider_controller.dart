@@ -42,11 +42,13 @@ class EditProviderController {
   final availableModels = signal<List<LlmModel>>([]);
   final selectedModels = signal<List<LlmModel>>([]);
   final isFetchingModels = signal<bool>(false);
+  EffectCleanup? _autoSaveCleanup;
 
   void initialize({
     LlmProviderInfo? providerInfo,
     LlmProviderModels? providerModels,
   }) {
+    _autoSaveCleanup?.call();
     if (providerInfo != null) {
       id.value = providerInfo.id;
       name.value = providerInfo.name;
@@ -90,7 +92,122 @@ class EditProviderController {
             .toList();
       }
     } else {
-      id.value = Uuid().v4();
+      id.value = const Uuid().v4();
+    }
+
+    // Start auto-saving after initialization
+    _setupAutoSave();
+  }
+
+  void _setupAutoSave() {
+    _autoSaveCleanup = effect(() {
+      // Trigger on any of these changes
+      name.value;
+      apiKey.value;
+      baseUrl.value;
+      selectedType.value;
+      selectedAuthMethod.value;
+      responsesApi.value;
+      supportStream.value;
+      customListModelsUrl.value;
+      httpProxyHost.value;
+      httpProxyPort.value;
+      httpProxyUsername.value;
+      httpProxyPassword.value;
+      socksProxyHost.value;
+      socksProxyPort.value;
+      socksProxyUsername.value;
+      socksProxyPassword.value;
+      headers.value;
+      selectedModels.value;
+
+      // We use a small delay to avoid excessive writes while typing
+      saveProvider();
+    });
+  }
+
+  Future<bool> saveProvider([BuildContext? context]) async {
+    final providerName = name.value.trim();
+    if (providerName.isEmpty) return false;
+
+    final providerId = id.value;
+
+    // Build headers map
+    final headerMap = <String, dynamic>{};
+    for (var h in headers.value) {
+      if (h.key.isNotEmpty) {
+        headerMap[h.key] = h.value;
+      }
+    }
+
+    // Build HTTP Proxy map
+    final httpProxy = <String, dynamic>{};
+    if (httpProxyHost.value.trim().isNotEmpty) {
+      httpProxy['host'] = httpProxyHost.value.trim();
+      httpProxy['port'] = int.tryParse(httpProxyPort.value.trim()) ?? 0;
+      if (httpProxyUsername.value.trim().isNotEmpty) {
+        httpProxy['username'] = httpProxyUsername.value.trim();
+      }
+      if (httpProxyPassword.value.trim().isNotEmpty) {
+        httpProxy['password'] = httpProxyPassword.value.trim();
+      }
+    }
+
+    // Build SOCKS Proxy map
+    final socksProxy = <String, dynamic>{};
+    if (socksProxyHost.value.trim().isNotEmpty) {
+      socksProxy['host'] = socksProxyHost.value.trim();
+      socksProxy['port'] = int.tryParse(socksProxyPort.value.trim()) ?? 0;
+      if (socksProxyUsername.value.trim().isNotEmpty) {
+        socksProxy['username'] = socksProxyUsername.value.trim();
+      }
+      if (socksProxyPassword.value.trim().isNotEmpty) {
+        socksProxy['password'] = socksProxyPassword.value.trim();
+      }
+    }
+
+    final providerInfo = LlmProviderInfo(
+      id: providerId,
+      name: providerName,
+      type: selectedType.value,
+      auth: Authorization(
+        method: selectedAuthMethod.value,
+        key: apiKey.value.trim().isEmpty ? null : apiKey.value.trim(),
+      ),
+      baseUrl: baseUrl.value.trim(),
+      config: Configuration(
+        headers: headerMap,
+        httpProxy: httpProxy,
+        socksProxy: socksProxy,
+        responsesApi: responsesApi.value,
+        supportStream: supportStream.value,
+        customListModelsUrl: customListModelsUrl.value.trim().isEmpty
+            ? null
+            : customListModelsUrl.value.trim(),
+      ),
+    );
+
+    final providerModels = LlmProviderModels(
+      id: providerId,
+      models: selectedModels.value,
+    );
+
+    try {
+      final infoStorage = await LlmProviderInfoStorage.init();
+      final modelsStorage = await LlmProviderModelsStorage.init();
+
+      await infoStorage.saveItem(providerInfo);
+      await modelsStorage.saveItem(providerModels);
+
+      if (context != null && context.mounted) {
+        context.showSuccessSnackBar(tl('Provider saved successfully'));
+      }
+      return true;
+    } catch (e) {
+      if (context != null && context.mounted) {
+        context.showErrorSnackBar(tl('Failed to save provider: $e'));
+      }
+      return false;
     }
   }
 
@@ -263,98 +380,8 @@ class EditProviderController {
     }
   }
 
-  Future<bool> saveProvider(
-    BuildContext context, {
-    LlmProviderInfo? existingProvider,
-  }) async {
-    final providerName = name.value.trim();
-    if (providerName.isEmpty) {
-      context.showErrorSnackBar(tl('Name is required'));
-      return false;
-    }
-
-    final id = existingProvider?.id ?? Uuid().v4();
-
-    // Build headers map
-    final headerMap = <String, dynamic>{};
-    for (var h in headers.value) {
-      if (h.key.isNotEmpty) {
-        headerMap[h.key] = h.value;
-      }
-    }
-
-    // Build HTTP Proxy map
-    final httpProxy = <String, dynamic>{};
-    if (httpProxyHost.value.trim().isNotEmpty) {
-      httpProxy['host'] = httpProxyHost.value.trim();
-      httpProxy['port'] = int.tryParse(httpProxyPort.value.trim()) ?? 0;
-      if (httpProxyUsername.value.trim().isNotEmpty) {
-        httpProxy['username'] = httpProxyUsername.value.trim();
-      }
-      if (httpProxyPassword.value.trim().isNotEmpty) {
-        httpProxy['password'] = httpProxyPassword.value.trim();
-      }
-    }
-
-    // Build SOCKS Proxy map
-    final socksProxy = <String, dynamic>{};
-    if (socksProxyHost.value.trim().isNotEmpty) {
-      socksProxy['host'] = socksProxyHost.value.trim();
-      socksProxy['port'] = int.tryParse(socksProxyPort.value.trim()) ?? 0;
-      if (socksProxyUsername.value.trim().isNotEmpty) {
-        socksProxy['username'] = socksProxyUsername.value.trim();
-      }
-      if (socksProxyPassword.value.trim().isNotEmpty) {
-        socksProxy['password'] = socksProxyPassword.value.trim();
-      }
-    }
-
-    final providerInfo = LlmProviderInfo(
-      id: id,
-      name: providerName,
-      type: selectedType.value,
-      auth: Authorization(
-        method: selectedAuthMethod.value,
-        key: apiKey.value.trim().isEmpty ? null : apiKey.value.trim(),
-      ),
-      baseUrl: baseUrl.value.trim(),
-      config: Configuration(
-        headers: headerMap,
-        httpProxy: httpProxy,
-        socksProxy: socksProxy,
-        responsesApi: responsesApi.value,
-        supportStream: supportStream.value,
-        customListModelsUrl: customListModelsUrl.value.trim().isEmpty
-            ? null
-            : customListModelsUrl.value.trim(),
-      ),
-    );
-
-    final providerModels = LlmProviderModels(
-      id: id,
-      models: selectedModels.value,
-    );
-
-    try {
-      final infoStorage = await LlmProviderInfoStorage.init();
-      final modelsStorage = await LlmProviderModelsStorage.init();
-
-      await infoStorage.saveItem(providerInfo);
-      await modelsStorage.saveItem(providerModels);
-
-      if (context.mounted) {
-        context.showSuccessSnackBar(tl('Provider saved successfully'));
-      }
-      return true;
-    } catch (e) {
-      if (context.mounted) {
-        context.showErrorSnackBar(tl('Failed to save provider: $e'));
-      }
-      return false;
-    }
-  }
-
   void dispose() {
+    _autoSaveCleanup?.call();
     name.dispose();
     apiKey.dispose();
     baseUrl.dispose();

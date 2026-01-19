@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/core.dart';
-import 'package:multigateway/shared/widgets/app_snackbar.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,6 +26,8 @@ class EditProfileController {
   final thinkingLevel = signal<ThinkingLevel>(ThinkingLevel.auto);
   final availableMcpItems = signal<List<McpInfo>>([]);
   final selectedMcpItemIds = signal<List<String>>([]);
+  EffectCleanup? _autoSaveCleanup;
+  String? _editingProfileId;
 
   // Initialize with optional existing profile
   void initialize(ChatProfile? profile) {
@@ -58,10 +58,42 @@ class EditProfileController {
         customThinkingTokensValue.value = profile.config.customThinkingTokens!;
       }
 
-      thinkingLevel.value = profile.config.thinkingLevel;
       selectedMcpItemIds.value = List.from(profile.activeMcpName);
+      _editingProfileId = profile.id;
     }
+
+    _setupAutoSave();
+
+    nameController.addListener(_debouncedSave);
+    promptController.addListener(_debouncedSave);
+    avatarController.addListener(_debouncedSave);
+
     _loadMcpClients();
+  }
+
+  void _setupAutoSave() {
+    _autoSaveCleanup = effect(() {
+      enableStream.value;
+      isTopPEnabled.value;
+      topPValue.value;
+      isTopKEnabled.value;
+      topKValue.value;
+      isTemperatureEnabled.value;
+      temperatureValue.value;
+      contextWindowValue.value;
+      conversationLengthValue.value;
+      maxTokensValue.value;
+      isCustomThinkingTokensEnabled.value;
+      customThinkingTokensValue.value;
+      thinkingLevel.value;
+      selectedMcpItemIds.value;
+
+      _debouncedSave();
+    });
+  }
+
+  void _debouncedSave() {
+    saveAgent();
   }
 
   Future<void> _loadMcpClients() async {
@@ -69,19 +101,17 @@ class EditProfileController {
     availableMcpItems.value = mcpRepo.getItems().cast<McpInfo>();
   }
 
-  Future<void> saveAgent(
+  Future<void> saveAgent([
     ChatProfile? existingProfile,
-    BuildContext context,
-  ) async {
-    if (nameController.text.isEmpty) {
-      context.showInfoSnackBar(tl('AI Profile Name'));
-      return;
-    }
+    BuildContext? context,
+  ]) async {
+    final name = nameController.text.trim();
+    if (name.isEmpty) return;
 
     final repository = await ChatProfileStorage.init();
     final newProfile = ChatProfile(
-      id: existingProfile?.id ?? const Uuid().v4(),
-      name: nameController.text,
+      id: _editingProfileId ??= const Uuid().v4(),
+      name: name,
       icon: avatarController.text.isNotEmpty ? avatarController.text : null,
       config: LlmChatConfig(
         systemPrompt: promptController.text,
@@ -172,6 +202,11 @@ class EditProfileController {
   }
 
   void dispose() {
+    _autoSaveCleanup?.call();
+    nameController.removeListener(_debouncedSave);
+    promptController.removeListener(_debouncedSave);
+    avatarController.removeListener(_debouncedSave);
+
     nameController.dispose();
     promptController.dispose();
     avatarController.dispose();

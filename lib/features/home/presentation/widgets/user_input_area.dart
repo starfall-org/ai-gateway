@@ -216,58 +216,41 @@ class _UserInputAreaState extends State<UserInputArea> {
                       ),
                     ],
                   ),
-                  // Right side: Nút chọn model kéo dài với tên model
+                  // Right side: Nút chọn model dạng outlined, không nền đặc
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
-                      child: ElevatedButton(
+                      child: OutlinedButton(
                         onPressed: () {
                           _unfocusTextField();
                           widget.onOpenModelPicker();
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 8,
+                            vertical: 10,
                           ),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: Colors.transparent,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.selectedLlmModel != null) ...[
-                              if (widget.selectedLlmModel!.icon != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: ThemeAwareImage(
-                                    child: Image.asset(
-                                      widget.selectedLlmModel!.icon!,
-                                      width: 20,
-                                      height: 20,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(Icons.token, size: 20),
-                                    ),
-                                  ),
-                                )
-                              else
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: Icon(Icons.token, size: 20),
-                                ),
-                              Flexible(
-                                child: Text(
-                                  widget.selectedLlmModel!.displayName,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
+                            _ModelIcon(model: widget.selectedLlmModel),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                widget.selectedLlmModel?.displayName ??
+                                    tl('Select Model'),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                            ] else ...[
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.token, size: 20),
-                              ),
-                              Text(tl('Select Model')),
-                            ],
+                            ),
                           ],
                         ),
                       ),
@@ -280,5 +263,26 @@ class _UserInputAreaState extends State<UserInputArea> {
         ),
       ),
     );
+  }
+}
+
+class _ModelIcon extends StatelessWidget {
+  final LlmModel? model;
+  const _ModelIcon({this.model});
+
+  @override
+  Widget build(BuildContext context) {
+    if (model?.icon != null && model!.icon!.isNotEmpty) {
+      return ThemeAwareImage(
+        child: Image.asset(
+          model!.icon!,
+          width: 20,
+          height: 20,
+          errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.token, size: 20),
+        ),
+      );
+    }
+    return const Icon(Icons.token, size: 20);
   }
 }

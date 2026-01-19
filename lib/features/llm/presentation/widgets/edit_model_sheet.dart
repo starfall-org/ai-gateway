@@ -20,7 +20,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
 
   late TextEditingController _idController;
   late TextEditingController _displayNameController;
-  late TextEditingController _providerNameController;
   late TextEditingController _iconController;
   Capabilities _inputCapabilities = Capabilities();
   Capabilities _outputCapabilities = Capabilities();
@@ -30,7 +29,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     super.initState();
     _idController = TextEditingController();
     _displayNameController = TextEditingController();
-    _providerNameController = TextEditingController();
     _iconController = TextEditingController();
     _prefill();
   }
@@ -40,7 +38,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
     if (model == null) return;
     _idController.text = model.id;
     _displayNameController.text = model.displayName;
-    _providerNameController.text = model.providerId;
     _iconController.text = model.icon ?? '';
     _inputCapabilities = model.inputCapabilities;
     _outputCapabilities = model.outputCapabilities;
@@ -50,7 +47,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
   void dispose() {
     _idController.dispose();
     _displayNameController.dispose();
-    _providerNameController.dispose();
     _iconController.dispose();
     super.dispose();
   }
@@ -73,7 +69,7 @@ class _EditModelSheetState extends State<EditModelSheet> {
       final model = LlmModel(
         id: _idController.text.trim(),
         displayName: _displayNameController.text.trim(),
-        providerId: _providerNameController.text.trim(),
+        providerId: widget.controller.id.value,
         inputCapabilities: _inputCapabilities,
         outputCapabilities: _outputCapabilities,
         modelInfo: {},
@@ -136,11 +132,6 @@ class _EditModelSheetState extends State<EditModelSheet> {
                   label: tl('Display Name'),
                   validator: (v) =>
                       (v == null || v.trim().isEmpty) ? tl('Required') : null,
-                ),
-                const SizedBox(height: 12),
-                CustomTextField(
-                  controller: _providerNameController,
-                  label: tl('Provider Name (optional)'),
                 ),
                 const SizedBox(height: 12),
                 CustomTextField(
