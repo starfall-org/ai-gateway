@@ -137,13 +137,9 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
                     );
 
                     if (allAdded) {
-                      for (final model in filteredModels) {
-                        widget.controller.removeModelDirectly(model);
-                      }
+                      widget.controller.removeAllModelsDirectly(filteredModels);
                     } else {
-                      for (final model in filteredModels) {
-                        widget.controller.addModelDirectly(model);
-                      }
+                      widget.controller.addAllModelsDirectly(filteredModels);
                     }
                   },
                   icon: Icon(
@@ -156,8 +152,7 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
                   ),
                   tooltip:
                       filteredModels.every(
-                        (model) =>
-                            selectedModels.any((m) => m.id == model.id),
+                        (model) => selectedModels.any((m) => m.id == model.id),
                       )
                       ? tl('Remove All')
                       : tl('Add All'),
@@ -198,11 +193,7 @@ class _FetchModelsSheetState extends State<FetchModelsSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 16,
-                  color: colorScheme.primary,
-                ),
+                Icon(Icons.info_outline, size: 16, color: colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '${availableModels.length} ${tl('models available')}',

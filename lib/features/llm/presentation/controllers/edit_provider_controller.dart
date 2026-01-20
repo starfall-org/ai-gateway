@@ -277,8 +277,29 @@ class EditProviderController {
     selectedModels.value = list;
   }
 
+  void addAllModelsDirectly(List<LlmModel> models) {
+    final list = List.of(selectedModels.value);
+    bool changed = false;
+    for (final model in models) {
+      if (!list.any((m) => m.id == model.id)) {
+        list.add(model);
+        changed = true;
+      }
+    }
+    if (changed) {
+      selectedModels.value = list;
+    }
+  }
+
   void removeModelDirectly(LlmModel model) {
     removeModel(model.id);
+  }
+
+  void removeAllModelsDirectly(List<LlmModel> models) {
+    final idsToRemove = models.map((m) => m.id).toSet();
+    final list = List.of(selectedModels.value)
+      ..removeWhere((m) => idsToRemove.contains(m.id));
+    selectedModels.value = list;
   }
 
   void removeModel(String modelId) {
