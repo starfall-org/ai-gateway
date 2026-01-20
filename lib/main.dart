@@ -8,6 +8,12 @@ import 'package:multigateway/app/storage/translation_cache_storage.dart';
 import 'package:multigateway/shared/utils/icon_builder.dart';
 import 'package:path_provider/path_provider.dart';
 
+// Import TypeAdapters
+import 'package:multigateway/core/chat/models/conversation_adapter.dart';
+import 'package:multigateway/core/profile/models/chat_profile_adapter.dart';
+import 'package:multigateway/core/llm/models/llm_provider_info_adapter.dart';
+import 'package:multigateway/core/mcp/models/mcp_adapter.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -77,4 +83,63 @@ Future<void> _initHiveWithMigration() async {
 
   // Initialize Hive with the new persistent path
   await Hive.initFlutter(newHivePath);
+
+  // Register TypeAdapters for better performance
+  _registerTypeAdapters();
+}
+
+/// Register all TypeAdapters for Hive storage optimization
+void _registerTypeAdapters() {
+  // Conversation adapters
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(ConversationAdapter());
+  }
+
+  // Chat profile adapters
+  if (!Hive.isAdapterRegistered(2)) {
+    Hive.registerAdapter(ThinkingLevelAdapter());
+  }
+  if (!Hive.isAdapterRegistered(3)) {
+    Hive.registerAdapter(LlmChatConfigAdapter());
+  }
+  if (!Hive.isAdapterRegistered(4)) {
+    Hive.registerAdapter(ActiveMcpAdapter());
+  }
+  if (!Hive.isAdapterRegistered(5)) {
+    Hive.registerAdapter(ModelToolAdapter());
+  }
+  if (!Hive.isAdapterRegistered(6)) {
+    Hive.registerAdapter(ChatProfileAdapter());
+  }
+
+  // LLM provider adapters
+  if (!Hive.isAdapterRegistered(7)) {
+    Hive.registerAdapter(ProviderTypeAdapter());
+  }
+  if (!Hive.isAdapterRegistered(8)) {
+    Hive.registerAdapter(AuthMethodAdapter());
+  }
+  if (!Hive.isAdapterRegistered(9)) {
+    Hive.registerAdapter(AuthorizationAdapter());
+  }
+  if (!Hive.isAdapterRegistered(10)) {
+    Hive.registerAdapter(ConfigurationAdapter());
+  }
+  if (!Hive.isAdapterRegistered(11)) {
+    Hive.registerAdapter(LlmProviderInfoAdapter());
+  }
+
+  // MCP adapters
+  if (!Hive.isAdapterRegistered(12)) {
+    Hive.registerAdapter(McpProtocolAdapter());
+  }
+  if (!Hive.isAdapterRegistered(13)) {
+    Hive.registerAdapter(McpInfoAdapter());
+  }
+  if (!Hive.isAdapterRegistered(14)) {
+    Hive.registerAdapter(StdioConfigAdapter());
+  }
+  if (!Hive.isAdapterRegistered(15)) {
+    Hive.registerAdapter(McpToolsListAdapter());
+  }
 }

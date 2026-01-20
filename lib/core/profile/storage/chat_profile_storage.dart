@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:multigateway/core/profile/models/chat_profile.dart';
-import 'package:multigateway/core/storage/base.dart';
+import 'package:multigateway/core/storage/typeadapter_base.dart';
 import 'package:uuid/uuid.dart';
 
-class ChatProfileStorage extends HiveBaseStorage<ChatProfile> {
+/// Optimized ChatProfileStorage using TypeAdapter for better performance
+class ChatProfileStorage extends HiveTypeAdapterStorage<ChatProfile> {
   static const String _prefix = 'chat_profile';
   static const String _selectedKey = '__selected_id__';
 
@@ -32,16 +33,6 @@ class ChatProfileStorage extends HiveBaseStorage<ChatProfile> {
 
   @override
   String getItemId(ChatProfile item) => item.id;
-
-  @override
-  Map<String, dynamic> serializeToFields(ChatProfile item) {
-    return item.toJson();
-  }
-
-  @override
-  ChatProfile deserializeFromFields(String id, Map<String, dynamic> fields) {
-    return ChatProfile.fromJson(fields);
-  }
 
   @override
   List<ChatProfile> getItems() {
@@ -97,11 +88,10 @@ class ChatProfileStorage extends HiveBaseStorage<ChatProfile> {
       final allIds = getItemIds();
 
       if (allIds.isEmpty) {
-        final boxName = 'storage_$_prefix';
-        final box = Hive.isBoxOpen(boxName)
-            ? Hive.box(boxName)
-            : await Hive.openBox(boxName);
+        final box = await openMetaBox();
         await box.delete(_selectedKey);
+        // Let listeners know selection disappeared
+        changeSignal.value++;
       } else {
         // Select the first available
         await setSelectedProfileId(allIds.first);
@@ -120,17 +110,15 @@ class ChatProfileStorage extends HiveBaseStorage<ChatProfile> {
   }
 
   String? getSelectedProfileId() {
-    final boxName = 'storage_$_prefix';
-    if (!Hive.isBoxOpen(boxName)) return null;
-    final box = Hive.box(boxName);
+    if (!Hive.isBoxOpen(metaBoxName)) return null;
+    final box = Hive.box(metaBoxName);
     return box.get(_selectedKey) as String?;
   }
 
   Future<void> setSelectedProfileId(String id) async {
-    final boxName = 'storage_$_prefix';
-    final box = Hive.isBoxOpen(boxName)
-        ? Hive.box(boxName)
-        : await Hive.openBox(boxName);
+    final box = Hive.isBoxOpen(metaBoxName)
+        ? Hive.box(metaBoxName)
+        : await openMetaBox();
     await box.put(_selectedKey, id);
     // Notify listeners so selected profile updates propagate live
     changeSignal.value++;

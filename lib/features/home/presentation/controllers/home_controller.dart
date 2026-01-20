@@ -169,6 +169,8 @@ class ChatController {
     }
   }
 
+  Future<void> stopGeneration() => message.stopGeneration();
+
   String getTranscript() {
     return session.getTranscript(
       profileName: profile.selectedProfile.value?.name,

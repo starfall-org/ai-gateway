@@ -55,6 +55,7 @@ class ChatBody extends StatelessWidget {
             onPickFromGallery: () => ctrl.pickFromGallery(context),
             onRemoveAttachment: ctrl.removeAttachmentAt,
             isGenerating: isGenerating,
+            onStopGeneration: () => ctrl.stopGeneration(),
             onOpenModelPicker: () => _openModelPicker(context, ctrl),
             onOpenMenu: () => QuickActionsSheet.show(context, ctrl),
             selectedLlmModel: ctrl.model.selectedLlmModel,

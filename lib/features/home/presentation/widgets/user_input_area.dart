@@ -20,6 +20,7 @@ class UserInputArea extends StatefulWidget {
 
   // Trạng thái sinh câu trả lời để disable input/nút gửi
   final bool isGenerating;
+  final VoidCallback? onStopGeneration;
 
   // Nút mở drawer menu
   final VoidCallback? onOpenMenu;
@@ -35,6 +36,7 @@ class UserInputArea extends StatefulWidget {
     required this.onOpenModelPicker,
     this.selectedLlmModel,
     this.isGenerating = false,
+    this.onStopGeneration,
     this.onOpenMenu,
   });
 
@@ -80,6 +82,8 @@ class _UserInputAreaState extends State<UserInputArea> {
         !widget.isGenerating &&
         ((widget.controller.text.trim().isNotEmpty) ||
             widget.attachments.isNotEmpty);
+    final showStop = widget.isGenerating;
+    final stopEnabled = widget.onStopGeneration != null;
 
     return Container(
       width: double.infinity,
@@ -112,7 +116,6 @@ class _UserInputAreaState extends State<UserInputArea> {
                 },
                 child: TextField(
                   textCapitalization: TextCapitalization.sentences,
-                  enabled: !widget.isGenerating,
                   controller: widget.controller,
                   focusNode: _focusNode,
                   minLines: 1,
@@ -134,33 +137,42 @@ class _UserInputAreaState extends State<UserInputArea> {
                     // Đưa nút gửi lên đây thay cho nút ẩn bàn phím
                     suffixIcon: GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: canSend
-                          ? () {
-                              widget.onSubmitted(widget.controller.text);
-                              _unfocusTextField();
-                            }
-                          : null,
+                      onTap: showStop
+                          ? (stopEnabled ? widget.onStopGeneration : null)
+                          : canSend
+                              ? () {
+                                  widget.onSubmitted(widget.controller.text);
+                                  _unfocusTextField();
+                                }
+                              : null,
                       child: Container(
                         margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: canSend
-                              ? Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 0.1)
-                              : Theme.of(
-                                  context,
-                                ).colorScheme.surface.withValues(alpha: 0.5),
+                          color: showStop
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .error
+                                  .withValues(alpha: 0.12)
+                              : canSend
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withValues(alpha: 0.1)
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surface.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Icon(
-                            Icons.arrow_upward,
-                            color: canSend
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(
-                                    context,
-                                  ).iconTheme.color?.withValues(alpha: 0.5),
+                            showStop ? Icons.stop : Icons.arrow_upward,
+                            color: showStop
+                                ? Theme.of(context).colorScheme.error
+                                : canSend
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).iconTheme.color?.withValues(alpha: 0.5),
                             size: 20,
                           ),
                         ),
