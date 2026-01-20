@@ -1,27 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:signals/signals.dart';
 
-/// Hive-backed base repository to replace SharedPreferences storage for core stores.
-/// Keeps the existing API (class name and methods) so current repositories continue to work
-/// without refactors. Under the hood, each repository uses a dedicated Hive Box keyed by its prefix.
+/// Optimized Hive-backed base repository using TypeAdapters for better performance.
+/// This replaces JSON serialization with direct binary serialization through TypeAdapters.
 ///
 /// Storage model:
-/// - Box name: repo_{prefix}
+/// - Box name: typeadapter_{prefix}
 /// - Record key: itemId (from getItemId)
-
-// - Record value: Map<String, dynamic> returned by serializeToFields(item)
+/// - Record value: Direct object stored using registered TypeAdapter
 ///
-/// Notes:
-/// - Box opening is async; we eagerly open in the constructor (fire-and-forget).
-/// - Synchronous getters (getItem/getItems) will return null/[] if the box is not yet open.
-///   As soon as the box opens (or after first write), streams and subsequent calls will see data.
-/// - No TypeAdapters required because we store plain Map/List primitives.
-abstract class HiveBaseStorage<T> {
-  HiveBaseStorage() {
+/// Benefits over HiveBaseStorage:
+/// - Faster serialization/deserialization through binary format
+/// - Smaller storage footprint
+/// - Type-safe operations
+/// - Better performance for complex nested objects
+abstract class HiveTypeAdapterStorage<T> {
+  HiveTypeAdapterStorage() {
     // Eagerly initialize Hive box (non-blocking)
     _initBox();
   }
@@ -29,8 +26,6 @@ abstract class HiveBaseStorage<T> {
   // Required by repositories
   String get prefix;
   String getItemId(T item);
-  Map<String, dynamic> serializeToFields(T item);
-  T deserializeFromFields(String id, Map<String, dynamic> fields);
 
   // Reactive signal for change notifications
   final changeSignal = signal<int>(0);
@@ -38,82 +33,82 @@ abstract class HiveBaseStorage<T> {
   // Internal
   static bool _hiveInitialized = false;
 
-  String get _boxName => 'storage_$prefix';
+  String get _boxName => 'typeadapter_$prefix';
+  String get _metaBoxName => '${_boxName}__meta';
 
   Future<void> _ensureHive() async {
     if (!_hiveInitialized) {
-      // Hive is initialized in main.dart
-      // We avoid calling Hive.initFlutter() again to prevent path conflicts
+      // Hive is initialized in main.dart with TypeAdapters registered
       _hiveInitialized = true;
     }
   }
 
-  Future<Box> _openBox() async {
+  Future<Box> _openMetaBox() async {
+    await _ensureHive();
+    if (Hive.isBoxOpen(_metaBoxName)) {
+      return Hive.box(_metaBoxName);
+    }
+    return await Hive.openBox(_metaBoxName);
+  }
+
+  Future<Box<T>> _openBox() async {
     await _ensureHive();
     if (Hive.isBoxOpen(_boxName)) {
-      return Hive.box(_boxName);
+      return Hive.box<T>(_boxName);
     }
-    return await Hive.openBox(_boxName);
+    return await Hive.openBox<T>(_boxName);
   }
 
   void _initBox() {
     // Fire-and-forget open to minimize latency for first sync reads
     unawaited(_openBox());
+    unawaited(_openMetaBox());
   }
+
+  @protected
+  Future<Box> openMetaBox() => _openMetaBox();
+
+  @protected
+  String get metaBoxName => _metaBoxName;
 
   @protected
   List<String> getItemIds() {
     if (!Hive.isBoxOpen(_boxName)) return <String>[];
-    final box = Hive.box(_boxName);
+    final box = Hive.box<T>(_boxName);
     return box.keys
         .map((k) => k.toString())
         .where((k) => !k.startsWith('__'))
         .toList();
   }
 
-  // CRUD
+  // CRUD Operations
 
+  /// Save an item using TypeAdapter for optimal performance
   Future<void> saveItem(T item) async {
     final id = getItemId(item);
-    final fields = serializeToFields(item);
-
     final box = await _openBox();
-    await box.put(id, fields);
+    await box.put(id, item);
 
     // Notify listeners
     changeSignal.value++;
   }
 
+  /// Get an item by ID - direct deserialization through TypeAdapter
   T? getItem(String id) {
     if (!Hive.isBoxOpen(_boxName)) {
-      // Try to wait briefly for box to open if initialization is in progress
       return null;
     }
-    final box = Hive.box(_boxName);
-    final raw = box.get(id);
-    if (raw == null) return null;
-
-    try {
-      // Ensure map is a Map<String, dynamic>
-      final map = raw is String
-          ? (json.decode(raw) as Map<String, dynamic>)
-          : (json.decode(json.encode(raw)) as Map<String, dynamic>);
-
-      return deserializeFromFields(id, map);
-    } catch (_) {
-      return null;
-    }
+    final box = Hive.box<T>(_boxName);
+    return box.get(id);
   }
 
   /// Get items synchronously. Returns empty list if box not ready.
   /// For reactive UI, use getItemsAsync() or itemsStream instead.
   List<T> getItems() {
     if (!Hive.isBoxOpen(_boxName)) {
-      // Box not open yet, return empty list
-      // Callers should use await getItemsAsync() or itemsStream for reliable data
       return <T>[];
     }
-    final box = Hive.box(_boxName);
+    final box = Hive.box<T>(_boxName);
     return _getItemsFromBox(box);
   }
 
@@ -123,23 +118,16 @@ abstract class HiveBaseStorage<T> {
     return _getItemsFromBox(box);
   }
 
-  List<T> _getItemsFromBox(Box box) {
+  List<T> _getItemsFromBox(Box<T> box) {
     final items = <T>[];
 
     for (final key in box.keys) {
       final id = key.toString();
       if (id.startsWith('__')) continue;
-      final raw = box.get(id);
-      if (raw == null) continue;
-      try {
-        final map = raw is String
-            ? (json.decode(raw) as Map<String, dynamic>)
-            : (json.decode(json.encode(raw)) as Map<String, dynamic>);
-        final item = deserializeFromFields(id, map);
+      
+      final item = box.get(id);
+      if (item != null) {
         items.add(item);
-      } catch (e, stack) {
-        debugPrint('Error deserializing item $id in $_boxName: $e\n$stack');
-        // skip malformed entry
       }
     }
 
@@ -163,17 +151,16 @@ abstract class HiveBaseStorage<T> {
   }
 
   Future<void> saveOrder(List<String> ids) async {
-    final box = await _openBox();
-    await box.put('__order__', ids);
+    final metaBox = await _openMetaBox();
+    await metaBox.put('__order__', ids);
     changeSignal.value++;
   }
 
   List<String> getOrder() {
-    if (!Hive.isBoxOpen(_boxName)) {
-      // Try to get existing box synchronously
+    if (!Hive.isBoxOpen(_metaBoxName)) {
       try {
-        final box = Hive.box(_boxName);
-        final raw = box.get('__order__');
+        final metaBox = Hive.box(_metaBoxName);
+        final raw = metaBox.get('__order__');
         if (raw is List) {
           return raw.cast<String>();
         }
@@ -182,8 +169,8 @@ abstract class HiveBaseStorage<T> {
       }
       return <String>[];
     }
-    final box = Hive.box(_boxName);
-    final raw = box.get('__order__');
+    final metaBox = Hive.box(_metaBoxName);
+    final raw = metaBox.get('__order__');
     if (raw is List) {
       return raw.cast<String>();
     }
@@ -199,6 +186,8 @@ abstract class HiveBaseStorage<T> {
   Future<void> clear() async {
     final box = await _openBox();
     await box.clear();
+    final metaBox = await _openMetaBox();
+    await metaBox.clear();
     changeSignal.value++;
   }
 
@@ -282,5 +271,6 @@ abstract class HiveBaseStorage<T> {
   /// This method should be called in the storage's init() method.
   Future<void> ensureBoxReady() async {
     await _openBox();
+    await _openMetaBox();
   }
 }

@@ -8,9 +8,9 @@ import 'package:multigateway/core/profile/storage/chat_profile_storage.dart';
 import 'package:multigateway/core/speech/speech.dart';
 import 'package:multigateway/features/home/presentation/controllers/home_controller.dart';
 import 'package:multigateway/features/home/presentation/ui/menu_view.dart';
+import 'package:multigateway/features/home/presentation/widgets/chat_app_bar.dart';
+import 'package:multigateway/features/home/presentation/widgets/chat_body.dart';
 import 'package:multigateway/features/home/presentation/widgets/chat_controller_provider.dart';
-import 'package:multigateway/features/home/presentation/widgets/chat_screen_widgets/chat_app_bar.dart';
-import 'package:multigateway/features/home/presentation/widgets/chat_screen_widgets/chat_body.dart';
 import 'package:multigateway/features/home/presentation/widgets/conversations_drawer.dart';
 import 'package:multigateway/features/home/presentation/widgets/edit_message_sheet.dart';
 import 'package:multigateway/shared/widgets/app_snackbar.dart';
@@ -160,7 +160,12 @@ class _ChatPageState extends State<ChatPage>
             selectedModelName: ctrl.model.selectedModelName.value,
             selectedProfile: ctrl.profile.selectedProfile.value,
           ),
-          endDrawer: const MenuView(),
+          endDrawer: MenuView(
+            selectedProfile: ctrl.profile.selectedProfile.value,
+            onAgentChanged: () {
+              ctrl.loadSelectedProfile();
+            },
+          ),
           body: const ChatBody(),
         );
       }),

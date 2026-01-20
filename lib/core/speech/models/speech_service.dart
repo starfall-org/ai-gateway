@@ -38,22 +38,26 @@ class TextToSpeech {
   final String? provider;
   final String? modelId;
   final String? voiceId;
-  final Map<dynamic, dynamic> settings;
+  final Map<String, dynamic> settings;
 
   const TextToSpeech({
     required this.type,
     this.provider,
     this.modelId,
     this.voiceId,
-    this.settings = const {},
+    this.settings = const <String, dynamic>{},
   });
 
   Map<String, dynamic> toJson() {
-    return _$TextToSpeechToJson(this);
+    final jsonMap = _$TextToSpeechToJson(this);
+    jsonMap['settings'] = _normalizeSettingsMap(settings);
+    return jsonMap;
   }
 
   factory TextToSpeech.fromJson(Map<String, dynamic> json) {
-    return _$TextToSpeechFromJson(json);
+    final normalized = Map<String, dynamic>.from(json);
+    normalized['settings'] = _normalizeSettingsMap(json['settings']);
+    return _$TextToSpeechFromJson(normalized);
   }
 
   String toJsonString() => json.encode(toJson());
@@ -71,20 +75,58 @@ class SpeechToText {
   final ServiceType type;
   final String? provider;
   final String? modelId;
-  final Map<dynamic, dynamic> settings;
+  final Map<String, dynamic> settings;
 
   const SpeechToText({
     required this.type,
     this.provider,
     this.modelId,
-    this.settings = const {},
+    this.settings = const <String, dynamic>{},
   });
 
   Map<String, dynamic> toJson() {
-    return _$SpeechToTextToJson(this);
+    final jsonMap = _$SpeechToTextToJson(this);
+    jsonMap['settings'] = _normalizeSettingsMap(settings);
+    return jsonMap;
   }
 
   factory SpeechToText.fromJson(Map<String, dynamic> json) {
-    return _$SpeechToTextFromJson(json);
+    final normalized = Map<String, dynamic>.from(json);
+    normalized['settings'] = _normalizeSettingsMap(json['settings']);
+    return _$SpeechToTextFromJson(normalized);
   }
+}
+
+Map<String, dynamic> _normalizeSettingsMap(dynamic raw) {
+  if (raw == null) return const <String, dynamic>{};
+
+  if (raw is Map<String, dynamic>) {
+    // Defensive copy to avoid unintended mutation across instances
+    return Map<String, dynamic>.from(raw);
+  }
+
+  if (raw is Map) {
+    final normalized = <String, dynamic>{};
+    raw.forEach((key, value) {
+      if (key is String) {
+        normalized[key] = value;
+      } else if (key != null) {
+        normalized[key.toString()] = value;
+      }
+    });
+    return normalized;
+  }
+
+  if (raw is String && raw.trim().isNotEmpty) {
+    try {
+      final decoded = json.decode(raw);
+      if (decoded is Map) {
+        return _normalizeSettingsMap(decoded);
+      }
+    } catch (_) {
+      // ignore malformed JSON; caller will receive empty map
+    }
+  }
+
+  return const <String, dynamic>{};
 }

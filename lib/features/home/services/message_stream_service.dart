@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartantic_ai/dartantic_ai.dart' as dai;
 import 'package:flutter/material.dart';
 import 'package:multigateway/core/chat/models/conversation.dart';
@@ -22,6 +24,10 @@ class MessageStreamService {
     String? existingMessageId,
     List<dai.Part>? files,
     BuildContext? context,
+    void Function(
+      StreamSubscription<dai.ChatResult> subscription,
+      Completer<void> completer,
+    )? onListen,
   }) async {
     final stream = ChatService.generateStream(
       userText: userText,
@@ -50,6 +56,8 @@ class MessageStreamService {
     }
 
     onSessionUpdate(session);
+    onScrollToBottom();
+
 
     try {
       // Force the very first chunk to render immediately
@@ -57,52 +65,68 @@ class MessageStreamService {
       var acc = '';
       String? reasoning;
 
-      await for (final chunk in stream) {
-        // Text content from new messages
-        if (chunk.messages.isNotEmpty) {
-          for (final msg in chunk.messages) {
-            // Only accumulate model responses
-            if (msg.role == dai.ChatMessageRole.model) {
-              acc += msg.text;
-            }
+      final completer = Completer<void>();
+      late final StreamSubscription<dai.ChatResult> sub;
+
+      sub = stream.listen(
+        (chunk) {
+          // Streaming chunks return content via output property, not messages
+          // Messages are typically only populated at the end or contain tool calls
+          final output = chunk.output.toString();
+          if (output.isNotEmpty) {
+            acc += output;
           }
-        }
 
-        if (chunk.thinking != null && chunk.thinking!.isNotEmpty) {
-          reasoning = chunk.thinking;
-        }
+          if (chunk.thinking != null && chunk.thinking!.isNotEmpty) {
+            reasoning = chunk.thinking;
+          }
 
-        if (acc != lastEmittedContent) {
-          session = MessageHelper.updateMessageActiveContent(
-            session,
-            modelId,
-            acc,
-            reasoningContent: reasoning,
+          if (acc != lastEmittedContent) {
+            session = MessageHelper.updateMessageActiveContent(
+              session,
+              modelId,
+              acc,
+              reasoningContent: reasoning,
+            );
+            onSessionUpdate(session);
+            lastEmittedContent = acc;
+          }
+        },
+        onError: (e, stackTrace) async {
+          if (!completer.isCompleted) {
+            completer.completeError(e, stackTrace);
+          }
+        },
+        onDone: () {
+          // Final update
+          final currentMessage = session.messages.firstWhere(
+            (m) => m.id == modelId,
+            orElse: () => throw StateError('Message not found'),
           );
-          onSessionUpdate(session);
-          lastEmittedContent = acc;
-        }
-      }
+          if (currentMessage.content != acc) {
+            session = MessageHelper.updateMessageActiveContent(
+              session,
+              modelId,
+              acc,
+              reasoningContent: reasoning,
+            );
+            onSessionUpdate(session);
+          }
 
-      // Final update
-      final currentMessage = session.messages.firstWhere(
-        (m) => m.id == modelId,
-        orElse: () => throw StateError('Message not found'),
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        },
+        cancelOnError: true,
       );
-      if (currentMessage.content != acc) {
-        session = MessageHelper.updateMessageActiveContent(
-          session,
-          modelId,
-          acc,
-          reasoningContent: reasoning,
-        );
-        onSessionUpdate(session);
-      }
+
+      onListen?.call(sub, completer);
+      await completer.future;
     } catch (e, stackTrace) {
       await MessageHelper.handleError(
         e,
         stackTrace,
-        context: context,
+        context: context?.mounted == true ? context : null,
         debugMessage: 'Error in handleStreamResponse',
       );
       rethrow;
@@ -174,6 +198,8 @@ class MessageStreamService {
       }
 
       onSessionUpdate(session);
+      onScrollToBottom();
+
     } catch (e, stackTrace) {
       await MessageHelper.handleError(
         e,

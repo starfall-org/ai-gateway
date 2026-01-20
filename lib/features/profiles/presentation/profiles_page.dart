@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
+import 'package:multigateway/app/storage/preferences_storage.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/profile/profile.dart';
 import 'package:multigateway/features/profiles/presentation/ui/edit_profile_screen.dart';
@@ -16,39 +18,38 @@ class ChatProfilesScreen extends StatefulWidget {
 
 class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
   List<ChatProfile> _profiles = [];
-  bool _isLoading = true;
   bool _isGridView = true;
-  late ChatProfileStorage _repository;
+  ChatProfileStorage? _repository;
+  Stream<List<ChatProfile>>? _profilesStream;
   String? _selectedProfileId;
 
   @override
   void initState() {
     super.initState();
-    _loadProfiles();
+    _initStorage();
   }
 
-  Future<void> _loadProfiles() async {
+  Future<void> _initStorage() async {
     _repository = await ChatProfileStorage.init();
-    if (!mounted) return;
-    setState(() {
-      _profiles = _repository.getItems();
-      _selectedProfileId = _repository.getSelectedProfileId();
-      _isLoading = false;
-    });
+    if (mounted) {
+      final prefs = await PreferencesStorage.instance;
+      setState(() {
+        _profilesStream = _repository!.itemsStream;
+        _selectedProfileId = _repository!.getSelectedProfileId();
+        _isGridView = prefs.currentPreferences.showProfilesAsGrid;
+      });
+    }
   }
 
   Future<void> _deleteProfile(String id) async {
-    await _repository.deleteItem(id);
-    _loadProfiles();
+    await _repository?.deleteItem(id);
   }
 
   Future<void> _setAsDefault(ChatProfile profile) async {
-    await _repository.setSelectedProfileId(profile.id);
-    if (!mounted) return;
-    setState(() {
-      _selectedProfileId = profile.id;
-    });
-    context.showSuccessSnackBar(tl('${profile.name} set as default profile'));
+    await _repository?.setSelectedProfileId(profile.id);
+    if (mounted) {
+      context.showSuccessSnackBar(tl('${profile.name} set as default profile'));
+    }
   }
 
   @override
@@ -90,23 +91,22 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
         actions: [
           AddAction(
             onPressed: () async {
-              final result = await Navigator.push(
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const AddProfileScreen(),
                 ),
               );
-              if (result == true) {
-                _loadProfiles();
-              }
             },
           ),
           ViewToggleAction(
             isGrid: _isGridView,
-            onChanged: (val) {
+            onChanged: (val) async {
               setState(() {
                 _isGridView = val;
               });
+              final prefs = await PreferencesStorage.instance;
+              await prefs.setProfilesViewMode(val);
             },
           ),
         ],
@@ -114,46 +114,62 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
       body: SafeArea(
         top: false,
         bottom: true,
-        child: _isLoading
+        child: _profilesStream == null
             ? const Center(child: CircularProgressIndicator())
-            : _profiles.isEmpty
-            ? EmptyState(
-                message: 'No AI Profiles found',
-                actionLabel: 'Add AI Profile',
-                onAction: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddProfileScreen(),
-                    ),
-                  );
-                  if (result == true) {
-                    _loadProfiles();
+            : StreamBuilder<List<ChatProfile>>(
+                stream: _profilesStream,
+                initialData: _profiles,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      snapshot.data == null) {
+                    return const Center(child: CircularProgressIndicator());
                   }
+
+                  final profiles = snapshot.data ?? [];
+                  _profiles = profiles;
+                  // Update selected ID whenever stream emits
+                  _selectedProfileId = _repository?.getSelectedProfileId();
+
+                  if (profiles.isEmpty) {
+                    return EmptyState(
+                      message: 'No AI Profiles found',
+                      actionLabel: 'Add AI Profile',
+                      onAction: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddProfileScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  }
+
+                  return _isGridView
+                      ? _buildGridView(colorScheme)
+                      : _buildListView(colorScheme);
                 },
-              )
-            : _isGridView
-            ? _buildGridView(colorScheme)
-            : _buildListView(colorScheme),
+              ),
       ),
     );
   }
 
   Widget _buildGridView(ColorScheme colorScheme) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    return ReorderableBuilder(
+      onReorder: _onReorderGrid,
+      builder: (children) => GridView.count(
+        padding: const EdgeInsets.all(16),
         crossAxisCount: 2,
         childAspectRatio: 0.85,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
+        children: children,
       ),
-      itemCount: _profiles.length,
-      itemBuilder: (context, index) {
-        final profile = _profiles[index];
+      children: _profiles.map((profile) {
         final isDefault = profile.id == _selectedProfileId;
 
         return ItemCard(
+          key: ValueKey(profile.id),
           title: profile.name,
           subtitle: profile.config.systemPrompt,
           icon: Stack(
@@ -188,7 +204,7 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
           onTap: () => _editProfile(profile),
           menuItems: _buildMenuItems(profile, isDefault),
         );
-      },
+      }).toList(),
     );
   }
 
@@ -261,17 +277,10 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
                 ),
             ],
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (value) => _handleMenuAction(value, profile),
-                itemBuilder: (context) =>
-                    _buildPopupMenuItems(profile, isDefault),
-              ),
-              const Icon(Icons.drag_handle),
-            ],
+          trailing: PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) => _handleMenuAction(value, profile),
+            itemBuilder: (context) => _buildPopupMenuItems(profile, isDefault),
           ),
           onTap: () => _editProfile(profile),
         );
@@ -357,26 +366,27 @@ class _ChatProfilesScreenState extends State<ChatProfilesScreen> {
   }
 
   void _onReorder(int oldIndex, int newIndex) {
-    setState(() {
-      if (oldIndex < newIndex) {
-        newIndex -= 1;
-      }
-      final ChatProfile item = _profiles.removeAt(oldIndex);
-      _profiles.insert(newIndex, item);
-    });
-    _repository.saveOrder(_profiles.map((e) => e.id).toList());
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    final ChatProfile item = _profiles.removeAt(oldIndex);
+    _profiles.insert(newIndex, item);
+    _repository?.saveOrder(_profiles.map((e) => e.id).toList());
+  }
+
+  void _onReorderGrid(ReorderedListFunction reorderedList) {
+    final newOrder = reorderedList(_profiles);
+    _profiles = newOrder.cast<ChatProfile>();
+    _repository?.saveOrder(_profiles.map((e) => e.id).toList());
   }
 
   void _editProfile(ChatProfile profile) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddProfileScreen(profile: profile),
       ),
     );
-    if (result == true) {
-      _loadProfiles();
-    }
   }
 
   Future<void> _confirmDelete(ChatProfile profile) async {

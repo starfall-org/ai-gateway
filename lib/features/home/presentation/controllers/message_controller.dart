@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartantic_ai/dartantic_ai.dart' as dai;
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/translate/tl.dart';
@@ -13,10 +15,15 @@ import 'package:signals/signals.dart';
 /// Controller responsible for message operations
 class MessageController {
   final isGenerating = signal<bool>(false);
+  StreamSubscription<dai.ChatResult>? _activeStream;
+  Completer<void>? _activeStreamCompleter;
+  bool _cancelRequested = false;
 
   void setGenerating(bool value) {
     isGenerating.value = value;
   }
+
+  bool get canCancel => _activeStream != null;
 
   Future<void> sendMessage({
     required String text,
@@ -39,6 +46,7 @@ class MessageController {
     );
 
     isGenerating.value = true;
+    _cancelRequested = false;
 
     // Generate title if first message
     if (session.messages.length == 1) {
@@ -47,6 +55,7 @@ class MessageController {
     }
 
     onSessionUpdate(session);
+    onScrollToBottom();
 
     final modelInput = ChatLogicUtils.formatFilesForPrompt(text, attachments);
 
@@ -63,6 +72,7 @@ class MessageController {
           onScrollToBottom: onScrollToBottom,
           isNearBottom: isNearBottom,
           allowedToolNames: allowedToolNames,
+          onListen: _setActiveStream,
           context: context,
         );
       } else {
@@ -80,6 +90,7 @@ class MessageController {
         );
       }
     } finally {
+      await _clearActiveStream();
       isGenerating.value = false;
     }
   }
@@ -122,6 +133,7 @@ class MessageController {
     }
 
     isGenerating.value = true;
+    _cancelRequested = false;
 
     try {
       // Preserve the message list up to the user message, plus the model message if we are regenerating it
@@ -150,6 +162,7 @@ class MessageController {
           isNearBottom: isNearBottom,
           allowedToolNames: allowedToolNames,
           existingMessageId: existingModelMessage?.id,
+          onListen: _setActiveStream,
           context: context,
         );
       } else {
@@ -172,12 +185,44 @@ class MessageController {
     } catch (e) {
       return e.toString();
     } finally {
+      await _clearActiveStream();
       isGenerating.value = false;
     }
   }
 
   void dispose() {
     isGenerating.dispose();
+  }
+
+  Future<void> stopGeneration() async {
+    _cancelRequested = true;
+    await _clearActiveStream(cancel: true);
+    isGenerating.value = false;
+  }
+
+  void _setActiveStream(
+    StreamSubscription<dai.ChatResult> sub,
+    Completer<void> completer,
+  ) {
+    _activeStream = sub;
+    _activeStreamCompleter = completer;
+    if (_cancelRequested) {
+      unawaited(stopGeneration());
+    }
+  }
+
+  Future<void> _clearActiveStream({bool cancel = false}) async {
+    final sub = _activeStream;
+    final completer = _activeStreamCompleter;
+    _activeStream = null;
+    _activeStreamCompleter = null;
+
+    if (cancel) {
+      await sub?.cancel();
+      if (completer != null && !completer.isCompleted) {
+        completer.complete();
+      }
+    }
   }
 
   Future<void> copyMessage(BuildContext context, StoredMessage message) async {
@@ -236,10 +281,7 @@ class MessageController {
     final session = MessageHelper.addVersionToMessageInSession(
       currentSession,
       original.id,
-      dai.ChatMessage.model(
-        newContent,
-        metadata: {'files': newAttachments},
-      ),
+      dai.ChatMessage.model(newContent, metadata: {'files': newAttachments}),
       files: newAttachments,
       reasoningContent: original.reasoningContent,
     );

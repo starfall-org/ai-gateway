@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/core/llm/models/llm_provider_models.dart';
+import 'package:multigateway/features/home/presentation/widgets/attachment_chips.dart';
 import 'package:multigateway/features/home/presentation/widgets/files_action_sheet.dart';
-import 'package:multigateway/features/home/presentation/widgets/input_widgets/attachment_chips.dart';
-import 'package:multigateway/shared/utils/theme_aware_image.dart';
+import 'package:multigateway/shared/utils/icon_builder.dart';
 
 class UserInputArea extends StatefulWidget {
   final TextEditingController controller;
@@ -21,6 +20,7 @@ class UserInputArea extends StatefulWidget {
 
   // Trạng thái sinh câu trả lời để disable input/nút gửi
   final bool isGenerating;
+  final VoidCallback? onStopGeneration;
 
   // Nút mở drawer menu
   final VoidCallback? onOpenMenu;
@@ -36,6 +36,7 @@ class UserInputArea extends StatefulWidget {
     required this.onOpenModelPicker,
     this.selectedLlmModel,
     this.isGenerating = false,
+    this.onStopGeneration,
     this.onOpenMenu,
   });
 
@@ -51,25 +52,28 @@ class _UserInputAreaState extends State<UserInputArea> {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(_onFocusChanged);
+    // Listen to controller changes to update button state
+    widget.controller.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
+    widget.controller.removeListener(_onTextChanged);
     super.dispose();
   }
 
   void _onFocusChanged() {
-    setState(() {});
+    if (mounted) setState(() {});
+  }
+
+  void _onTextChanged() {
+    if (mounted) setState(() {});
   }
 
   void _unfocusTextField() {
-    if (_focusNode.hasFocus) {
-      _focusNode.unfocus();
-      // Ẩn bàn phím ảo bằng cách sử dụng SystemChannels
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
-    }
+    FocusScope.of(context).unfocus();
   }
 
   @override
@@ -78,14 +82,24 @@ class _UserInputAreaState extends State<UserInputArea> {
         !widget.isGenerating &&
         ((widget.controller.text.trim().isNotEmpty) ||
             widget.attachments.isNotEmpty);
+    final showStop = widget.isGenerating;
+    final stopEnabled = widget.onStopGeneration != null;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(28),
           topRight: Radius.circular(28),
+        ),
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
+            width: 0.5,
+          ),
         ),
       ),
       child: SafeArea(
@@ -109,7 +123,7 @@ class _UserInputAreaState extends State<UserInputArea> {
                   }
                 },
                 child: TextField(
-                  enabled: !widget.isGenerating,
+                  textCapitalization: TextCapitalization.sentences,
                   controller: widget.controller,
                   focusNode: _focusNode,
                   minLines: 1,
@@ -123,7 +137,7 @@ class _UserInputAreaState extends State<UserInputArea> {
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
@@ -131,7 +145,9 @@ class _UserInputAreaState extends State<UserInputArea> {
                     // Đưa nút gửi lên đây thay cho nút ẩn bàn phím
                     suffixIcon: GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: canSend
+                      onTap: showStop
+                          ? (stopEnabled ? widget.onStopGeneration : null)
+                          : canSend
                           ? () {
                               widget.onSubmitted(widget.controller.text);
                               _unfocusTextField();
@@ -140,7 +156,11 @@ class _UserInputAreaState extends State<UserInputArea> {
                       child: Container(
                         margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: canSend
+                          color: showStop
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.error.withValues(alpha: 0.12)
+                              : canSend
                               ? Theme.of(
                                   context,
                                 ).colorScheme.primary.withValues(alpha: 0.1)
@@ -152,8 +172,10 @@ class _UserInputAreaState extends State<UserInputArea> {
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Icon(
-                            Icons.arrow_upward,
-                            color: canSend
+                            showStop ? Icons.stop : Icons.arrow_upward,
+                            color: showStop
+                                ? Theme.of(context).colorScheme.error
+                                : canSend
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(
                                     context,
@@ -272,15 +294,13 @@ class _ModelIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (model?.icon != null && model!.icon!.isNotEmpty) {
-      return ThemeAwareImage(
-        child: Image.asset(
-          model!.icon!,
-          width: 20,
-          height: 20,
-          errorBuilder: (context, error, stackTrace) =>
-              const Icon(Icons.token, size: 20),
-        ),
+    if (model != null) {
+      return SizedBox(
+        width: 20,
+        height: 20,
+        child: model!.icon != null
+            ? buildIcon(model!.icon!)
+            : buildIcon(model!.id),
       );
     }
     return const Icon(Icons.token, size: 20);

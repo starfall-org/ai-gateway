@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:multigateway/features/home/presentation/widgets/chat_message_widgets/assistant_message_card.dart';
-import 'package:multigateway/features/home/presentation/widgets/chat_message_widgets/user_message_card.dart';
+import 'package:multigateway/features/home/presentation/widgets/assistant_message_card.dart';
+import 'package:multigateway/features/home/presentation/widgets/user_message_card.dart';
 import 'package:multigateway/features/home/services/message_helper.dart';
 
 /// Widget hiển thị danh sách tin nhắn chat
@@ -17,6 +17,7 @@ class ChatMessagesDisplay extends StatefulWidget {
   final VoidCallback? onRegenerate;
   final void Function(StoredMessage message)? onRead;
   final void Function(StoredMessage message, int versionIndex)? onSwitchVersion;
+  final String? modelId;
 
   const ChatMessagesDisplay({
     super.key,
@@ -30,6 +31,7 @@ class ChatMessagesDisplay extends StatefulWidget {
     this.onRegenerate,
     this.onRead,
     this.onSwitchVersion,
+    this.modelId,
   });
 
   @override
@@ -126,6 +128,7 @@ class _ChatMessagesDisplayState extends State<ChatMessagesDisplay> {
                     onSwitchVersion: widget.onSwitchVersion != null
                         ? (idx) => widget.onSwitchVersion!(message, idx)
                         : null,
+                    modelId: widget.modelId,
                   );
           },
         ),

@@ -9,6 +9,7 @@ import 'package:multigateway/features/settings/presentation/about_page.dart';
 import 'package:multigateway/features/settings/presentation/appearance_page.dart';
 import 'package:multigateway/features/settings/presentation/preferences_page.dart';
 import 'package:multigateway/features/settings/presentation/settings_page.dart';
+import 'package:multigateway/features/settings/presentation/translation_management_page.dart';
 import 'package:multigateway/features/settings/presentation/update_page.dart';
 import 'package:multigateway/features/settings/presentation/userdata_page.dart';
 import 'package:multigateway/features/speech/presentation/speech_sevices_page.dart';
@@ -30,6 +31,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const UpdatePage());
     case AppRoutes.userdata:
       return MaterialPageRoute(builder: (_) => const DataControlsScreen());
+    case AppRoutes.translations:
+      return MaterialPageRoute(builder: (_) => const TranslationManagementPage());
     case AppRoutes.providers:
       return MaterialPageRoute(builder: (_) => const AiProvidersPage());
     case AppRoutes.speech:

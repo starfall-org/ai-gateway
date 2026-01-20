@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/core/chat/chat.dart';
 import 'package:multigateway/core/profile/profile.dart';
-import 'package:multigateway/features/home/presentation/widgets/drawer_widgets/drawer_footer.dart';
-import 'package:multigateway/features/home/presentation/widgets/drawer_widgets/drawer_header.dart'
+import 'package:multigateway/features/home/presentation/widgets/drawer_footer.dart';
+import 'package:multigateway/features/home/presentation/widgets/drawer_header.dart'
     as drawer_widgets;
-import 'package:multigateway/features/home/presentation/widgets/drawer_widgets/history_list.dart';
+import 'package:multigateway/features/home/presentation/widgets/history_list.dart';
 import 'package:multigateway/shared/widgets/app_sidebar.dart';
 
 /// Drawer hiển thị danh sách conversations
@@ -33,6 +33,8 @@ class ConversationsDrawer extends StatefulWidget {
 class _ConversationsDrawerState extends State<ConversationsDrawer> {
   List<Conversation> _sessions = [];
   ConversationStorage? _chatRepository;
+  ChatProfileStorage? _profileRepository;
+  Map<String, ChatProfile> _profilesById = {};
   final TextEditingController _searchController = TextEditingController();
   List<Conversation> _filteredSessions = [];
 
@@ -51,38 +53,28 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
 
   Future<void> _loadHistory() async {
     _chatRepository = await ConversationStorage.init();
+    _profileRepository ??= await ChatProfileStorage.init();
+    final profiles = await _profileRepository!.getItemsAsync();
+    final profilesById = <String, ChatProfile>{
+      for (final profile in profiles) profile.id: profile,
+    };
+    final sessions = _chatRepository!.getItems();
+    final filtered = _filterSessionsList(
+      sessions,
+      _searchController.text.toLowerCase(),
+    );
     setState(() {
-      _sessions = _chatRepository!.getItems();
-      _filteredSessions = _sessions;
+      _sessions = sessions;
+      _filteredSessions = filtered;
+      _profilesById = profilesById;
     });
   }
 
   void _filterSessions() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      if (query.isEmpty) {
-        _filteredSessions = _sessions;
-      } else {
-        _filteredSessions = _sessions.where((session) {
-          return session.title.toLowerCase().contains(query);
-        }).toList();
-      }
+      _filteredSessions = _filterSessionsList(_sessions, query);
     });
-  }
-
-  Future<void> _deleteSession(String id) async {
-    await _chatRepository!.deleteItem(id);
-    _loadHistory();
-  }
-
-  Future<void> _renameSession(String id, String newTitle) async {
-    final session = _sessions.firstWhere((s) => s.id == id);
-    final updatedSession = session.copyWith(
-      title: newTitle,
-      updatedAt: DateTime.now(),
-    );
-    await _chatRepository!.updateItem(updatedSession);
-    _loadHistory();
   }
 
   @override
@@ -103,6 +95,8 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
               children: [
                 HistoryList(
                   sessions: _filteredSessions,
+                  profilesById: _profilesById,
+                  fallbackProfile: widget.selectedProfile,
                   onSessionSelected: widget.onSessionSelected,
                   onDeleteSession: _deleteSession,
                   onRenameSession: _renameSession,
@@ -117,5 +111,30 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
         ],
       ),
     );
+  }
+
+  List<Conversation> _filterSessionsList(
+    List<Conversation> sessions,
+    String query,
+  ) {
+    if (query.isEmpty) return sessions;
+    return sessions
+        .where((session) => session.title.toLowerCase().contains(query))
+        .toList();
+  }
+
+  Future<void> _deleteSession(String id) async {
+    await _chatRepository!.deleteItem(id);
+    _loadHistory();
+  }
+
+  Future<void> _renameSession(String id, String newTitle) async {
+    final session = _sessions.firstWhere((s) => s.id == id);
+    final updatedSession = session.copyWith(
+      title: newTitle,
+      updatedAt: DateTime.now(),
+    );
+    await _chatRepository!.updateItem(updatedSession);
+    _loadHistory();
   }
 }

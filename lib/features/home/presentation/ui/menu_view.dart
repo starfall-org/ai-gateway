@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/app/config/routes.dart';
 import 'package:multigateway/app/translate/tl.dart';
+import 'package:multigateway/core/profile/profile.dart';
+import 'package:multigateway/features/home/presentation/widgets/active_profile_section.dart';
 import 'package:multigateway/features/home/presentation/widgets/menu_item_tile.dart';
 import 'package:multigateway/shared/widgets/app_sidebar.dart';
 
 class MenuView extends StatelessWidget {
-  const MenuView({super.key});
+  final ChatProfile? selectedProfile;
+  final VoidCallback? onAgentChanged;
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 4),
-      child: Text(
-        title,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: colorScheme.onSurface.withValues(alpha: 0.6),
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
+  const MenuView({super.key, this.selectedProfile, this.onAgentChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -73,23 +61,21 @@ class MenuView extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
+                    ActiveProfileSection(
+                      selectedProfile: selectedProfile,
+                      onAgentChanged: onAgentChanged,
+                    ),
                     const SizedBox(height: 24),
-                    _buildSectionTitle(context, 'AI Features'),
+                    SectionTitle(title: 'AI Features'),
                     const SizedBox(height: 8),
                     MenuItemTile(
-                      icon: Icons.psychology_outlined,
-                      title: tl('Profiles'),
-                      route: AppRoutes.profiles,
-                    ),
-                    MenuItemTile(
-                      icon: Icons.cloud_outlined,
-                      title: tl('Providers'),
-
+                      icon: Icons.cloud_queue_outlined,
+                      title: tl('LLM Providers'),
                       route: AppRoutes.providers,
                     ),
                     MenuItemTile(
-                      icon: Icons.dns_outlined,
-                      title: tl('MCP Servers'),
+                      icon: Icons.extension_outlined,
+                      title: tl('MCP Manage'),
 
                       route: AppRoutes.mcp,
                     ),
@@ -101,7 +87,7 @@ class MenuView extends StatelessWidget {
                     ),
                     MenuItemTile(
                       icon: Icons.settings_outlined,
-                      title: tl('Settings'),
+                      title: tl('General Settings'),
                       route: AppRoutes.settings,
                     ),
                   ],
@@ -109,6 +95,29 @@ class MenuView extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String title;
+  const SectionTitle({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, bottom: 4),
+      child: Text(
+        title,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: colorScheme.onSurface.withValues(alpha: 0.6),
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
       ),
     );
