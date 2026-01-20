@@ -4,8 +4,9 @@ import 'package:multigateway/core/profile/profile.dart';
 import 'package:multigateway/features/llm/presentation/widgets/view_profile_dialog.dart';
 import 'package:multigateway/features/profiles/presentation/profiles_page.dart';
 import 'package:multigateway/features/profiles/presentation/ui/edit_profile_screen.dart';
+import 'package:multigateway/shared/utils/icon_builder.dart';
 
-/// Widget hiển thị profile hiện tại ở đầu drawer với các nút hành động
+/// Widget hiển thị profile hiện tại ở đầu menu với các nút hành động
 class ActiveProfileSection extends StatelessWidget {
   final ChatProfile? selectedProfile;
   final VoidCallback? onAgentChanged;
@@ -26,22 +27,49 @@ class ActiveProfileSection extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colorScheme.primaryContainer.withValues(alpha: 0.1),
-        border: Border(
-          bottom: BorderSide(color: colorScheme.outlineVariant, width: 1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.1),
+          width: 1,
         ),
       ),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            tl('AI Profile'),
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.1,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                tl('ACTIVE PROFILE'),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              if (selectedProfile != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    tl('Active'),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           InkWell(
             onTap: selectedProfile != null
                 ? () {
@@ -61,21 +89,21 @@ class ActiveProfileSection extends StatelessWidget {
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.primary.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Row(
                 children: [
-                  _buildProfileAvatar(colorScheme, profileName),
-                  const SizedBox(width: 12),
+                  _buildProfileAvatar(colorScheme, selectedProfile),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,33 +117,42 @@ class ActiveProfileSection extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (selectedProfile?.config.systemPrompt != null)
-                          Text(
-                            selectedProfile!.config.systemPrompt,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                        const SizedBox(height: 2),
+                        Text(
+                          selectedProfile?.config.systemPrompt != null &&
+                                  selectedProfile!
+                                      .config
+                                      .systemPrompt
+                                      .isNotEmpty
+                              ? selectedProfile!.config.systemPrompt
+                              : tl('No system prompt'),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.7,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ],
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right,
-                    color: colorScheme.primary.withValues(alpha: 0.7),
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: _ActionButton(
-                  icon: Icons.people_outline,
-                  label: tl('All Profiles'),
+                  icon: Icons.grid_view_outlined,
+                  label: tl('Profiles'),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -126,11 +163,11 @@ class ActiveProfileSection extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Expanded(
                 child: _ActionButton(
-                  icon: Icons.edit_outlined,
-                  label: tl('Edit Current'),
+                  icon: Icons.tune_outlined,
+                  label: tl('Edit'),
                   onPressed: selectedProfile != null
                       ? () {
                           Navigator.push(
@@ -151,34 +188,16 @@ class ActiveProfileSection extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileAvatar(ColorScheme colorScheme, String name) {
+  Widget _buildProfileAvatar(ColorScheme colorScheme, ChatProfile? profile) {
     return Container(
-      width: 44,
-      height: 44,
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [colorScheme.tertiary, colorScheme.primary],
-        ),
+        color: colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Center(
-        child: Text(
-          name
-              .split(' ')
-              .where((word) => word.isNotEmpty)
-              .map((word) => word[0])
-              .take(2)
-              .join()
-              .toUpperCase(),
-          style: TextStyle(
-            color: colorScheme.onPrimary,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      clipBehavior: Clip.antiAlias,
+      child: buildIcon(profile?.icon ?? profile?.name ?? ''),
     );
   }
 }

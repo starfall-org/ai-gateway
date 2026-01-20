@@ -160,7 +160,12 @@ class _ChatPageState extends State<ChatPage>
             selectedModelName: ctrl.model.selectedModelName.value,
             selectedProfile: ctrl.profile.selectedProfile.value,
           ),
-          endDrawer: const MenuView(),
+          endDrawer: MenuView(
+            selectedProfile: ctrl.profile.selectedProfile.value,
+            onAgentChanged: () {
+              ctrl.loadSelectedProfile();
+            },
+          ),
           body: const ChatBody(),
         );
       }),

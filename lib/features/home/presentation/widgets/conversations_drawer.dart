@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multigateway/core/chat/chat.dart';
 import 'package:multigateway/core/profile/profile.dart';
-import 'package:multigateway/features/home/presentation/widgets/active_profile_section.dart';
 import 'package:multigateway/features/home/presentation/widgets/drawer_footer.dart';
 import 'package:multigateway/features/home/presentation/widgets/drawer_header.dart'
     as drawer_widgets;
@@ -78,6 +77,42 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AppSidebar(
+      backgroundColor: colorScheme.surface,
+      child: Column(
+        children: [
+          drawer_widgets.DrawerHeader(
+            searchController: _searchController,
+            onNewChat: widget.onNewChat,
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              children: [
+                HistoryList(
+                  sessions: _filteredSessions,
+                  profilesById: _profilesById,
+                  fallbackProfile: widget.selectedProfile,
+                  onSessionSelected: widget.onSessionSelected,
+                  onDeleteSession: _deleteSession,
+                  onRenameSession: _renameSession,
+                ),
+              ],
+            ),
+          ),
+          DrawerFooter(
+            selectedProfile: widget.selectedProfile,
+            onAgentChanged: widget.onAgentChanged,
+          ),
+        ],
+      ),
+    );
+  }
+
   List<Conversation> _filterSessionsList(
     List<Conversation> sessions,
     String query,
@@ -101,42 +136,5 @@ class _ConversationsDrawerState extends State<ConversationsDrawer> {
     );
     await _chatRepository!.updateItem(updatedSession);
     _loadHistory();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return AppSidebar(
-      backgroundColor: colorScheme.surface,
-      child: Column(
-        children: [
-          ActiveProfileSection(
-            selectedProfile: widget.selectedProfile,
-            onAgentChanged: widget.onAgentChanged,
-          ),
-          drawer_widgets.DrawerHeader(
-            searchController: _searchController,
-            onNewChat: widget.onNewChat,
-          ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              children: [
-                HistoryList(
-                  sessions: _filteredSessions,
-                  profilesById: _profilesById,
-                  fallbackProfile: widget.selectedProfile,
-                  onSessionSelected: widget.onSessionSelected,
-                  onDeleteSession: _deleteSession,
-                  onRenameSession: _renameSession,
-                ),
-              ],
-            ),
-          ),
-          const DrawerFooter(),
-        ],
-      ),
-    );
   }
 }
