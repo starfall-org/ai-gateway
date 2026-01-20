@@ -4,6 +4,7 @@ class AppRoutes {
   static const String appearance = '/settings/appearance';
   static const String preferences = '/settings/preferences';
   static const String userdata = '/settings/userdata';
+  static const String translations = '/settings/translations';
   static const String about = '/settings/about';
   static const String update = '/settings/update';
   static const String profiles = '/profiles';

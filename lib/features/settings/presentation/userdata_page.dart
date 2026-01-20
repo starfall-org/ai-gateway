@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multigateway/app/config/routes.dart';
 import 'package:multigateway/app/translate/tl.dart';
 import 'package:multigateway/features/settings/presentation/controllers/userdata_controller.dart';
 import 'package:multigateway/features/settings/presentation/widgets/userdata/data_overview_card.dart';
@@ -93,6 +94,16 @@ class _DataControlsView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          _ActionTile(
+                            icon: Icons.translate_outlined,
+                            title: tl('Manage translations'),
+                            subtitle: tl('Review cached translations against English'),
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              AppRoutes.translations,
+                            ),
+                          ),
+                          const Divider(height: 1),
                           _ActionTile(
                             icon: Icons.history_toggle_off,
                             title: tl('Delete conversation history'),

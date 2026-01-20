@@ -7,23 +7,6 @@ import 'package:multigateway/shared/widgets/app_sidebar.dart';
 class MenuView extends StatelessWidget {
   const MenuView({super.key});
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 4),
-      child: Text(
-        title,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: colorScheme.onSurface.withValues(alpha: 0.6),
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -74,22 +57,22 @@ class MenuView extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   children: [
                     const SizedBox(height: 24),
-                    _buildSectionTitle(context, 'AI Features'),
+                    SectionTitle(title: 'AI Features'),
                     const SizedBox(height: 8),
                     MenuItemTile(
-                      icon: Icons.psychology_outlined,
-                      title: tl('Profiles'),
+                      icon: Icons.person_2_outlined,
+                      title: tl('Chat Profiles'),
                       route: AppRoutes.profiles,
                     ),
                     MenuItemTile(
-                      icon: Icons.cloud_outlined,
-                      title: tl('Providers'),
+                      icon: Icons.cloud_queue_outlined,
+                      title: tl('LLM Providers'),
 
                       route: AppRoutes.providers,
                     ),
                     MenuItemTile(
-                      icon: Icons.dns_outlined,
-                      title: tl('MCP Servers'),
+                      icon: Icons.extension_outlined,
+                      title: tl('MCP Manage'),
 
                       route: AppRoutes.mcp,
                     ),
@@ -101,7 +84,7 @@ class MenuView extends StatelessWidget {
                     ),
                     MenuItemTile(
                       icon: Icons.settings_outlined,
-                      title: tl('Settings'),
+                      title: tl('General Settings'),
                       route: AppRoutes.settings,
                     ),
                   ],
@@ -109,6 +92,29 @@ class MenuView extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String title;
+  const SectionTitle({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, bottom: 4),
+      child: Text(
+        title,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: colorScheme.onSurface.withValues(alpha: 0.6),
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
       ),
     );
