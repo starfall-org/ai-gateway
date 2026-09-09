@@ -78,3 +78,18 @@ interface McpServerDao {
     @Query("DELETE FROM mcp_servers WHERE id = :id")
     suspend fun deleteById(id: String)
 }
+
+@Dao
+interface SpeechServiceDao {
+    @Query("SELECT * FROM speech_services")
+    fun getAllSpeechServices(): Flow<List<SpeechServiceEntity>>
+
+    @Query("SELECT * FROM speech_services WHERE id = :id")
+    suspend fun getServiceById(id: String): SpeechServiceEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(service: SpeechServiceEntity)
+
+    @Query("DELETE FROM speech_services WHERE id = :id")
+    suspend fun deleteById(id: String)
+}

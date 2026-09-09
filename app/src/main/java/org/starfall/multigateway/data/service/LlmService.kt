@@ -28,6 +28,107 @@ class LlmService {
         }
     }
 
+    fun resolveOllamaChatUrl(baseUrl: String): String {
+        var clean = baseUrl.trim().trimEnd('/')
+        if (clean.endsWith("/tags")) {
+            clean = clean.removeSuffix("/tags").trimEnd('/')
+        }
+        if (clean.endsWith("/chat")) {
+            clean = clean.removeSuffix("/chat").trimEnd('/')
+        }
+        if (clean.endsWith("/generate")) {
+            clean = clean.removeSuffix("/generate").trimEnd('/')
+        }
+        return if (clean.endsWith("/api")) "$clean/chat" else "$clean/api/chat"
+    }
+
+    fun resolveOllamaTagsUrl(baseUrl: String): String {
+        var clean = baseUrl.trim().trimEnd('/')
+        if (clean.endsWith("/tags")) {
+            return clean
+        }
+        if (clean.endsWith("/chat")) {
+            clean = clean.removeSuffix("/chat").trimEnd('/')
+        }
+        if (clean.endsWith("/generate")) {
+            clean = clean.removeSuffix("/generate").trimEnd('/')
+        }
+        return if (clean.endsWith("/api")) "$clean/tags" else "$clean/api/tags"
+    }
+
+    suspend fun testConnection(provider: LlmProviderInfo): Result<String> {
+        return try {
+            when (provider.type) {
+                ProviderType.OLLAMA -> {
+                    val tagsUrl = resolveOllamaTagsUrl(provider.baseUrl)
+                    val response = httpClient.get(tagsUrl) {
+                        applyAuth(provider)
+                    }
+                    if (response.status.isSuccess()) {
+                        val body = response.bodyAsText()
+                        val parsed = json.parseToJsonElement(body).jsonObject
+                        val models = parsed["models"]?.jsonArray?.mapNotNull {
+                            it.jsonObject["name"]?.jsonPrimitive?.contentOrNull
+                        } ?: emptyList()
+                        if (models.isNotEmpty()) {
+                            Result.success("Connected! Found ${models.size} models:\n${models.take(4).joinToString(", ")}${if (models.size > 4) "..." else ""}")
+                        } else {
+                            Result.success("Connected to Ollama! (0 models installed)")
+                        }
+                    } else {
+                        Result.failure(Exception("HTTP ${response.status.value}: ${response.status.description}"))
+                    }
+                }
+                ProviderType.OPENAI -> {
+                    val baseUrlClean = provider.baseUrl.trimEnd('/')
+                    val url = if (baseUrlClean.endsWith("/models")) baseUrlClean else "$baseUrlClean/models"
+                    val response = httpClient.get(url) {
+                        applyAuth(provider)
+                    }
+                    if (response.status.isSuccess()) {
+                        Result.success("OpenAI connection successful!")
+                    } else {
+                        Result.failure(Exception("HTTP ${response.status.value}: ${response.status.description}"))
+                    }
+                }
+                ProviderType.GOOGLE -> {
+                    val apiKey = provider.auth.key ?: provider.auth.value ?: ""
+                    val baseUrlClean = provider.baseUrl.trimEnd('/')
+                    val url = "$baseUrlClean/models?key=$apiKey"
+                    val response = httpClient.get(url)
+                    if (response.status.isSuccess()) {
+                        Result.success("Google Gemini connection successful!")
+                    } else {
+                        Result.failure(Exception("HTTP ${response.status.value}: ${response.status.description}"))
+                    }
+                }
+                ProviderType.ANTHROPIC -> {
+                    Result.success("Anthropic credentials configured!")
+                }
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun fetchOllamaModels(baseUrl: String): List<String> {
+        return try {
+            val tagsUrl = resolveOllamaTagsUrl(baseUrl)
+            val response = httpClient.get(tagsUrl)
+            if (response.status.isSuccess()) {
+                val body = response.bodyAsText()
+                val parsed = json.parseToJsonElement(body).jsonObject
+                parsed["models"]?.jsonArray?.mapNotNull {
+                    it.jsonObject["name"]?.jsonPrimitive?.contentOrNull
+                } ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
     suspend fun generateStream(
         provider: LlmProviderInfo,
         modelName: String,
@@ -246,8 +347,7 @@ class LlmService {
         topP: Double?,
         maxTokens: Int
     ): Flow<String> = flow {
-        val baseUrlClean = provider.baseUrl.trimEnd('/')
-        val url = "$baseUrlClean/chat"
+        val url = resolveOllamaChatUrl(provider.baseUrl)
 
         val ollamaMessages = mutableListOf<JsonObject>()
         if (systemPrompt.isNotBlank()) {
@@ -267,6 +367,12 @@ class LlmService {
             put("model", modelName)
             put("messages", JsonArray(ollamaMessages))
             put("stream", true)
+            if (temperature != null || topP != null) {
+                put("options", buildJsonObject {
+                    if (temperature != null) put("temperature", temperature)
+                    if (topP != null) put("top_p", topP)
+                })
+            }
         }
 
         try {

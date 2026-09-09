@@ -51,3 +51,14 @@ data class McpServerEntity(
     val url: String?,
     val headersJson: String?
 )
+
+@Entity(tableName = "speech_services")
+data class SpeechServiceEntity(
+    @PrimaryKey val id: String,
+    val name: String,
+    val provider: String,
+    val voice: String,
+    val speed: Float,
+    val pitch: Float,
+    val apiKey: String
+)

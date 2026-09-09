@@ -13,9 +13,20 @@ data class AppPreferences(
     val selectedProfileId: String? = null,
     val selectedProviderId: String = "",
     val selectedModelId: String = "",
-    val themeMode: String = "SYSTEM",
+    val themeMode: String = "SYSTEM", // SYSTEM, LIGHT, DARK, AMOLED
     val useDynamicColor: Boolean = true,
-    val defaultSystemPrompt: String = ""
+    val colorSchemeName: String = "DEFAULT", // DEFAULT, EMERALD, SUNSET, CRIMSON, VIOLET
+    val defaultSystemPrompt: String = "",
+    val continueLastConversation: Boolean = true,
+    val persistChatSelection: Boolean = true,
+    val enableVibration: Boolean = true,
+    val hideStatusBar: Boolean = false,
+    val hideNavigationBar: Boolean = false,
+    val debugMode: Boolean = false,
+    val selectedLanguage: String = "en",
+    val showProfilesAsGrid: Boolean = true,
+    val showProvidersAsGrid: Boolean = false,
+    val showMcpAsGrid: Boolean = false
 )
 
 class AppPreferencesRepository(private val context: Context) {
@@ -26,7 +37,18 @@ class AppPreferencesRepository(private val context: Context) {
         val SELECTED_MODEL_ID = stringPreferencesKey("selected_model_id")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val USE_DYNAMIC_COLOR = booleanPreferencesKey("use_dynamic_color")
+        val COLOR_SCHEME_NAME = stringPreferencesKey("color_scheme_name")
         val DEFAULT_SYSTEM_PROMPT = stringPreferencesKey("default_system_prompt")
+        val CONTINUE_LAST_CONVERSATION = booleanPreferencesKey("continue_last_conversation")
+        val PERSIST_CHAT_SELECTION = booleanPreferencesKey("persist_chat_selection")
+        val ENABLE_VIBRATION = booleanPreferencesKey("enable_vibration")
+        val HIDE_STATUS_BAR = booleanPreferencesKey("hide_status_bar")
+        val HIDE_NAVIGATION_BAR = booleanPreferencesKey("hide_navigation_bar")
+        val DEBUG_MODE = booleanPreferencesKey("debug_mode")
+        val SELECTED_LANGUAGE = stringPreferencesKey("selected_language")
+        val SHOW_PROFILES_AS_GRID = booleanPreferencesKey("show_profiles_as_grid")
+        val SHOW_PROVIDERS_AS_GRID = booleanPreferencesKey("show_providers_as_grid")
+        val SHOW_MCP_AS_GRID = booleanPreferencesKey("show_mcp_as_grid")
     }
 
     val appPreferencesFlow: Flow<AppPreferences> = context.dataStore.data
@@ -38,7 +60,18 @@ class AppPreferencesRepository(private val context: Context) {
                 selectedModelId = preferences[PreferenceKeys.SELECTED_MODEL_ID] ?: "",
                 themeMode = preferences[PreferenceKeys.THEME_MODE] ?: "SYSTEM",
                 useDynamicColor = preferences[PreferenceKeys.USE_DYNAMIC_COLOR] ?: true,
-                defaultSystemPrompt = preferences[PreferenceKeys.DEFAULT_SYSTEM_PROMPT] ?: ""
+                colorSchemeName = preferences[PreferenceKeys.COLOR_SCHEME_NAME] ?: "DEFAULT",
+                defaultSystemPrompt = preferences[PreferenceKeys.DEFAULT_SYSTEM_PROMPT] ?: "",
+                continueLastConversation = preferences[PreferenceKeys.CONTINUE_LAST_CONVERSATION] ?: true,
+                persistChatSelection = preferences[PreferenceKeys.PERSIST_CHAT_SELECTION] ?: true,
+                enableVibration = preferences[PreferenceKeys.ENABLE_VIBRATION] ?: true,
+                hideStatusBar = preferences[PreferenceKeys.HIDE_STATUS_BAR] ?: false,
+                hideNavigationBar = preferences[PreferenceKeys.HIDE_NAVIGATION_BAR] ?: false,
+                debugMode = preferences[PreferenceKeys.DEBUG_MODE] ?: false,
+                selectedLanguage = preferences[PreferenceKeys.SELECTED_LANGUAGE] ?: "en",
+                showProfilesAsGrid = preferences[PreferenceKeys.SHOW_PROFILES_AS_GRID] ?: true,
+                showProvidersAsGrid = preferences[PreferenceKeys.SHOW_PROVIDERS_AS_GRID] ?: false,
+                showMcpAsGrid = preferences[PreferenceKeys.SHOW_MCP_AS_GRID] ?: false
             )
         }
 
@@ -68,6 +101,72 @@ class AppPreferencesRepository(private val context: Context) {
     suspend fun setUseDynamicColor(useDynamic: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferenceKeys.USE_DYNAMIC_COLOR] = useDynamic
+        }
+    }
+
+    suspend fun setColorSchemeName(scheme: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.COLOR_SCHEME_NAME] = scheme
+        }
+    }
+
+    suspend fun setContinueLastConversation(enable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.CONTINUE_LAST_CONVERSATION] = enable
+        }
+    }
+
+    suspend fun setPersistChatSelection(enable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.PERSIST_CHAT_SELECTION] = enable
+        }
+    }
+
+    suspend fun setEnableVibration(enable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.ENABLE_VIBRATION] = enable
+        }
+    }
+
+    suspend fun setHideStatusBar(hide: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.HIDE_STATUS_BAR] = hide
+        }
+    }
+
+    suspend fun setHideNavigationBar(hide: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.HIDE_NAVIGATION_BAR] = hide
+        }
+    }
+
+    suspend fun setDebugMode(debug: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.DEBUG_MODE] = debug
+        }
+    }
+
+    suspend fun setSelectedLanguage(lang: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.SELECTED_LANGUAGE] = lang
+        }
+    }
+
+    suspend fun setShowProfilesAsGrid(isGrid: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.SHOW_PROFILES_AS_GRID] = isGrid
+        }
+    }
+
+    suspend fun setShowProvidersAsGrid(isGrid: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.SHOW_PROVIDERS_AS_GRID] = isGrid
+        }
+    }
+
+    suspend fun setShowMcpAsGrid(isGrid: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.SHOW_MCP_AS_GRID] = isGrid
         }
     }
 }

@@ -261,3 +261,48 @@ class McpRepository(private val db: AppDatabase) {
         )
     }
 }
+
+class SpeechRepository(private val db: AppDatabase) {
+    private val dao = db.speechServiceDao()
+
+    val allServices: Flow<List<SpeechService>> = dao.getAllSpeechServices().map { entities ->
+        entities.map { entityToModel(it) }
+    }
+
+    suspend fun getById(id: String): SpeechService? {
+        val entity = dao.getServiceById(id) ?: return null
+        return entityToModel(entity)
+    }
+
+    suspend fun saveService(service: SpeechService) {
+        dao.insertOrUpdate(modelToEntity(service))
+    }
+
+    suspend fun deleteService(id: String) {
+        dao.deleteById(id)
+    }
+
+    private fun entityToModel(entity: SpeechServiceEntity): SpeechService {
+        return SpeechService(
+            id = entity.id,
+            name = entity.name,
+            provider = entity.provider,
+            voice = entity.voice,
+            speed = entity.speed,
+            pitch = entity.pitch,
+            apiKey = entity.apiKey
+        )
+    }
+
+    private fun modelToEntity(service: SpeechService): SpeechServiceEntity {
+        return SpeechServiceEntity(
+            id = service.id,
+            name = service.name,
+            provider = service.provider,
+            voice = service.voice,
+            speed = service.speed,
+            pitch = service.pitch,
+            apiKey = service.apiKey
+        )
+    }
+}

@@ -23,15 +23,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val appPrefs by viewModel.appPreferences.collectAsStateWithLifecycle()
-            val darkTheme = when (appPrefs.themeMode) {
-                "LIGHT" -> false
-                "DARK" -> true
-                else -> isSystemInDarkTheme()
-            }
-
             MultiGatewayTheme(
-                darkTheme = darkTheme,
-                dynamicColor = appPrefs.useDynamicColor
+                themeMode = appPrefs.themeMode,
+                dynamicColor = appPrefs.useDynamicColor,
+                colorSchemeName = appPrefs.colorSchemeName
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

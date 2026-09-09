@@ -13,9 +13,10 @@ import org.starfall.multigateway.data.local.db.entities.*
         ChatProfileEntity::class,
         LlmProviderEntity::class,
         LlmModelsEntity::class,
-        McpServerEntity::class
+        McpServerEntity::class,
+        SpeechServiceEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,6 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun llmProviderDao(): LlmProviderDao
     abstract fun llmModelsDao(): LlmModelsDao
     abstract fun mcpServerDao(): McpServerDao
+    abstract fun speechServiceDao(): SpeechServiceDao
 
     companion object {
         @Volatile
@@ -35,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "multigateway_db"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

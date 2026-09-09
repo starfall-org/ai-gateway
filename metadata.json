@@ -1,0 +1,6 @@
+{
+  "name": "MultiGateway",
+  "description": "Multi-provider LLM gateway and chat assistant supporting OpenAI, Anthropic, Gemini, Ollama, and MCP servers",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
