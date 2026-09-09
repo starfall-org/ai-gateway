@@ -1,0 +1,80 @@
+package org.starfall.multigateway.data.local.db.dao
+
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
+import org.starfall.multigateway.data.local.db.entities.*
+
+@Dao
+interface ConversationDao {
+    @Query("SELECT * FROM conversations ORDER BY updatedAt DESC")
+    fun getAllConversations(): Flow<List<ConversationEntity>>
+
+    @Query("SELECT * FROM conversations WHERE id = :id")
+    suspend fun getConversationById(id: String): ConversationEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(conversation: ConversationEntity)
+
+    @Query("DELETE FROM conversations WHERE id = :id")
+    suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM conversations")
+    suspend fun deleteAll()
+}
+
+@Dao
+interface ChatProfileDao {
+    @Query("SELECT * FROM chat_profiles")
+    fun getAllProfiles(): Flow<List<ChatProfileEntity>>
+
+    @Query("SELECT * FROM chat_profiles WHERE id = :id")
+    suspend fun getProfileById(id: String): ChatProfileEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(profile: ChatProfileEntity)
+
+    @Query("DELETE FROM chat_profiles WHERE id = :id")
+    suspend fun deleteById(id: String)
+}
+
+@Dao
+interface LlmProviderDao {
+    @Query("SELECT * FROM llm_providers")
+    fun getAllProviders(): Flow<List<LlmProviderEntity>>
+
+    @Query("SELECT * FROM llm_providers WHERE id = :id")
+    suspend fun getProviderById(id: String): LlmProviderEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(provider: LlmProviderEntity)
+
+    @Query("DELETE FROM llm_providers WHERE id = :id")
+    suspend fun deleteById(id: String)
+}
+
+@Dao
+interface LlmModelsDao {
+    @Query("SELECT * FROM llm_models WHERE id = :providerId")
+    suspend fun getModelsForProvider(providerId: String): LlmModelsEntity?
+
+    @Query("SELECT * FROM llm_models")
+    fun getAllModels(): Flow<List<LlmModelsEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(models: LlmModelsEntity)
+}
+
+@Dao
+interface McpServerDao {
+    @Query("SELECT * FROM mcp_servers")
+    fun getAllServers(): Flow<List<McpServerEntity>>
+
+    @Query("SELECT * FROM mcp_servers WHERE id = :id")
+    suspend fun getServerById(id: String): McpServerEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(server: McpServerEntity)
+
+    @Query("DELETE FROM mcp_servers WHERE id = :id")
+    suspend fun deleteById(id: String)
+}
